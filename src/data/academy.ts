@@ -1,0 +1,267 @@
+import { LeatherMaterial } from '../types';
+
+export const LEATHER_MATERIALS: LeatherMaterial[] = [
+  {
+    id: 'kulit-domba',
+    name: 'Kulit Domba (Sheepskin)',
+    slug: 'kulit-domba',
+    origin: 'Berasal dari domba, khususnya domba Priangan Garut yang terkenal dengan kelembutan dan kelenturan seratnya.',
+    textureDescription: 'Tekstur permukaan sangat halus, berbutir halus (fine grain), lembut saat disentuh, dan sangat lentur mengikuti kontur tubuh.',
+    characteristics: [
+      'Bobot relatif ringan dan sangat lembut (supple).',
+      'Pori-pori rapat dan pola permukaan alami yang rata.',
+      'Sangat elastis dan fleksibel saat dikenakan.',
+      'Memiliki sirkulasi udara yang baik, terasa hangat di cuaca dingin dan sejuk di cuaca normal.',
+    ],
+    pros: [
+      'Sangat nyaman dipakai berjam-jam sebagai jaket busana.',
+      'Tidak kaku sejak pemakaian pertama.',
+      'Tampilan mewah dan berkelas dengan kilau drape alami.',
+    ],
+    cons: [
+      'Relatif lebih rentan terhadap goresan benda tajam dibanding kulit sapi tebal.',
+      'Memerlukan kehati-hatian ekstra terhadap paparan cairan pekat.',
+    ],
+    commonUses: [
+      'Jaket kulit pria & wanita premium.',
+      'Sarung tangan berkendara / dress gloves.',
+      'Topi kulit dan dompet berdesain fleksibel.',
+    ],
+    careTips: [
+      'Gunakan kain mikrofiber lembap bersih untuk menyeka debu permukaan.',
+      'Oleskan leather lotion atau balsam khusus kulit lembut secara berkala (2-3 bulan sekali).',
+      'Gantung dengan hanger berbusa lebar agar bahu jaket tidak berubah bentuk.',
+    ],
+    genuineComparison: 'Kulit domba asli memiliki aroma khas penyamakan alami, pori-pori yang bervariasi secara mikroskopis (tidak identik berulang), dan terasa hangat menyerap suhu tubuh.',
+    imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80',
+    comparison: {
+      texture: 'Sangat halus & lentur',
+      flexibility: 'Sangat Tinggi',
+      thickness: 'Sedang - Tipis (0.7 - 1.0 mm)',
+      durability: 'Tinggi (untuk pakaian)',
+      maintenance: 'Rutin & Lembut',
+    },
+  },
+  {
+    id: 'kulit-sapi',
+    name: 'Kulit Sapi (Cowhide)',
+    slug: 'kulit-sapi',
+    origin: 'Berasal dari sapi potong atau sapi perah, menjadi material industri kulit paling populer di dunia karena kekuatannya.',
+    textureDescription: 'Permukaan bertekstur kokoh, pori-pori tegas, memiliki ketebalan substansial, dan berstruktur serat padat.',
+    characteristics: [
+      'Struktur serat sangat padat dan memiliki ketahanan abrasi luar biasa.',
+      'Awalnya berkarakter kaku, namun seiring pemakaian akan melunak dan membentuk patina indah.',
+      'Ketahanan tinggi terhadap gesekan, cuaca ekstrem, dan beban berat.',
+      'Menghasilkan struktur yang kokoh untuk produk berpola tegas.',
+    ],
+    pros: [
+      'Sangat tahan banting dan awet puluhan tahun dengan perawatan tepat.',
+      'Proteksi fisik maksimal terhadap benturan dan goresan.',
+      'Menua dengan sangat indah (developing rich patina).',
+    ],
+    cons: [
+      'Bobot lebih berat dibanding kulit domba.',
+      'Memerlukan periode penyesuaian (break-in period) terutama pada sepatu baru.',
+    ],
+    commonUses: [
+      'Sepatu kerja kantor, sepatu PDH, dan boots touring.',
+      'Ikat pinggang tebal, tas kantor (briefcase), dan ransel kulit.',
+      'Sadel, jok furnitur, dan jaket keselamatan berkendara berat.',
+    ],
+    careTips: [
+      'Bersihkan kotoran lumpur atau debu dengan sikat bulu kuda (horsehair brush).',
+      'Gunakan saddle soap atau wax/creme conditioner berkualitas untuk menjaga kelembapan serat.',
+      'Gunakan shoe tree kayu untuk sepatu kulit sapi guna menjaga lekukan ergonomisnya.',
+    ],
+    genuineComparison: 'Kulit sapi asli terasa padat berbobot, saat ditekan dengan ibu jari akan tampak kerutan halus alami yang menyebar, bukan kerutan kaku khas vinil.',
+    imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80',
+    comparison: {
+      texture: 'Kuat, padat & tegas',
+      flexibility: 'Sedang (melunak seiring waktu)',
+      thickness: 'Tebal (1.2 - 2.2 mm)',
+      durability: 'Sangat Tinggi (Tahan puluhan tahun)',
+      maintenance: 'Sedang (Wax/Cream berkala)',
+    },
+  },
+  {
+    id: 'kulit-kambing',
+    name: 'Kulit Kambing (Goatskin)',
+    slug: 'kulit-kambing',
+    origin: 'Berasal dari kulit kambing dewasa, dikenal dengan istilah maroko leather karena sejarah pemanfaatannya di Mediterania.',
+    textureDescription: 'Tekstur berbutir khas (pebble grain / ridge) dengan permukaan sedikit berkerikil alami yang menarik.',
+    characteristics: [
+      'Mengandung lanolin alami yang membuat seratnya lentur sekaligus tangguh.',
+      'Lebih kuat dan tahan sobek dibanding kulit domba pada ketebalan yang setara.',
+      'Tahan air lebih baik dibanding jenis kulit hewan mamalia kecil lainnya.',
+      'Pola tekstur berkerut halus yang unik dan tidak mudah pudar.',
+    ],
+    pros: [
+      'Keseimbangan sempurna antara kelenturan ringan dan daya tahan abrasi.',
+      'Secara historis digunakan untuk jaket penerbang militer (A-2 / G-1 flight jacket).',
+      'Mudah dibersihkan dan tahan lembap relatif lebih baik.',
+    ],
+    cons: [
+      'Tekstur permukaan tidak semulus kulit domba jika menginginkan tampilan ultra-sleek.',
+      'Ukuran lembaran kulit biasanya lebih kecil sehingga butuh banyak panel sambungan pada produk besar.',
+    ],
+    commonUses: [
+      'Jaket aviasi / pilot bomber jacket.',
+      'Sepatu santai wanita dan flat shoes fleksibel.',
+      'Sampul buku mewah, dompet kartu, dan tas jinjing.',
+    ],
+    careTips: [
+      'Cukup lap dengan kain katun lembap setelah pemakaian.',
+      'Beri pelembap leather cream berbahan dasar air secara berkala.',
+      'Simpan di tempat teduh dengan sirkulasi udara baik.',
+    ],
+    genuineComparison: 'Memiliki aroma hewani khas dan tekstur butiran (ridges) yang tidak seragam mesin di seluruh permukaannya.',
+    imageUrl: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80',
+    comparison: {
+      texture: 'Berbutir (pebble) & elastis',
+      flexibility: 'Tinggi',
+      thickness: 'Sedang (0.9 - 1.2 mm)',
+      durability: 'Tinggi',
+      maintenance: 'Mudah',
+    },
+  },
+  {
+    id: 'suede',
+    name: 'Suede (Velvety Split Leather)',
+    slug: 'suede',
+    origin: 'Dibuat dari bagian dalam (flesh side) lembaran kulit sapi, kambing, atau domba yang disikat hingga menghasilkan serat halus berbulu beludru.',
+    textureDescription: 'Permukaan berbulu halus (napped finish), sangat lembut disentuh, tidak memantulkan kilau (matte elegan).',
+    characteristics: [
+      'Menghadirkan sentuhan lembut bak beludru yang mewah dan bersahaja.',
+      'Tidak memiliki lapisan pelindung terluar (epidermis), menjadikannya sangat bernapas (breathable).',
+      'Memberikan kedalaman warna yang hangat dan kaya.',
+      'Lebih lentur dan santai untuk gaya pakaian serta alas kaki kasual.',
+    ],
+    pros: [
+      'Estetika visual dan taktil yang sangat premium dan bernilai seni tinggi.',
+      'Sangat nyaman dan sejuk di kaki maupun badan.',
+      'Memberikan variasi gaya kontras jika dipadukan dengan tekstur lain.',
+    ],
+    cons: [
+      'Sangat sensitif terhadap cipratan air, lumpur, dan noda minyak.',
+      'Memerlukan sikat khusus dan perlakuan khusus agar serat tidak menggumpal.',
+    ],
+    commonUses: [
+      'Sepatu santai, loafers, moccasin, dan chelsea boots.',
+      'Jaket kasual musim gugur dan rompi.',
+      'Lapisan dalam tas mewah dan sarung kacamata.',
+    ],
+    careTips: [
+      'Gunakan sikat krep suede (suede brush) searah untuk mengangkat debu.',
+      'Semprotkan suede protector spray antiair sebelum pemakaian di luar ruangan.',
+      'Gunakan penghapus suede khusus (suede eraser) untuk noda kering, jangan pernah dicuci air biasa.',
+    ],
+    genuineComparison: 'Suede asli memiliki serat mikroskopis organik yang berubah arah warnanya saat disapu jari, serta bagian belakang berbahan kulit alami bukan kain jaring sintetik.',
+    imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80',
+    comparison: {
+      texture: 'Beludru halus (napped)',
+      flexibility: 'Sangat Tinggi',
+      thickness: 'Tipis - Sedang (0.8 - 1.4 mm)',
+      durability: 'Sedang (Sensitif noda)',
+      maintenance: 'Khusus (Sikat & Suede spray)',
+    },
+  },
+  {
+    id: 'kulit-sintetis-pu',
+    name: 'Kulit Sintetis atau PU (Faux / Synthetic)',
+    slug: 'kulit-sintetis-pu',
+    origin: 'Material buatan pabrik berbasis polimer (Polyurethane atau Polyvinyl Chloride) yang dilapisi pada serat dasar kain atau polyester.',
+    textureDescription: 'Permukaan seragam dengan motif tekstur cetakan mesin (embossed grain), tanpa pori-pori organik alami.',
+    characteristics: [
+      'Bahan non-hewani yang diproduksi secara massal oleh industri kimia.',
+      'Pola tekstur sangat seragam dan konsisten di setiap meter persegi bahan.',
+      'Kedap air di permukaan luar namun tidak memiliki sirkulasi udara mikro (non-breathable).',
+      'Memiliki rentang usia terbatas sebelum lapisan polimer mulai terkelupas (peeling).',
+    ],
+    pros: [
+      'Biaya produksi lebih terjangkau dibanding kulit asli.',
+      'Mudah dibersihkan dari cipratan air biasa.',
+      'Ketersediaan warna dan ketebalan sangat seragam.',
+    ],
+    cons: [
+      'Tidak bernapas, cenderung memicu gerah dan keringat jika dipakai lama.',
+      'Mudah retak dan mengelupas setelah 1-3 tahun pemakaian dan tidak dapat diperbaiki (tidak membentuk patina).',
+      'Mengeluarkan aroma plastik sintetis tajam di awal.',
+    ],
+    commonUses: [
+      'Produk fast fashion berbiaya ekonomis.',
+      'Jok kendaraan komersial standar.',
+      'Aksesori sekali pakai atau mode musiman cepat.',
+    ],
+    careTips: [
+      'Cukup lap dengan kain lembap bersabun lembut.',
+      'Jauhkan dari sumber panas tinggi dan sinar matahari langsung agar tidak cepat getas.',
+      'Hindari penggunaan krim minyak kulit asli karena tidak akan menyerap ke lapisan plastik.',
+    ],
+    genuineComparison: 'Kulit sintetis memiliki tepi potongan yang memperlihatkan serat kain dasar (backing fabric), pola pori yang berulang identik tanpa ketidakteraturan biologis, dan tidak menyerap air maupun panas tubuh.',
+    imageUrl: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80',
+    comparison: {
+      texture: 'Seragam cetakan pabrik',
+      flexibility: 'Sedang (dapat kaku saat dingin)',
+      thickness: 'Bervariasi (0.6 - 1.2 mm)',
+      durability: 'Rendah - Sedang (Cenderung mengelupas)',
+      maintenance: 'Sangat Mudah (Cukup lap)',
+    },
+  },
+];
+
+export const LEATHER_CARE_GUIDELINES = [
+  {
+    stepNumber: '01',
+    title: 'Cara Membersihkan (Cleaning Routine)',
+    summary: 'Pembersihan rutin menjaga pori-pori kulit tetap bernapas dan terhindar dari akumulasi debu yang menggores serat.',
+    points: [
+      'Gunakan kain mikrofiber kering atau sedikit lembap dengan air hangat untuk menyeka kotoran permukaan setelah pemakaian.',
+      'Untuk kotoran membandel pada kulit sapi/domba, gunakan sabun pelana khusus (saddle soap) ber-pH seimbang dengan busa tipis.',
+      'Jangan pernah merendam produk kulit ke dalam air atau mencucinya dengan mesin cuci.',
+      'Keringkan secara alami di ruangan berventilasi baik, jauhkan dari paparan kipas pemanas atau hair dryer.',
+    ],
+  },
+  {
+    stepNumber: '02',
+    title: 'Cara Menyimpan (Storage Best Practices)',
+    summary: 'Tempat penyimpanan yang tepat mencegah perubahan bentuk fisik serta tumbuhnya jamur perusak kulit.',
+    points: [
+      'Simpan di tempat bersuhu sejuk, kering, dan terlindung dari sinar matahari langsung.',
+      'Gunakan cover pelindung berbahan katun berpori (breathable dust bag), jangan gunakan kantong plastik kedap udara.',
+      'Beri ruang antar pakaian di lemari agar sirkulasi udara mengalir lancar dan produk tidak saling berhimpit.',
+      'Gantung jaket kulit menggunakan gantungan berpenampang lebar (contoured hanger) agar bahu tidak melorot.',
+    ],
+  },
+  {
+    stepNumber: '03',
+    title: 'Menghindari Kelembapan Berlebih (Moisture & Mold)',
+    summary: 'Iklim tropis rawan memicu jamur putih pada produk kulit asli jika kelembapan udara terlalu tinggi.',
+    points: [
+      'Letakkan kantung penyerap kelembapan (silica gel) di dalam lemari atau kotak penyimpanan sepatu.',
+      'Keluarkan produk kulit secara berkala (misal 2-3 minggu sekali) untuk diangin-anginkan di ruangan teduh.',
+      'Jika produk terkena hujan, segera tepuk-tepuk dengan handuk bersih berdaya serap tinggi dan biarkan mengering alami.',
+      'Bila muncul bercak jamur ringan, seka lembut dengan kain yang ditetesi larutan cuka putih encer (1:1 dengan air), lalu keringkan.',
+    ],
+  },
+  {
+    stepNumber: '04',
+    title: 'Menjaga Bentuk Produk (Shape Retention)',
+    summary: 'Mempertahankan lekuk ergonomis dan keelokan siluet asli produk agar tetap tampak prima layaknya baru.',
+    points: [
+      'Gunakan alat penopang sepatu (wooden shoe tree) dari kayu cedar untuk menyerap keringat dan menjaga ujung sepatu tidak menekuk.',
+      'Untuk jaket, hindari melipat terlalu lama; bila terpaksa disimpan datar, selipkan kertas tisu bebas asam di sela lipatan.',
+      'Hindari menaruh beban berat di saku jaket atau tas kulit dalam waktu lama karena dapat meregangkan serat kulit secara permanen.',
+    ],
+  },
+  {
+    stepNumber: '05',
+    title: 'Hal-Hal yang Perlu Dihindari (What to Avoid)',
+    summary: 'Kesalahan umum yang berpotensi merusak material kulit secara permanen.',
+    points: [
+      'DILARANG menjemur produk kulit asli di bawah terik matahari langsung yang dapat membuat serat kulit kering, getas, dan pecah-pecah.',
+      'DILARANG menggunakan deterjen pakaian, pemutih, alkohol medis, atau aseton karena mengikis lapisan minyak alami kulit.',
+      'DILARANG menyetrika langsung permukaan kulit. Jika perlu merapikan jaket, gunakan setrika uap berjarak aman dengan pelapis kain tebal.',
+      'DILARANG menyimpan di bagasi mobil yang panas dalam durasi panjang.',
+    ],
+  },
+];
