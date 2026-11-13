@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { ProductCard } from './components/ProductCard';
@@ -7,22 +7,121 @@ import { InteractiveMap } from './components/InteractiveMap';
 import { VirtualTour } from './components/VirtualTour';
 import { AcademyComparison } from './components/AcademyComparison';
 import { ProductionTimeline } from './components/ProductionTimeline';
+import { AuthModal } from './components/AuthModal';
+import { ProfileModal } from './components/ProfileModal';
+import { AdminPhotoManagerModal } from './components/AdminPhotoManagerModal';
+import { SyakiraStorePage } from './pages/SyakiraStorePage';
 import { PRODUCTS_DATA } from './data/products';
 import { SUKAREGANG_LOCATIONS } from './data/locations';
 import { LEATHER_MATERIALS, LEATHER_CARE_GUIDELINES } from './data/academy';
 import { PRODUCTION_STEPS } from './data/production';
 import { HISTORY_MILESTONES } from './data/history';
-import { Product } from './types';
+import { Product, UserProfile } from './types';
 
 export const App: React.FC = () => {
+  // Routes: 'beranda' (landing page di awal), 'store', 'explore', 'sejarah', 'academy', 'produksi', 'katalog', 'tentang'
   const [currentRoute, setCurrentRoute] = useState<string>('beranda');
+
+  // Modals state
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState<boolean>(false);
+  const [isAdminPhotoModalOpen, setIsAdminPhotoModalOpen] = useState<boolean>(false);
+
+  // User Profile state (persisted in localStorage, default to active profile)
+  const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => {
+    try {
+      const saved = localStorage.getItem('syakira_current_user');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    // Default active profile for smooth experience
+    return {
+      id: 'usr-admin-01',
+      name: 'Alya Alifia',
+      email: 'alya.alifia@sukaregang.id',
+      role: 'admin',
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+      joinDate: '13 November 2026',
+      phone: '+62 812-3456-7890',
+    };
+  });
+
+  // Custom Product Images uploaded via Admin Studio (persisted in localStorage)
+  const [customImages, setCustomImages] = useState<Record<string, string>>(() => {
+    try {
+      const saved = localStorage.getItem('syakira_custom_product_images');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return {};
+  });
+
+  // Save custom images
+  const handleUpdateProductImage = (productId: string, newImageUrl: string) => {
+    setCustomImages((prev) => {
+      const updated = { ...prev, [productId]: newImageUrl };
+      try {
+        localStorage.setItem('syakira_custom_product_images', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+  };
+
+  const handleResetProductImage = (productId: string) => {
+    setCustomImages((prev) => {
+      const updated = { ...prev };
+      delete updated[productId];
+      try {
+        localStorage.setItem('syakira_custom_product_images', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+  };
+
+  const handleResetAllProductImages = () => {
+    setCustomImages({});
+    try {
+      localStorage.removeItem('syakira_custom_product_images');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Auth Handlers
+  const handleLoginSuccess = (user: UserProfile) => {
+    setCurrentUser(user);
+    try {
+      localStorage.setItem('syakira_current_user', JSON.stringify(user));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    try {
+      localStorage.removeItem('syakira_current_user');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // Leather Academy State
   const [selectedMaterial, setSelectedMaterial] = useState(LEATHER_MATERIALS[0]);
+
+  // Catalog State
   const [catalogCategory, setCatalogCategory] = useState<string>('Semua');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortBy, setSortBy] = useState<string>('default');
 
-  // Filter & sort products
+  // Filter & sort products for standard catalog page
   const filteredProducts = useMemo(() => {
     let list = [...PRODUCTS_DATA];
 
@@ -50,18 +149,34 @@ export const App: React.FC = () => {
   }, [catalogCategory, searchQuery, sortBy]);
 
   const featuredJaket = PRODUCTS_DATA.filter((p) => p.category === 'Jaket Kulit Pria' && p.isFeatured).slice(0, 2);
-  const featuredSepatuPria = PRODUCTS_DATA.filter((p) => p.category === 'Sepatu Kulit Pria' && p.isFeatured).slice(0, 1);
-  const featuredSepatuWanita = PRODUCTS_DATA.filter((p) => p.category === 'Sepatu Kulit Wanita' && p.isFeatured).slice(0, 1);
+  const featuredSepatuPria = PRODUCTS_DATA.filter((p) => p.category === 'Sepatu Pria' && p.isFeatured).slice(0, 1);
+  const featuredSepatuWanita = PRODUCTS_DATA.filter((p) => p.category === 'Sepatu Wanita' && p.isFeatured).slice(0, 1);
+
+  // Scroll to top on navigation
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentRoute]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F5F0E7] text-[#292B29]">
-      <Navbar currentRoute={currentRoute} onNavigate={(r) => setCurrentRoute(r)} />
+      {/* Navbar with Profile Widget in Top-Right Corner */}
+      <Navbar
+        currentRoute={currentRoute}
+        onNavigate={(r) => setCurrentRoute(r)}
+        currentUser={currentUser}
+        onOpenLogin={() => setIsAuthModalOpen(true)}
+        onOpenProfile={() => setIsProfileModalOpen(true)}
+        onOpenAdminManager={() => setIsAdminPhotoModalOpen(true)}
+        onLogout={handleLogout}
+      />
 
       <main className="flex-1">
-        {/* --- 1. BERANDA --- */}
+        {/* =================================================================
+            1. BERANDA (LANDING PAGE DI AWAL)
+        ================================================================= */}
         {currentRoute === 'beranda' && (
           <div>
-            {/* Hero */}
+            {/* Hero Section */}
             <section className="relative bg-[#253B32] text-[#F5F0E7] py-20 lg:py-28 overflow-hidden">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
                 <div className="lg:col-span-7 space-y-6">
@@ -86,10 +201,10 @@ export const App: React.FC = () => {
                       🧭 Mulai Eksplorasi
                     </button>
                     <button
-                      onClick={() => setCurrentRoute('katalog')}
-                      className="px-6 py-3.5 rounded-xl bg-[#A66D43] hover:bg-[#87532F] text-white font-bold text-sm tracking-wide transition shadow-lg"
+                      onClick={() => setCurrentRoute('store')}
+                      className="px-6 py-3.5 rounded-xl bg-[#A66D43] hover:bg-[#87532F] text-white font-bold text-sm tracking-wide transition shadow-lg flex items-center space-x-2"
                     >
-                      📦 Lihat Koleksi Produk
+                      <span>🛍️ Kunjungi Syakira Store</span>
                     </button>
                   </div>
                 </div>
@@ -186,13 +301,17 @@ export const App: React.FC = () => {
                     <span className="text-xs uppercase font-bold tracking-widest text-[#A66D43]">Koleksi Pilihan</span>
                     <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#253B32] mt-1">Produk Unggulan Syakira Leather</h3>
                   </div>
-                  <button onClick={() => setCurrentRoute('katalog')} className="px-5 py-2.5 rounded-xl border-2 border-[#253B32] text-[#253B32] hover:bg-[#253B32] hover:text-[#F5F0E7] text-xs font-bold">
-                    Lihat Semua Produk (20) →
+                  <button onClick={() => setCurrentRoute('store')} className="px-5 py-2.5 rounded-xl border-2 border-[#253B32] text-[#253B32] hover:bg-[#253B32] hover:text-[#F5F0E7] text-xs font-bold">
+                    Kunjungi Syakira Store (20 Produk) →
                   </button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {[...featuredJaket, ...featuredSepatuPria, ...featuredSepatuWanita].map((p) => (
-                    <ProductCard key={p.id} product={p} onSelectDetail={(prod) => setSelectedProduct(prod)} />
+                    <ProductCard
+                      key={p.id}
+                      product={{ ...p, imageUrl: customImages[p.id] || p.imageUrl }}
+                      onSelectDetail={(prod) => setSelectedProduct(prod)}
+                    />
                   ))}
                 </div>
               </div>
@@ -203,15 +322,34 @@ export const App: React.FC = () => {
               <div className="max-w-3xl mx-auto px-4 space-y-5">
                 <h3 className="font-serif text-3xl sm:text-4xl font-bold">Your Journey into Leather Heritage Starts Here</h3>
                 <p className="text-sm sm:text-base text-[#F5F0E7]/80">Kenali lebih dekat Sukaregang dan temukan berbagai produk kulit pilihan.</p>
-                <button onClick={() => setCurrentRoute('explore')} className="px-8 py-3.5 rounded-xl bg-[#D6B889] text-[#253B32] font-bold text-sm">
-                  Mulai Menjelajahi
-                </button>
+                <div className="flex justify-center gap-3 pt-2">
+                  <button onClick={() => setCurrentRoute('explore')} className="px-8 py-3.5 rounded-xl bg-[#D6B889] text-[#253B32] font-bold text-sm">
+                    Mulai Menjelajahi
+                  </button>
+                  <button onClick={() => setCurrentRoute('store')} className="px-8 py-3.5 rounded-xl bg-[#A66D43] text-white font-bold text-sm">
+                    Buka Syakira Store
+                  </button>
+                </div>
               </div>
             </section>
           </div>
         )}
 
-        {/* --- 2. EXPLORE SUKAREGANG --- */}
+        {/* =================================================================
+            2. HALAMAN KHUSUS: SYAKIRA LEATHER STORE
+        ================================================================= */}
+        {currentRoute === 'store' && (
+          <SyakiraStorePage
+            products={PRODUCTS_DATA}
+            customImages={customImages}
+            onSelectDetail={(prod) => setSelectedProduct(prod)}
+            onOpenAdminUpload={() => setIsAdminPhotoModalOpen(true)}
+          />
+        )}
+
+        {/* =================================================================
+            3. EXPLORE SUKAREGANG (MAP & VIRTUAL TOUR)
+        ================================================================= */}
         {currentRoute === 'explore' && (
           <div className="py-12 bg-[#F5F0E7]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
@@ -234,7 +372,9 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* --- 3. SEJARAH --- */}
+        {/* =================================================================
+            4. SEJARAH SUKAREGANG
+        ================================================================= */}
         {currentRoute === 'sejarah' && (
           <div className="py-12 bg-[#F5F0E7]">
             <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -263,7 +403,9 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* --- 4. LEATHER ACADEMY --- */}
+        {/* =================================================================
+            5. LEATHER ACADEMY
+        ================================================================= */}
         {currentRoute === 'academy' && (
           <div className="py-12 bg-[#F5F0E7]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
@@ -326,7 +468,9 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* --- 5. PROSES PRODUKSI --- */}
+        {/* =================================================================
+            6. PROSES PRODUKSI
+        ================================================================= */}
         {currentRoute === 'produksi' && (
           <div className="py-12 bg-[#F5F0E7]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -341,43 +485,22 @@ export const App: React.FC = () => {
           </div>
         )}
 
-        {/* --- 6. PROFIL SYAKIRA LEATHER --- */}
-        {currentRoute === 'syakira' && (
-          <div className="py-12 bg-[#F5F0E7]">
-            <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
-              <div className="bg-[#253B32] p-8 md:p-12 rounded-3xl text-[#F5F0E7] space-y-5 shadow-xl">
-                <span className="text-xs font-bold uppercase text-[#D6B889] tracking-wider">Toko Pilihan Mitra</span>
-                <h2 className="font-serif text-4xl font-bold">SYAKIRA LEATHER</h2>
-                <p className="text-base sm:text-lg leading-relaxed text-[#F5F0E7]/90 font-serif italic">
-                  "Syakira Leather menghadirkan pilihan produk jaket kulit dan sepatu kulit untuk melengkapi kebutuhan serta gaya penggunanya. Melalui katalog digital Sukaregang Discovery, pengunjung dapat mengenal dan melihat koleksi produk Syakira Leather dengan lebih mudah."
-                </p>
-                <div className="flex gap-3 pt-2">
-                  <button onClick={() => setCurrentRoute('katalog')} className="px-6 py-3 rounded-xl bg-[#D6B889] text-[#253B32] font-bold text-xs">
-                    Buka Katalog Produk
-                  </button>
-                  <a href="https://shopee.co.id" target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-xl bg-[#A66D43] text-white font-bold text-xs">
-                    Kunjungi di Shopee
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* --- 7. KATALOG PRODUK --- */}
+        {/* =================================================================
+            7. KATALOG PRODUK (STANDARD VIEW)
+        ================================================================= */}
         {currentRoute === 'katalog' && (
           <div className="py-12 bg-[#F5F0E7]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
               <div className="text-center max-w-3xl mx-auto space-y-3">
                 <span className="text-xs uppercase font-bold tracking-widest text-[#A66D43]">Katalog Terkurasi</span>
                 <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-[#253B32]">Katalog Produk Syakira Leather</h2>
-                <p className="text-sm text-[#292B29]/70">20 Produk: 13 Jaket Kulit Pria, 3 Sepatu Kulit Pria, 4 Sepatu Kulit Wanita.</p>
+                <p className="text-sm text-[#292B29]/70">20 Produk: 13 Jaket Kulit Pria, 3 Sepatu Pria, 4 Sepatu Wanita.</p>
               </div>
 
               {/* Filter controls */}
               <div className="bg-white p-6 rounded-3xl border border-[#D6B889]/40 shadow space-y-4">
                 <div className="flex flex-wrap gap-2">
-                  {['Semua', 'Jaket Kulit Pria', 'Sepatu Kulit Pria', 'Sepatu Kulit Wanita'].map((cat) => (
+                  {['Semua', 'Jaket Kulit Pria', 'Sepatu Pria', 'Sepatu Wanita'].map((cat) => (
                     <button
                       key={cat}
                       onClick={() => setCatalogCategory(cat)}
@@ -413,14 +536,20 @@ export const App: React.FC = () => {
               {/* Product Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {filteredProducts.map((p) => (
-                  <ProductCard key={p.id} product={p} onSelectDetail={(prod) => setSelectedProduct(prod)} />
+                  <ProductCard
+                    key={p.id}
+                    product={{ ...p, imageUrl: customImages[p.id] || p.imageUrl }}
+                    onSelectDetail={(prod) => setSelectedProduct(prod)}
+                  />
                 ))}
               </div>
             </div>
           </div>
         )}
 
-        {/* --- 8. TENTANG KAMI --- */}
+        {/* =================================================================
+            8. TENTANG KAMI
+        ================================================================= */}
         {currentRoute === 'tentang' && (
           <div className="py-12 bg-[#F5F0E7]">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -438,8 +567,50 @@ export const App: React.FC = () => {
         )}
       </main>
 
-      <ProductDetailModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
-      <Footer onNavigate={(r) => setCurrentRoute(r)} onSelectCategory={(c) => setCatalogCategory(c)} />
+      {/* --- MODALS --- */}
+      {/* 1. Product Detail Modal */}
+      <ProductDetailModal
+        product={selectedProduct ? { ...selectedProduct, imageUrl: customImages[selectedProduct.id] || selectedProduct.imageUrl } : null}
+        onClose={() => setSelectedProduct(null)}
+      />
+
+      {/* 2. Auth Modal (Login) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+      />
+
+      {/* 3. User Profile Modal */}
+      {currentUser && (
+        <ProfileModal
+          isOpen={isProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          user={currentUser}
+          onLogout={handleLogout}
+          onOpenAdminManager={() => setIsAdminPhotoModalOpen(true)}
+        />
+      )}
+
+      {/* 4. Admin Photo Upload & Management Studio Modal */}
+      <AdminPhotoManagerModal
+        isOpen={isAdminPhotoModalOpen}
+        onClose={() => setIsAdminPhotoModalOpen(false)}
+        products={PRODUCTS_DATA}
+        customImages={customImages}
+        onUpdateImage={handleUpdateProductImage}
+        onResetImage={handleResetProductImage}
+        onResetAllImages={handleResetAllProductImages}
+      />
+
+      {/* Footer */}
+      <Footer
+        onNavigate={(r) => setCurrentRoute(r)}
+        onSelectCategory={(c) => {
+          setCatalogCategory(c);
+          setCurrentRoute('store');
+        }}
+      />
     </div>
   );
 };

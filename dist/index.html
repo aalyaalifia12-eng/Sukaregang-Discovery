@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sukaregang Discovery & Syakira Leather | Digital Tourism, Education & Official Store</title>
+  <meta name="description" content="Platform digital interaktif sentra kerajinan kulit Sukaregang, Garut. Eksplorasi kawasan, edukasi material kulit, proses produksi kerajinan, dan katalog resmi Syakira Leather.">
+  
+  <!-- Google Fonts: Playfair Display (Serif) & Plus Jakarta Sans (Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Leaflet CSS & JS for Interactive Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- React 18 & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel Standalone for In-Browser JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forest: {
+              DEFAULT: '#253B32',
+              50: '#F2F6F4',
+              100: '#E1EBE6',
+              200: '#C2D7CD',
+              700: '#1C2C25',
+              800: '#253B32',
+              900: '#15211C',
+            },
+            leather: {
+              DEFAULT: '#A66D43',
+              light: '#BE875D',
+              dark: '#87532F',
+            },
+            warmbeige: {
+              DEFAULT: '#D6B889',
+              light: '#EAD7BA',
+              dark: '#BFA06F',
+            },
+            cream: {
+              DEFAULT: '#F5F0E7',
+              light: '#FAF7F2',
+              dark: '#ECE3D4',
+            },
+            charcoal: {
+              DEFAULT: '#292B29',
+              light: '#3C403C',
+              dark: '#1C1D1C',
+            }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #F5F0E7;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #D6B889;
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background: #A66D43;
+    }
+    .leaflet-popup-content-wrapper {
+      background: #253B32 !important;
+      color: #F5F0E7 !important;
+      border-radius: 12px !important;
+      border: 1px solid #D6B889 !important;
+      font-family: 'Plus Jakarta Sans', sans-serif !important;
+    }
+    .leaflet-popup-tip {
+      background: #253B32 !important;
+    }
+  </style>
+</head>
+<body class="bg-cream text-charcoal font-sans antialiased selection:bg-leather selection:text-cream">
+  <div id="root"></div>
+
+  <!-- Main React App Script -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    // --- DATA 20 PRODUK SYAKIRA LEATHER ---
+    const PRODUCTS_DATA = [
+      // KATEGORI 1 – JAKET KULIT PRIA (13 PRODUK)
+      {
+        id: 'jaket-01',
+        name: 'Jaket Kulit Jubah Premium',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-jubah-jaket-kulit-premium-jaket-kulit-asli-Garut-jaket-kulit-jaz-kulit-i.31871696.6816167332?extraParams=%7B%22display_model_id%22%3A34141006660%2C%22model_selection_logic%22%3A3%7D&image_ids=775a835b1959b5d447f053e81394946d',
+        imageId: '775a835b1959b5d447f053e81394946d',
+        imageUrl: 'https://down-id.img.susercontent.com/file/775a835b1959b5d447f053e81394946d',
+        description: 'Model jubah panjang dengan sentuhan potongan khas jas kulit berkelas dari perajin Sukaregang Garut.',
+        materialInfo: 'Bahan kulit asli Garut pilihan dengan furing dalam berkualitas.',
+        isFeatured: true,
+      },
+      {
+        id: 'jaket-02',
+        name: 'Jaket Kulit Pria Model Domba',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-asli-jaket-kulit-domba-jaket-kulit-keren-jaket-kulit-sukaregang-i.31871696.5216044039?extraParams=%7B%22display_model_id%22%3A23230403914%2C%22model_selection_logic%22%3A3%7D&image_ids=401ca80733d410796aa1c4bf9fa2ee36',
+        imageId: '401ca80733d410796aa1c4bf9fa2ee36',
+        imageUrl: 'https://down-id.img.susercontent.com/file/401ca80733d410796aa1c4bf9fa2ee36',
+        description: 'Jaket kulit pria berkarakter klasik dengan kelenturan dan kelembutan khas material kulit domba Garut.',
+        materialInfo: 'Kulit domba asli Sukaregang Garut dengan karakter lentur dan bobot nyaman.',
+        isFeatured: true,
+      },
+      {
+        id: 'jaket-03',
+        name: 'Jaket Kulit Pria Model Jangkis',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-sukaregang-garut-jaket-kulit-keren-jaket-jangkis-jaket-pria-jaket-kulit-asli-garut-i.31871696.5415826298?extraParams=%7B%22display_model_id%22%3A72477810793%2C%22model_selection_logic%22%3A3%7D&image_ids=e9f5b65138f60013c63bbcf485ceb482',
+        imageId: 'e9f5b65138f60013c63bbcf485ceb482',
+        imageUrl: 'https://down-id.img.susercontent.com/file/e9f5b65138f60013c63bbcf485ceb482',
+        description: 'Model jangkis (bomber cut) yang dinamis dengan ban pinggang dan kerah khas untuk gaya kasual modern.',
+        materialInfo: 'Material kulit domba Sukaregang berkualitas dengan resleting kuat.',
+        isFeatured: false,
+      },
+      {
+        id: 'jaket-04',
+        name: 'Jaket Kulit Pria Asli Domba',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-Kulit-Pria-Asli-Domba-Sukaregang-Garut-i.31871696.7915818996?extraParams=%7B%22display_model_id%22%3A47432999315%2C%22model_selection_logic%22%3A3%7D&image_ids=6143784491473d15e1f6e223492333f7',
+        imageId: '6143784491473d15e1f6e223492333f7',
+        imageUrl: 'https://down-id.img.susercontent.com/file/6143784491473d15e1f6e223492333f7',
+        description: 'Karya perajin lokal Sukaregang yang memadukan keaslian kulit domba Garut dengan jahitan presisi.',
+        materialInfo: '100% Kulit Domba Asli Garut.',
+        isFeatured: false,
+      },
+      {
+        id: 'jaket-05',
+        name: 'Jaket Kulit Pria Casual',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-sukaregang-garut-jaket-kulit-keren-jaket-casual-kulit-i.31871696.5516043866?extraParams=%7B%22display_model_id%22%3A92963548180%2C%22model_selection_logic%22%3A3%7D&image_ids=1c10077ded09045d3bb77fa519245b0a',
+        imageId: '1c10077ded09045d3bb77fa519245b0a',
+        imageUrl: 'https://down-id.img.susercontent.com/file/1c10077ded09045d3bb77fa519245b0a',
+        description: 'Desain kasual serbaguna yang fleksibel dipadukan dengan berbagai busana harian.',
+        materialInfo: 'Bahan kulit domba olahan sentra Sukaregang bertekstur halus.',
+        isFeatured: false,
+      },
+      {
+        id: 'jaket-06',
+        name: 'Jaket Kulit Pria Model Jas atau Blazer',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-asli-jaket-kulit-pria-jaket-kulit-sukaregang-garut-jaket-jas-kulit-jas-kulit-blezer-i.31871696.7616518803?extraParams=%7B%22display_model_id%22%3A52478002614%2C%22model_selection_logic%22%3A3%7D&image_ids=ce9e4313b6c6aea3e80bc5651fbcd28c',
+        imageId: 'ce9e4313b6c6aea3e80bc5651fbcd28c',
+        imageUrl: 'https://down-id.img.susercontent.com/file/ce9e4313b6c6aea3e80bc5651fbcd28c',
+        description: 'Siluet blazer formal berbahan kulit asli dengan lapel notch yang berwibawa untuk penampilan profesional.',
+        materialInfo: 'Kulit asli Garut berkarakter tegas dan rapi.',
+        isFeatured: true,
+      },
+      {
+        id: 'jaket-07',
+        name: 'Jaket Kulit Domba Pria Garut',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/jaket-kulit-domba-asli-garut-jaket-kulit-pria-jaket-kulit-keren-jaket-kulit-sukaregang-garut-i.31871696.5936313382?extraParams=%7B%22display_model_id%22%3A44115888226%2C%22model_selection_logic%22%3A3%7D&image_ids=643102a8208e34d10119a2a8d6646dd4',
+        imageId: '643102a8208e34d10119a2a8d6646dd4',
+        imageUrl: 'https://down-id.img.susercontent.com/file/643102a8208e34d10119a2a8d6646dd4',
+        description: 'Produk autentik Sukaregang dengan fitting maskulin dan saku fungsional berkualitas.',
+        materialInfo: 'Kulit domba asli Sukaregang Garut.',
+        isFeatured: false,
+      },
+      {
+        id: 'jaket-08',
+        name: 'Jaket Kulit Pria Hoodie',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-hody-jaket-pria-jaket-kulit-sukaregang-garut-jaket-kulit-domba-jaket-original-i.31871696.7116043654?extraParams=%7B%22display_model_id%22%3A25979180943%2C%22model_selection_logic%22%3A3%7D&image_ids=606dd0d4518544796bfa3e1663eb00fc',
+        imageId: '606dd0d4518544796bfa3e1663eb00fc',
+        imageUrl: 'https://down-id.img.susercontent.com/file/606dd0d4518544796bfa3e1663eb00fc',
+        description: 'Kombinasi gaya kulit mewah dengan kenyamanan tudung (hoodie) modern untuk perlindungan berkendara.',
+        materialInfo: 'Kulit domba dipadu aksen penutup kepala (hoodie).',
+        isFeatured: false,
+      },
+      {
+        id: 'jaket-09',
+        name: 'Jaket Kulit Pria Model Hoody',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-garut-jaket-kulit-sukaregang-garut-jaket-kulit-hoody-i.31871696.5416043956?extraParams=%7B%22display_model_id%22%3A81574174616%2C%22model_selection_logic%22%3A3%7D&image_ids=a195858cf3a7f005065596a97cb8474f',
+        imageId: 'a195858cf3a7f005065596a97cb8474f',
+        imageUrl: 'https://down-id.img.susercontent.com/file/a195858cf3a7f005065596a97cb8474f',
+        description: 'Varian jaket bertudung dengan potongan fit kontemporer dan saku beritsleting praktis.',
+        materialInfo: 'Kulit asli Garut berkarakter lembut dan fleksibel.',
+        isFeatured: false,
+      },
+      {
+        id: 'jaket-10',
+        name: 'Jaket Kulit Hoody Original',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-hoody-jaket-pria-jaket-kulit-original-jaket-kulit-sukaregang-garut-i.31871696.7636312605?extraParams=%7B%22display_model_id%22%3A32478053520%2C%22model_selection_logic%22%3A3%7D&image_ids=1e74bae430864f6b8562796991e67dc7',
+        imageId: '1e74bae430864f6b8562796991e67dc7',
+        imageUrl: 'https://down-id.img.susercontent.com/file/1e74bae430864f6b8562796991e67dc7',
+        description: 'Edisi original berkarakter tangguh yang mempertahankan orisinalitas pengerjaan pengrajin Sukaregang Garut.',
+        materialInfo: 'Bahan kulit asli domba Sukaregang.',
+        isFeatured: false,
+      },
+      {
+        id: 'jaket-11',
+        name: 'Jaket Kulit Domba Model Jas',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-domba-jaket-kulit-domba-jaket-kulit-asli-sularegang-garut-jaket-jas-kulit-i.31871696.5716045083?extraParams=%7B%22display_model_id%22%3A52886759945%2C%22model_selection_logic%22%3A3%7D&image_ids=2f37f2f77d37414464a10e7736f8b96e',
+        imageId: '2f37f2f77d37414464a10e7736f8b96e',
+        imageUrl: 'https://down-id.img.susercontent.com/file/2f37f2f77d37414464a10e7736f8b96e',
+        description: 'Pilihan jas kulit berkarakter eksklusif dengan kancing depan dan garis jahitan rapi yang mempertegas postur tubuh.',
+        materialInfo: 'Kulit domba asli olahan Garut.',
+        isFeatured: false,
+      },
+      {
+        id: 'jaket-12',
+        name: 'Jaket Kulit Harley Pria',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-kulit-harley-jaket-kulit-pria-jaket-kulit-asli-sukaregang-jaket-kulit-domba-bordir-harley-i.31871696.3416263151?extraParams=%7B%22display_model_id%22%3A75528565882%2C%22model_selection_logic%22%3A3%7D&image_ids=41e43c47d83ca93411bf4897329be140',
+        imageId: '41e43c47d83ca93411bf4897329be140',
+        imageUrl: 'https://down-id.img.susercontent.com/file/41e43c47d83ca93411bf4897329be140',
+        description: 'Gaya biker legendaris dengan detail bordir dan konstruksi kokoh bagi pecinta touring.',
+        materialInfo: 'Bahan kulit domba asli dengan bordir detail rapi.',
+        isFeatured: true,
+      },
+      {
+        id: 'jaket-13',
+        name: 'Jaket Kulit Domba Grade A',
+        category: 'Jaket Kulit Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Jaket-Kulit-Domba-Asli-Garut-Furing-Grade-A-i.31871696.5415615062?extraParams=%7B%22display_model_id%22%3A72867407672%2C%22model_selection_logic%22%3A3%7D&image_ids=id-11134207-7rasi-m5ms948ni6wy03',
+        imageId: 'id-11134207-7rasi-m5ms948ni6wy03',
+        imageUrl: 'https://down-id.img.susercontent.com/file/id-11134207-7rasi-m5ms948ni6wy03',
+        description: 'Menggunakan lembaran kulit domba seleksi Grade A terbaik dengan furing dalam premium yang sejuk.',
+        materialInfo: 'Kulit domba Grade A asli Sukaregang Garut dengan furing berkualitas tinggi.',
+        isFeatured: false,
+      },
+
+      // KATEGORI 2 – SEPATU PRIA (3 PRODUK)
+      {
+        id: 'sepatu-pria-01',
+        name: 'Sepatu Kulit Pria Formal',
+        category: 'Sepatu Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/sepatu-kulit-pria-sepatu-kantor-kulit-sepatu-formal-kulit-sepatu-kulit-original-sepatu-resmi-kulit-sepatu-asli-kulit-berkualitas-i.31871696.23917059159?extraParams=%7B%22display_model_id%22%3A146528134238%2C%22model_selection_logic%22%3A3%7D&image_ids=sg-11134201-23010-o9nhum7ks1lv9c',
+        imageId: 'sg-11134201-23010-o9nhum7ks1lv9c',
+        imageUrl: 'https://down-id.img.susercontent.com/file/sg-11134201-23010-o9nhum7ks1lv9c',
+        description: 'Sepatu pantofel formal pria berdesain sleek dan profesional dengan sol dalam empuk untuk aktivitas kantor.',
+        materialInfo: 'Material kulit asli berkualitas dengan sol rapi dan kokoh.',
+        isFeatured: true,
+      },
+      {
+        id: 'sepatu-pria-02',
+        name: 'Sepatu Kantor Pria Kulit',
+        category: 'Sepatu Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/spatu-kantor-pria-kulit-asli-spatu-kantor-kulit-asli-garut-spatu-kulit-premium-spatu-trendi-spatu-pria-terbaik-i.31871696.21107075521?extraParams=%7B%22display_model_id%22%3A154671686538%2C%22model_selection_logic%22%3A3%7D&image_ids=48e0e5eba376341b2b65b3a967fc98ec',
+        imageId: '48e0e5eba376341b2b65b3a967fc98ec',
+        imageUrl: 'https://down-id.img.susercontent.com/file/48e0e5eba376341b2b65b3a967fc98ec',
+        description: 'Sepatu kerja dengan lekuk ergonomis dan kilau kulit yang elegan untuk pria aktif.',
+        materialInfo: 'Kulit asli olahan Garut dengan daya tahan tinggi.',
+        isFeatured: false,
+      },
+      {
+        id: 'sepatu-pria-03',
+        name: 'Sepatu PDH Kulit Model Anyam',
+        category: 'Sepatu Pria',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Spatu-PDH-kantor-spatu-kulit-PDH-spatu-formal-spatu-model-anyam-spatu-kulit-garut-spatu-kulit-berkualitas-i.31871696.22417077495?extraParams=%7B%22display_model_id%22%3A193692704811%2C%22model_selection_logic%22%3A3%7D&image_ids=sg-11134201-23010-px1pgdkov1lvde',
+        imageId: 'sg-11134201-23010-px1pgdkov1lvde',
+        imageUrl: 'https://down-id.img.susercontent.com/file/sg-11134201-23010-px1pgdkov1lvde',
+        description: 'Sepatu dinas kantor PDH dengan aksen anyaman kulit khas perajin Sukaregang yang artistik.',
+        materialInfo: 'Kulit asli dengan variasi anyaman tangan rapi khas perajin Garut.',
+        isFeatured: true,
+      },
+
+      // KATEGORI 3 – SEPATU WANITA (4 PRODUK)
+      {
+        id: 'sepatu-wanita-01',
+        name: 'Sepatu Kulit Wanita Santai',
+        category: 'Sepatu Wanita',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Sepatu-Kulit-Asli-Santai-Sol-Karet-Anti-Licin-i.31871696.6338871174?extraParams=%7B%22display_model_id%22%3A141369681033%2C%22model_selection_logic%22%3A3%7D&image_ids=e6aeb879ef95203771335efe0e0c98b0',
+        imageId: 'e6aeb879ef95203771335efe0e0c98b0',
+        imageUrl: 'https://down-id.img.susercontent.com/file/e6aeb879ef95203771335efe0e0c98b0',
+        description: 'Sepatu santai wanita dengan sol karet antiselip (anti licin) yang nyaman untuk dipakai seharian.',
+        materialInfo: 'Bahan kulit asli bertekstur lembut dengan outsole karet antilicin.',
+        isFeatured: true,
+      },
+      {
+        id: 'sepatu-wanita-02',
+        name: 'Sepatu Kantor Wanita Hak Pendek',
+        category: 'Sepatu Wanita',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Syakira-sepatu-wanita-kulit-asli-sepatu-kantor-wanita-sepatu-hak-pendek-sepatu-kantor-plat-sepatu-kulit-asli-i.31871696.28521275430?extraParams=%7B%22display_model_id%22%3A227178151932%2C%22model_selection_logic%22%3A3%7D&image_ids=id-11134207-8224y-mj9avycv6xvlb3',
+        imageId: 'id-11134207-8224y-mj9avycv6xvlb3',
+        imageUrl: 'https://down-id.img.susercontent.com/file/id-11134207-8224y-mj9avycv6xvlb3',
+        description: 'Model hak pendek (low heel) elegan dengan aksen plat yang manis bagi wanita pekerja profesional.',
+        materialInfo: 'Kulit asli Garut berkarakter halus dengan insole empuk.',
+        isFeatured: false,
+      },
+      {
+        id: 'sepatu-wanita-03',
+        name: 'Sepatu Flat Wanita Kulit',
+        category: 'Sepatu Wanita',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/sepatu-kantor-plat-kulit-asli-sepatu-kantor-wanita-kulit-asli-sepatu-flat-wanita-sepatu-santai-spatu-wanita-kulit-asli-i.31871696.11278204668?extraParams=%7B%22display_model_id%22%3A28227135249%2C%22model_selection_logic%22%3A3%7D&image_ids=9d74a00a884f5747737cf7c776a8098f',
+        imageId: '9d74a00a884f5747737cf7c776a8098f',
+        imageUrl: 'https://down-id.img.susercontent.com/file/9d74a00a884f5747737cf7c776a8098f',
+        description: 'Sepatu flat kasual berbahan kulit asli dengan fleksibilitas tinggi dan kenyamanan maksimal.',
+        materialInfo: 'Kulit asli lembut yang lentur mengikuti gerak langkah kaki.',
+        isFeatured: true,
+      },
+      {
+        id: 'sepatu-wanita-04',
+        name: 'Sepatu Kantor Wanita Kulit',
+        category: 'Sepatu Wanita',
+        storeName: 'Syakira Leather',
+        shopeeUrl: 'https://shopee.co.id/Sepatu-kantor-kulit-asli-garut-sepatu-wanita-kulit-asli-sepatu-wanita-santai-i.31871696.6938228870?extraParams=%7B%22display_model_id%22%3A51198300203%2C%22model_selection_logic%22%3A3%7D&image_ids=d7ce4bf785410b498aca2e5c626f5ac7',
+        imageId: 'd7ce4bf785410b498aca2e5c626f5ac7',
+        imageUrl: 'https://down-id.img.susercontent.com/file/d7ce4bf785410b498aca2e5c626f5ac7',
+        description: 'Sepatu kerja wanita bersiluet formal dengan konstruksi jahitan kokoh khas Sukaregang yang tahan lama.',
+        materialInfo: 'Bahan kulit asli Garut pilihan dengan finishing bersih dan rapi.',
+        isFeatured: false,
+      },
+    ];
+
+    const SUKAREGANG_LOCATIONS = [
+      {
+        id: 'loc-gerbang',
+        name: 'Gerbang Kawasan Sentra Industri Kulit Sukaregang',
+        category: 'Landmark',
+        coordinates: [-7.2135, 107.9138],
+        address: 'Jl. Jenderal Ahmad Yani - Masuk Kawasan Sukaregang, Kec. Garut Kota, Kab. Garut',
+        description: 'Gapura dan tugu penanda ikonik gerbang masuk menuju kawasan sentra industri dan pertokoan kulit legendaris Sukaregang Garut.',
+        imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80',
+        visitorTip: 'Titik awal terbaik bagi wisatawan untuk memulai rute jelajah jalan kaki menyusuri jajaran perajin kulit.',
+      },
+      {
+        id: 'loc-koridor-utama',
+        name: 'Koridor Pertokoan & Galeri Kulit Gagak Lumayung',
+        category: 'Sentra Industri',
+        coordinates: [-7.2152, 107.9161],
+        address: 'Jl. Gagak Lumayung, Sukaregang, Kec. Garut Kota, Kab. Garut',
+        description: 'Pusat etalase dan deretan galeri kerajinan kulit terpadu yang memajang ragam jaket kulit, sepatu, sandal, sabuk, dan aksesori kulit Garut.',
+        imageUrl: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80',
+        visitorTip: 'Waktu berkunjung paling ramai dan nyaman adalah antara pukul 09.00 hingga 17.00 WIB.',
+      },
+      {
+        id: 'loc-penyamakan',
+        name: 'Sentra Penyamakan Kulit Sukaregang',
+        category: 'Edukasi',
+        coordinates: [-7.2180, 107.9185],
+        address: 'Kawasan Industri Penyamakan Kulit, Sukaregang, Kec. Garut Kota, Kab. Garut',
+        description: 'Area workshop dan pengolahan kulit mentah (kulit domba dan sapi) menjadi kulit tersamak siap olah menggunakan metode nabati dan krom.',
+        imageUrl: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=800&q=80',
+        visitorTip: 'Kunjungan observasi edukatif disarankan berkoordinasi terlebih dahulu dengan pengelola sentra atau perajin setempat.',
+      },
+      {
+        id: 'loc-syakira',
+        name: 'Toko Pilihan: Syakira Leather',
+        category: 'Toko Mitra',
+        coordinates: [-7.2148, 107.9152],
+        address: 'Kawasan Sentra Kerajinan Kulit Sukaregang, Garut',
+        description: 'Toko pilihan yang menghadirkan ragam koleksi jaket kulit pria asli domba Garut serta sepatu kulit formal dan kasual pria & wanita.',
+        imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80',
+        visitorTip: 'Produk dapat dieksplorasi secara daring di katalog website ini dan dibeli langsung melalui marketplace Shopee resmi.',
+      },
+      {
+        id: 'loc-workshop-perajin',
+        name: 'Bengkel Jahit & Pola Kerajinan Kulit Tradisional',
+        category: 'Edukasi',
+        coordinates: [-7.2165, 107.9172],
+        address: 'Jl. Sukaregang Gg. Kerajinan, Kec. Garut Kota, Kab. Garut',
+        description: 'Pusat aktivitas para penjahit dan pembuat pola manual yang mewarisi keahlian pembuatan jaket dan sepatu kulit secara turun-temurun.',
+        imageUrl: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80',
+        visitorTip: 'Pengunjung dapat menyaksikan langsung keahlian potong kulit dan ketelitian jahit jarum mesin kulit ganda.',
+      },
+    ];
+
+    const LEATHER_MATERIALS = [
+      {
+        id: 'kulit-domba',
+        name: 'Kulit Domba (Sheepskin)',
+        origin: 'Berasal dari domba, khususnya domba Priangan Garut yang tersohor dengan kelembutan dan kelenturan seratnya.',
+        textureDescription: 'Tekstur permukaan sangat halus, berbutir halus (fine grain), lembut saat disentuh, dan sangat lentur mengikuti kontur tubuh.',
+        characteristics: [
+          'Bobot relatif ringan dan sangat lembut (supple).',
+          'Pori-pori rapat dan pola permukaan alami yang rata.',
+          'Sangat elastis dan fleksibel saat dikenakan.',
+          'Memiliki sirkulasi udara alami yang nyaman.',
+        ],
+        pros: [
+          'Sangat nyaman dipakai berjam-jam sebagai jaket busana.',
+          'Tidak kaku sejak pertama kali dibeli.',
+          'Tampilan mewah dan berkelas dengan kilau drape alami.',
+        ],
+        cons: [
+          'Relatif lebih rentan terhadap goresan benda tajam dibanding kulit sapi tebal.',
+          'Perlu kehati-hatian ekstra terhadap paparan cairan pekat.',
+        ],
+        commonUses: ['Jaket kulit pria & wanita premium', 'Sarung tangan berkendara', 'Topi & dompet lentur'],
+        careTips: [
+          'Seka debu dengan kain mikrofiber lembap bersih secara rutin.',
+          'Oleskan leather lotion atau balsam khusus kulit lembut secara berkala (2-3 bulan sekali).',
+          'Gantung menggunakan hanger berbusa lebar agar siluet bahu jaket terjaga.',
+        ],
+        genuineComparison: 'Kulit domba asli memiliki aroma khas penyamakan alami, variasi pori mikro organik yang tidak seragam mesin, serta menghantarkan suhu hangat tubuh.',
+        imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80',
+        comparison: {
+          texture: 'Sangat halus & lentur',
+          flexibility: 'Sangat Tinggi',
+          thickness: 'Sedang - Tipis (0.7 - 1.0 mm)',
+          durability: 'Tinggi (untuk busana)',
+          maintenance: 'Rutin & Lembut',
+        },
+      },
+      {
+        id: 'kulit-sapi',
+        name: 'Kulit Sapi (Cowhide)',
+        origin: 'Berasal dari kulit sapi potong, menjadi material kerajinan paling populer karena kekokohan dan daya tahannya yang legendaris.',
+        textureDescription: 'Permukaan bertekstur kokoh, pori-pori tegas, memiliki ketebalan substansial, dan berstruktur serat padat.',
+        characteristics: [
+          'Struktur serat sangat padat dan memiliki ketahanan abrasi luar biasa.',
+          'Awalnya berkarakter kaku, namun seiring pemakaian akan melunak dan membentuk patina yang unik.',
+          'Ketahanan tinggi terhadap gesekan, benturan, dan beban berat.',
+          'Menghasilkan struktur yang kokoh untuk produk berpola tegas.',
+        ],
+        pros: [
+          'Sangat tahan banting dan awet hingga puluhan tahun dengan perawatan tepat.',
+          'Proteksi fisik maksimal terhadap gesekan.',
+          'Menua dengan sangat indah (rich aging patina).',
+        ],
+        cons: [
+          'Bobot lebih berat dibanding kulit domba.',
+          'Memerlukan waktu adaptasi (break-in) terutama pada sepatu baru.',
+        ],
+        commonUses: ['Sepatu kerja kantor, sepatu PDH, boots', 'Ikat pinggang tebal & tas kerja (briefcase)', 'Jaket pelindung berkendara berat'],
+        careTips: [
+          'Bersihkan debu dan kotoran dengan sikat bulu kuda (horsehair brush).',
+          'Gunakan saddle soap atau wax/creme conditioner berkualitas untuk nutrisi serat.',
+          'Gunakan shoe tree kayu untuk sepatu guna menjaga lekukan ergonomis.',
+        ],
+        genuineComparison: 'Kulit sapi asli terasa padat berbobot, saat ditekan dengan ibu jari akan tampak kerutan halus alami yang menyebar.',
+        imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80',
+        comparison: {
+          texture: 'Kuat, padat & tegas',
+          flexibility: 'Sedang (melunak seiring waktu)',
+          thickness: 'Tebal (1.2 - 2.2 mm)',
+          durability: 'Sangat Tinggi (Dekade)',
+          maintenance: 'Sedang (Wax/Cream berkala)',
+        },
+      },
+      {
+        id: 'kulit-kambing',
+        name: 'Kulit Kambing (Goatskin)',
+        origin: 'Berasal dari kulit kambing dewasa, terkenal dengan ketahanan tarik dan ketahanan air alaminya.',
+        textureDescription: 'Tekstur berbutir khas (pebble grain / ridge) dengan permukaan sedikit berkerikil alami yang artistik.',
+        characteristics: [
+          'Mengandung lanolin alami yang membuat seratnya lentur sekaligus tangguh.',
+          'Lebih kuat dan tahan sobek dibanding kulit domba pada ketebalan setara.',
+          'Tahan lembap lebih baik dibanding kulit mamalia kecil lainnya.',
+          'Pola tekstur kerikil halus yang unik dan tidak mudah pudar.',
+        ],
+        pros: [
+          'Keseimbangan prima antara kelenturan ringan dan daya tahan abrasi.',
+          'Secara historis digunakan untuk jaket penerbang militer kelas dunia.',
+          'Mudah dirawat dan tidak gampang kotor.',
+        ],
+        cons: [
+          'Permukaan tidak semulus kulit domba jika menginginkan tampilan ultra-sleek.',
+          'Lembaran berukuran lebih kecil sehingga membutuhkan banyak panel sambungan.',
+        ],
+        commonUses: ['Jaket aviasi / pilot bomber', 'Sepatu santai wanita & flat shoes fleksibel', 'Sampul buku mewah & dompet'],
+        careTips: [
+          'Lap dengan kain katun lembap setelah pemakaian.',
+          'Oleskan pelembap leather cream berbahan dasar air.',
+          'Simpan di tempat teduh dengan sirkulasi udara baik.',
+        ],
+        genuineComparison: 'Memiliki aroma hewani khas dan tekstur butiran (ridges) yang tidak seragam di seluruh permukaan.',
+        imageUrl: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80',
+        comparison: {
+          texture: 'Berbutir (pebble) & elastis',
+          flexibility: 'Tinggi',
+          thickness: 'Sedang (0.9 - 1.2 mm)',
+          durability: 'Tinggi',
+          maintenance: 'Mudah',
+        },
+      },
+      {
+        id: 'suede',
+        name: 'Suede (Velvety Split Leather)',
+        origin: 'Dibuat dari bagian dalam (flesh side) kulit hewan yang disikat hingga menghasilkan serat halus berbulu beludru.',
+        textureDescription: 'Permukaan berbulu halus (napped finish), sangat lembut disentuh, tidak memantulkan kilau (matte mewah).',
+        characteristics: [
+          'Menghadirkan sentuhan lembut bak beludru yang mewah dan bersahaja.',
+          'Tidak memiliki lapisan pelindung epidermis, sangat bernapas (breathable).',
+          'Memberikan kedalaman warna yang hangat dan elegan.',
+          'Lebih lentur dan santai untuk pakaian kasual.',
+        ],
+        pros: [
+          'Estetika visual dan taktil yang sangat tinggi dan artistik.',
+          'Sangat nyaman dan sejuk di kaki maupun badan.',
+          'Memberikan aksen tekstur kontras yang memikat.',
+        ],
+        cons: [
+          'Sangat sensitif terhadap cipratan air, lumpur, dan noda minyak.',
+          'Memerlukan sikat dan perlakuan khusus agar serat tidak menggumpal.',
+        ],
+        commonUses: ['Sepatu santai, loafers, chelsea boots', 'Jaket kasual & rompi', 'Lapisan dalam tas mewah'],
+        careTips: [
+          'Gunakan sikat krep khusus suede (suede brush) searah.',
+          'Semprotkan suede protector antiair sebelum pemakaian luar ruang.',
+          'Gunakan penghapus suede khusus (suede eraser) untuk noda kering.',
+        ],
+        genuineComparison: 'Suede asli memiliki serat mikroskopis organik yang berubah arah gradasi warnanya saat disapu jari.',
+        imageUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80',
+        comparison: {
+          texture: 'Beludru halus (napped)',
+          flexibility: 'Sangat Tinggi',
+          thickness: 'Tipis - Sedang (0.8 - 1.4 mm)',
+          durability: 'Sedang (Sensitif noda)',
+          maintenance: 'Khusus (Sikat & Suede spray)',
+        },
+      },
+      {
+        id: 'kulit-sintetis-pu',
+        name: 'Kulit Sintetis atau PU (Faux / Synthetic)',
+        origin: 'Material buatan pabrik berbasis polimer (Polyurethane / PVC) yang dilapisi pada serat dasar kain atau polyester.',
+        textureDescription: 'Permukaan seragam dengan motif tekstur cetakan mesin (embossed grain), tanpa pori-pori organik alami.',
+        characteristics: [
+          'Bahan non-hewani yang diproduksi secara massal oleh industri polimer.',
+          'Pola tekstur sangat seragam dan konsisten di setiap jengkal bahan.',
+          'Kedap air di permukaan luar namun tidak memiliki sirkulasi udara mikro (non-breathable).',
+          'Memiliki rentang usia terbatas sebelum lapisan polimer mulai terkelupas (peeling).',
+        ],
+        pros: [
+          'Biaya produksi lebih ekonomis dibanding kulit asli.',
+          'Mudah dibersihkan dari cipratan air biasa.',
+          'Ketersediaan warna dan ketebalan sangat seragam.',
+        ],
+        cons: [
+          'Tidak bernapas, cenderung terasa panas dan memicu keringat jika dipakai lama.',
+          'Cenderung retak dan mengelupas setelah 1-3 tahun pemakaian dan tidak dapat diperbaiki.',
+          'Mengeluarkan aroma plastik sintetis tajam di awal.',
+        ],
+        commonUses: ['Produk fast fashion ekonomis', 'Jok kendaraan komersial standar', 'Aksesori sekali pakai'],
+        careTips: [
+          'Cukup lap dengan kain lembap bersabun lembut.',
+          'Jauhkan dari sumber panas tinggi dan paparan sinar matahari langsung.',
+          'Hindari penggunaan minyak/kondisioner kulit asli karena tidak akan meresap.',
+        ],
+        genuineComparison: 'Kulit sintetis memperlihatkan serat kain jaring di bagian belakang potongan dan pola pori yang berulang identik tanpa ketidakteraturan biologis.',
+        imageUrl: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80',
+        comparison: {
+          texture: 'Seragam cetakan pabrik',
+          flexibility: 'Sedang (bisa kaku saat dingin)',
+          thickness: 'Bervariasi (0.6 - 1.2 mm)',
+          durability: 'Rendah - Sedang (Rentan mengelupas)',
+          maintenance: 'Sangat Mudah (Cukup lap)',
+        },
+      },
+    ];
+
+    const LEATHER_CARE_GUIDELINES = [
+      {
+        stepNumber: '01',
+        title: 'Cara Membersihkan (Cleaning Routine)',
+        summary: 'Pembersihan rutin menjaga pori-pori kulit tetap bernapas dan terhindar dari akumulasi debu yang menggores serat.',
+        points: [
+          'Gunakan kain mikrofiber kering atau sedikit lembap dengan air hangat untuk menyeka kotoran permukaan setelah pemakaian.',
+          'Untuk kotoran membandel pada kulit sapi/domba, gunakan sabun pelana khusus (saddle soap) ber-pH seimbang dengan busa tipis.',
+          'Jangan pernah merendam produk kulit ke dalam air atau mencucinya dengan mesin cuci.',
+          'Keringkan secara alami di ruangan berventilasi baik, jauhkan dari kipas pemanas atau hair dryer.',
+        ],
+      },
+      {
+        stepNumber: '02',
+        title: 'Cara Menyimpan (Storage Best Practices)',
+        summary: 'Tempat penyimpanan yang tepat mencegah perubahan bentuk fisik serta tumbuhnya jamur perusak kulit.',
+        points: [
+          'Simpan di tempat bersuhu sejuk, kering, dan terlindung dari sinar matahari langsung.',
+          'Gunakan cover pelindung berbahan katun berpori (breathable dust bag), jangan gunakan kantong plastik kedap udara.',
+          'Beri ruang antar pakaian di lemari agar sirkulasi udara mengalir lancar dan produk tidak saling berhimpit.',
+          'Gantung jaket kulit menggunakan gantungan berpenampang lebar (contoured hanger) agar bahu tidak melorot.',
+        ],
+      },
+      {
+        stepNumber: '03',
+        title: 'Menghindari Kelembapan Berlebih (Moisture & Mold)',
+        summary: 'Iklim tropis rawan memicu jamur putih pada produk kulit asli jika kelembapan udara terlalu tinggi.',
+        points: [
+          'Letakkan kantung penyerap kelembapan (silica gel) di dalam lemari atau kotak penyimpanan sepatu.',
+          'Keluarkan produk kulit secara berkala (misal 2-3 minggu sekali) untuk diangin-anginkan di ruangan teduh.',
+          'Jika produk terkena hujan, segera tepuk-tepuk dengan handuk bersih berdaya serap tinggi dan biarkan mengering alami.',
+          'Bila muncul bercak jamur ringan, seka lembut dengan kain yang ditetesi larutan cuka putih encer (1:1 dengan air), lalu keringkan.',
+        ],
+      },
+      {
+        stepNumber: '04',
+        title: 'Menjaga Bentuk Produk (Shape Retention)',
+        summary: 'Mempertahankan lekuk ergonomis dan keelokan siluet asli produk agar tetap tampak prima layaknya baru.',
+        points: [
+          'Gunakan alat penopang sepatu (wooden shoe tree) dari kayu cedar untuk menyerap keringat dan menjaga ujung sepatu tidak menekuk.',
+          'Untuk jaket, hindari melipat terlalu lama; bila terpaksa disimpan datar, selipkan kertas tisu bebas asam di sela lipatan.',
+          'Hindari menaruh beban berat di saku jaket atau tas kulit dalam waktu lama karena dapat meregangkan serat kulit secara permanen.',
+        ],
+      },
+      {
+        stepNumber: '05',
+        title: 'Hal-Hal yang Perlu Dihindari (What to Avoid)',
+        summary: 'Kesalahan umum yang berpotensi merusak material kulit secara permanen.',
+        points: [
+          'DILARANG menjemur produk kulit asli di bawah terik matahari langsung yang dapat membuat serat kulit kering, getas, dan pecah-pecah.',
+          'DILARANG menggunakan deterjen pakaian, pemutih, alkohol medis, atau aseton karena mengikis lapisan minyak alami kulit.',
+          'DILARANG menyetrika langsung permukaan kulit. Jika perlu merapikan jaket, gunakan setrika uap berjarak aman dengan pelapis kain tebal.',
+          'DILARANG menyimpan di bagasi mobil yang panas dalam durasi panjang.',
+        ],
+      },
+    ];
+
+    const PRODUCTION_STEPS = [
+      {
+        step: 1,
+        title: 'Pemilihan Bahan Kulit (Material Selection & Grading)',
+        subtitle: 'Menyeleksi lembaran kulit tersamak berkualitas terbaik.',
+        description: 'Tahap awal dimulai dari proses kurasi lembaran kulit matang (crust / finished leather) dari penyamak. Lembaran kulit domba atau sapi diperiksa ketebalan rata-ratanya, kelenturan alaminya, serta keseragaman gradasi warnanya untuk menentukan kecocokannya dengan model jaket atau sepatu yang akan diproduksi.',
+        keyTools: ['Ketelitian mata perajin', 'Alat pengukur ketebalan kulit (Leather Thickness Gauge)', 'Lampu inspeksi terarah'],
+        artisanInsight: 'Setiap lembar kulit hewan memiliki keunikan biologis tersendiri. Memilih bagian terbaik memastikan jaket memiliki jatuh (drape) yang serasi.',
+        imageUrl: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        step: 2,
+        title: 'Pemeriksaan & Persiapan Material (Inspection & Conditioning)',
+        subtitle: 'Memetakan titik regangan dan membersihkan permukaan kulit.',
+        description: 'Lembaran kulit dibentangkan pada meja kerja datar. Perajin meneliti secara cermat area garis punggung, perut, dan rusuk. Arah serat elastisitas (grain direction) dianalisis agar bagian jaket yang membutuhkan kelenturan (seperti siku dan pundak) mendapatkan bagian potongan kulit yang tepat.',
+        keyTools: ['Meja potong kayu datar', 'Kain pembersih mikrofiber', 'Pemberat pola (Pattern weights)'],
+        artisanInsight: 'Mengenal arah kelenturan kulit adalah rahasia kenyamanan jaket Sukaregang saat dikenakan berkendara atau beraktivitas aktif.',
+        imageUrl: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        step: 3,
+        title: 'Pembuatan Pola (Pattern Drafting & Grading)',
+        subtitle: 'Menerjemahkan desain dan ukuran menjadi cetak biru potongan presisi.',
+        description: 'Pola dirancang secara teliti di atas kertas karton duplex tebal atau master cetakan khusus. Untuk jaket, pola mencakup bagian badan depan, belakang, kerah, lengan, ban pinggang, hingga saku dalam dan furing. Pada sepatu, master pola mencakup bagian vamp, quarter, counter, dan lidah sepatu.',
+        keyTools: ['Karton pola master', 'Penggaris lengkung kurva perajin', 'Jangka dan pensil pola perak (Silver pen)'],
+        artisanInsight: 'Pola yang baik menyeimbangkan estetika siluet modern dengan kebebasan bergerak anatomi tubuh pemakainya.',
+        imageUrl: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        step: 4,
+        title: 'Pemotongan Bahan (Precision Cutting)',
+        subtitle: 'Mengiris kulit mengikuti pola dengan akurasi tangan tingkat tinggi.',
+        description: 'Perajin menggunakan pisau khusus potong kulit (round knife / rotary cutter) yang sangat tajam untuk memotong setiap panel kulit satu per satu. Ketepatan sudut potong (bevel) dan kehati-hatian tangan perajin menentukan kesempurnaan sambungan pada tahap selanjutnya.',
+        keyTools: ['Pisau potong kulit (Leather Skiving Knife)', 'Cutting mat penyerap goresan', 'Gunting khusus kulit bergigi halus'],
+        artisanInsight: 'Tidak ada ruang untuk kesalahan dalam memotong kulit asli; ketenangan dan konsentrasi tinggi adalah kunci utama.',
+        imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        step: 5,
+        title: 'Proses Penjahitan (Stitching & Seaming)',
+        subtitle: 'Menyambungkan panel demi panel dengan mesin jahit industri berkekuatan tinggi.',
+        description: 'Bagian tepi kulit ditipiskan (skiving) agar sambungan tidak terlalu tebal dan tetap rapi. Potongan kulit kemudian dijahit menggunakan mesin jahit kulit jarum ganda dengan benang nilon atau polyester berserat kuat (bonded thread) yang tahan tarikan dan tidak lapuk.',
+        keyTools: ['Mesin jahit industri khusus kulit (Walking Foot Machine)', 'Benang bonded nylon', 'Jarum jahit ujung tajam pemotong kulit (triangular point)'],
+        artisanInsight: 'Jarak stik jahitan harus konsisten dan terukur agar jahitan tampak anggun sekaligus mengunci panel dengan kuat.',
+        imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        step: 6,
+        title: 'Perakitan Produk (Assembly & Hardware Installation)',
+        subtitle: 'Pemasangan furing pelapis, resleting, kancing, sol, dan penguatan struktur.',
+        description: 'Pada jaket kulit, lapisan kain furing dalam (seperti dormeuil England atau satin sejuk) dipasang bersama resleting logam anti karat dan saku fungsional. Pada sepatu kulit, bagian atas (upper) dibentuk di atas cetakan acuan kaki (shoe last), dipasangkan tatak insole, dan disatukan dengan sol luar menggunakan perekat tahan panas serta jahitan penguat.',
+        keyTools: ['Shoe last (cetakan kaki)', 'Alat pasang kancing keling (Riveter)', 'Resleting logam heavy-duty YKK / kuningan'],
+        artisanInsight: 'Di tahap inilah jaket atau sepatu mulai menampakkan wujud kemewahan aslinya yang siap menemani gaya penggunanya.',
+        imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        step: 7,
+        title: 'Finishing & Pemeriksaan Kualitas (Finishing & Quality Control)',
+        subtitle: 'Penyempurnaan kilau, pembersihan detail, dan inspeksi standar mutu akhir.',
+        description: 'Produk dibersihkan dari sisa benang dan debu kerja. Permukaan kulit diusap dengan krim kondisioner pelembut untuk mengunci kilau alami dan keharuman khas kulit Garut. Inspeksi akhir dilakukan meliputi kekuatan tarikan jahitan, kelancaran resleting, simetri bentuk, dan kerapian kemasan.',
+        keyTools: ['Kain poles katun lembut', 'Leather finishing cream', 'Label merek & kartu sertifikasi perajin'],
+        artisanInsight: 'Sebuah mahakarya kerajinan Sukaregang siap dihadirkan ke tangan Anda dengan rasa bangga akan warisan lokal Garut.',
+        imageUrl: 'https://images.unsplash.com/photo-1520639888713-7851133b1ed0?auto=format&fit=crop&w=800&q=80',
+      },
+    ];
+
+    const HISTORY_MILESTONES = [
+      {
+        era: 'Awal Mula & Cikal Bakal',
+        yearRange: 'Dekade 1920-an - 1940-an',
+        title: 'Awal Penyamakan Kulit Tradisional di Garut',
+        narrative: 'Aktivitas pengolahan kulit di wilayah Garut berakar dari keberlimpahan populasi ternak lokal, terutama domba Priangan yang memiliki kualitas kulit halus dan lentur. Pada masa awal, penyamakan kulit dilakukan secara bersahaja menggunakan bahan-bahan nabati alami dari kulit kayu dan tumbuhan setempat oleh masyarakat untuk kebutuhan perlengkapan rumah tangga dan tali pelana sederhana.',
+        keyHighlights: [
+          'Pemanfaatan kulit domba lokal bertekstur lembut alami.',
+          'Metode penyamakan nabati tradisional ramah lingkungan.',
+          'Perintisan keterampilan pengolahan kulit mentah di Garut.',
+        ],
+        imageUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        era: 'Konsolidasi Sukaregang',
+        yearRange: 'Dekade 1960-an - 1970-an',
+        title: 'Tumbuhnya Sentra Bengkel & Penyamak di Sukaregang',
+        narrative: 'Seiring bertambahnya perajin yang bermukim dan membuka usaha di kawasan Sukaregang (Kecamatan Garut Kota), kawasan ini mulai bertransformasi menjadi pusat pengolahan kulit terpadu. Dukungan ketersediaan aliran air dan kedekatan dengan jalur logistik kota Garut menjadikan Sukaregang titik kumpul para pengrajin kulit terampil.',
+        keyHighlights: [
+          'Pemusatan bengkel jahit dan tempat penyamakan di Sukaregang.',
+          'Mulai diperkenalkannya mesin jahit industri sederhana.',
+          'Munculnya generasi pertama pengrajin jaket kulit pesanan khusus.',
+        ],
+        imageUrl: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        era: 'Keemasan & Pengakuan Resmi',
+        yearRange: 'Dekade 1980-an - 1990-an',
+        title: 'Sukaregang Diresmikan Sebagai Sentra Industri Kulit',
+        narrative: 'Pemerintah Daerah Kabupaten Garut secara resmi menetapkan kawasan Sukaregang sebagai Sentra Industri dan Kerajinan Kulit Unggulan. Reputasi jaket kulit Garut melambung ke kancah nasional bahkan mancanegara berkat kualitas bahan kulit domba aslinya yang lembut dan daya tahan luar biasa, sering dipakai oleh tokoh terkemuka, musisi, dan wisatawan.',
+        keyHighlights: [
+          'Penetapan resmi Sukaregang sebagai sentra kerajinan kulit terpadu.',
+          'Ledakan popularitas jaket kulit Garut sebagai ikon fesyen nasional.',
+          'Ekspor produk sarung tangan kulit golf dan jaket ke pasar global.',
+        ],
+        imageUrl: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        era: 'Diversifikasi Produk',
+        yearRange: 'Dekade 2000-an - 2010-an',
+        title: 'Ragam Produk Kulit Modern & Penguatan Nilai Wisata',
+        narrative: 'Industri Sukaregang tidak hanya berfokus pada jaket kulit pria, melainkan memperluas portofolio ke sepatu formal, sepatu dinas PDH, sepatu kasual wanita, tas kantor, dompet, dan aksesori kulit estetis. Sukaregang bertransformasi menjadi destinasi wisata belanja terkemuka di Jawa Barat.',
+        keyHighlights: [
+          'Ekspansi produksi ke alas kaki (sepatu formal, kantor, kasual).',
+          'Koridor pertokoan Sukaregang dipadati wisatawan nusantara.',
+          'Pengembangan teknik finishing kulit, termasuk suede dan nappa.',
+        ],
+        imageUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80',
+      },
+      {
+        era: 'Era Digital & Keberlanjutan',
+        yearRange: 'Tahun 2020 - Sekarang',
+        title: 'Digitalisasi, Edukasi, dan Kolaborasi Toko Lokal',
+        narrative: 'Memasuki era digital, para perajin dan pemilik usaha di Sukaregang, seperti Syakira Leather, mulai menjangkau konsumen lebih luas melalui platform online dan marketplace digital seperti Shopee. Platform digital seperti Sukaregang Discovery hadir untuk menyatukan dokumentasi wisata, edukasi material kulit, dan eksplorasi produk lokal autentik.',
+        keyHighlights: [
+          'Adopsi marketplace digital oleh toko lokal seperti Syakira Leather.',
+          'Inisiasi platform digital tourism dan edukasi kerajinan Sukaregang.',
+          'Fokus pada transparansi keaslian bahan dan pengalaman konsumen modern.',
+        ],
+        imageUrl: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=800&q=80',
+      },
+    ];
+
+    // --- REUSABLE ICON HELPER ---
+    function Icon({ name, className = "w-5 h-5" }) {
+      useEffect(() => {
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }, [name]);
+      return <i data-lucide={name} className={className}></i>;
+    }
+
+    // --- VIRTUAL TOUR 360 ---
+    function VirtualTour360() {
+      const [currentSpot, setCurrentSpot] = useState(0);
+      const [yaw, setYaw] = useState(0);
+      const [pitch, setPitch] = useState(0);
+      const [zoom, setZoom] = useState(1);
+      const [isDragging, setIsDragging] = useState(false);
+      const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+      const spots = [
+        {
+          id: 'spot-gerbang',
+          title: 'Gerbang Sentra Sukaregang',
+          locationName: 'Pintu Gerbang Utama & Tugu Sukaregang',
+          desc: 'Titik masuk ikonik ke kawasan sentra industri dan pertokoan kulit Garut.',
+          bgUrl: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1600&q=85',
+        },
+        {
+          id: 'spot-koridor',
+          title: 'Koridor Galeri Kulit',
+          locationName: 'Jl. Gagak Lumayung Sukaregang',
+          desc: 'Jajaran etalase perajin kulit dengan display jaket dan sepatu khas Sukaregang.',
+          bgUrl: 'https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1600&q=85',
+        },
+        {
+          id: 'spot-workshop',
+          title: 'Bengkel Penyamakan Tradisional',
+          locationName: 'Workshop Pengolahan & Pengeringan Kulit',
+          desc: 'Area penyamakan dan pengolahan lembaran kulit domba dan sapi mentah.',
+          bgUrl: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1600&q=85',
+        },
+        {
+          id: 'spot-syakira',
+          title: 'Showroom Syakira Leather',
+          locationName: 'Pusat Koleksi Jaket & Sepatu Kulit',
+          desc: 'Toko kurasi produk kulit asli Sukaregang dengan standar mutu terjamin.',
+          bgUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1600&q=85',
+        },
+      ];
+
+      const activeSpot = spots[currentSpot];
+
+      const handleMouseDown = (e) => {
+        setIsDragging(true);
+        setDragStart({ x: e.clientX, y: e.clientY });
+      };
+
+      const handleMouseMove = (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        setYaw((prev) => (prev + dx * 0.25) % 360);
+        setPitch((prev) => Math.max(-40, Math.min(40, prev - dy * 0.15)));
+        setDragStart({ x: e.clientX, y: e.clientY });
+      };
+
+      const handleMouseUp = () => setIsDragging(false);
+
+      return (
+        <div className="relative w-full rounded-2xl overflow-hidden bg-forest-900 border-2 border-warmbeige/40 shadow-2xl">
+          <div
+            className="relative h-[480px] md:h-[580px] w-full overflow-hidden cursor-grab active:cursor-grabbing select-none"
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-75 will-change-transform"
+              style={{
+                backgroundImage: `url(${activeSpot.bgUrl})`,
+                transform: `scale(${zoom}) translate(${yaw * 1.5}px, ${pitch * 1.2}px)`,
+                filter: 'brightness(0.92) contrast(1.05)',
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-forest-900/90 via-transparent to-forest-900/50 pointer-events-none" />
+
+            <div className="absolute top-4 left-4 z-10 flex items-center space-x-2 bg-forest/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-warmbeige/40 text-cream text-xs">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+              <span className="font-semibold tracking-wider">360° LIVE PANORAMA</span>
+              <span className="text-warmbeige">| Arah: {Math.round((yaw + 360) % 360)}°</span>
+            </div>
+
+            <div className="absolute top-4 right-4 z-10 flex flex-col space-y-2 bg-forest/80 backdrop-blur-md p-1.5 rounded-xl border border-warmbeige/40 text-cream">
+              <button
+                onClick={() => setZoom((z) => Math.min(2.0, z + 0.2))}
+                className="w-8 h-8 flex items-center justify-center hover:bg-leather rounded-lg transition"
+              >
+                +
+              </button>
+              <button
+                onClick={() => setZoom((z) => Math.max(0.9, z - 0.2))}
+                className="w-8 h-8 flex items-center justify-center hover:bg-leather rounded-lg transition"
+              >
+                -
+              </button>
+              <button
+                onClick={() => { setYaw(0); setPitch(0); setZoom(1); }}
+                className="w-8 h-8 flex items-center justify-center hover:bg-leather rounded-lg transition"
+              >
+                ↺
+              </button>
+            </div>
+
+            <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3 pointer-events-none">
+              <div className="bg-forest/85 backdrop-blur-md p-3.5 rounded-xl border border-warmbeige/40 text-cream max-w-md pointer-events-auto">
+                <div className="text-[10px] uppercase font-bold tracking-widest text-warmbeige">Titik Eksplorasi {currentSpot + 1} / {spots.length}</div>
+                <h4 className="font-serif text-lg font-bold text-cream">{activeSpot.title}</h4>
+                <p className="text-xs text-cream/80 mt-0.5">{activeSpot.desc}</p>
+                <div className="mt-2 flex items-center space-x-1.5 text-[11px] text-warmbeige/90">
+                  <Icon name="map-pin" className="w-3.5 h-3.5 text-leather-light" />
+                  <span>{activeSpot.locationName}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-forest p-3.5 border-t border-warmbeige/30 flex flex-wrap items-center justify-between gap-2">
+            <span className="text-xs text-warmbeige font-medium">Pilih Sudut Pandang Kawasan:</span>
+            <div className="flex flex-wrap gap-2">
+              {spots.map((spot, idx) => (
+                <button
+                  key={spot.id}
+                  onClick={() => {
+                    setCurrentSpot(idx);
+                    setYaw(0);
+                    setPitch(0);
+                  }}
+                  className={`text-xs px-3 py-1.5 rounded-lg font-medium transition flex items-center space-x-1.5 ${
+                    currentSpot === idx
+                      ? 'bg-warmbeige text-forest font-bold shadow'
+                      : 'bg-forest-900/60 text-cream/80 hover:bg-forest-700 hover:text-cream border border-warmbeige/20'
+                  }`}
+                >
+                  <Icon name="camera" className="w-3.5 h-3.5" />
+                  <span>{spot.title}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- INTERACTIVE MAP ---
+    function SukaregangMap({ locations }) {
+      const mapContainerRef = useRef(null);
+      const mapInstanceRef = useRef(null);
+      const [selectedLoc, setSelectedLoc] = useState(locations[0]);
+      const [activeCategory, setActiveCategory] = useState('Semua');
+
+      const categories = ['Semua', 'Sentra Industri', 'Landmark', 'Edukasi', 'Toko Mitra'];
+
+      const filteredLocations = useMemo(() => {
+        if (activeCategory === 'Semua') return locations;
+        return locations.filter((l) => l.category === activeCategory);
+      }, [locations, activeCategory]);
+
+      useEffect(() => {
+        if (!mapContainerRef.current) return;
+        if (!mapInstanceRef.current) {
+          const map = L.map(mapContainerRef.current).setView([-7.2148, 107.9155], 16);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap | Sukaregang Discovery',
+          }).addTo(map);
+          mapInstanceRef.current = map;
+        }
+
+        const map = mapInstanceRef.current;
+        map.eachLayer((layer) => {
+          if (layer instanceof L.Marker) {
+            map.removeLayer(layer);
+          }
+        });
+
+        filteredLocations.forEach((loc) => {
+          const marker = L.marker(loc.coordinates).addTo(map);
+          marker.bindPopup(`
+            <div style="padding: 4px; min-width: 180px;">
+              <span style="font-size: 10px; text-transform: uppercase; color: #D6B889; font-weight: bold;">${loc.category}</span>
+              <h4 style="margin: 2px 0 6px 0; font-size: 14px; font-weight: bold; color: #F5F0E7;">${loc.name}</h4>
+              <p style="margin: 0; font-size: 11px; color: #C2D7CD;">${loc.address}</p>
+            </div>
+          `);
+          marker.on('click', () => setSelectedLoc(loc));
+        });
+      }, [filteredLocations]);
+
+      return (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div className="lg:col-span-2 rounded-2xl overflow-hidden border-2 border-warmbeige/40 shadow-xl bg-forest-900 relative">
+            <div className="absolute top-4 left-4 z-[500] flex flex-wrap gap-1.5 bg-forest/85 backdrop-blur-md p-1.5 rounded-xl border border-warmbeige/40 shadow-lg">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`text-xs px-2.5 py-1 rounded-lg transition font-medium ${
+                    activeCategory === cat ? 'bg-warmbeige text-forest font-bold' : 'text-cream/80 hover:text-cream hover:bg-forest-700'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+            <div ref={mapContainerRef} className="h-[460px] md:h-[540px] w-full" />
+          </div>
+
+          <div className="bg-white rounded-2xl p-6 border-2 border-warmbeige/30 shadow-lg">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-forest/10 text-forest mb-4">
+              {selectedLoc.category}
+            </span>
+            <img src={selectedLoc.imageUrl} alt={selectedLoc.name} className="w-full h-44 object-cover rounded-xl mb-4 shadow" />
+            <h3 className="font-serif text-xl font-bold text-forest mb-2">{selectedLoc.name}</h3>
+            <p className="text-xs text-charcoal/70 mb-3">📍 {selectedLoc.address}</p>
+            <p className="text-xs text-charcoal/80 leading-relaxed mb-4">{selectedLoc.description}</p>
+            <div className="bg-cream p-3.5 rounded-xl border border-warmbeige/40">
+              <span className="text-leather font-semibold text-xs block mb-1">✨ Tips Wisatawan:</span>
+              <p className="text-xs text-charcoal/80">{selectedLoc.visitorTip}</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // --- MAIN REACT APPLICATION ---
+    function App() {
+      const [currentRoute, setCurrentRoute] = useState('beranda');
+      const [selectedProduct, setSelectedProduct] = useState(null);
+      const [selectedMaterial, setSelectedMaterial] = useState(LEATHER_MATERIALS[0]);
+      const [catalogCategory, setCatalogCategory] = useState('Semua');
+      const [searchQuery, setSearchQuery] = useState('');
+      const [sortBy, setSortBy] = useState('default');
+      const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+      const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+
+      // Auth & Profile State
+      const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+      const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+      const [isAdminPhotoModalOpen, setIsAdminPhotoModalOpen] = useState(false);
+      
+      const [currentUser, setCurrentUser] = useState(() => {
+        try {
+          const saved = localStorage.getItem('syakira_current_user');
+          if (saved) return JSON.parse(saved);
+        } catch (e) {}
+        return {
+          id: 'usr-admin-01',
+          name: 'Alya Alifia',
+          email: 'alya.alifia@sukaregang.id',
+          role: 'admin',
+          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+          joinDate: '13 November 2026',
+        };
+      });
+
+      // Custom images storage
+      const [customImages, setCustomImages] = useState(() => {
+        try {
+          const saved = localStorage.getItem('syakira_custom_product_images');
+          if (saved) return JSON.parse(saved);
+        } catch (e) {}
+        return {};
+      });
+
+      const handleUpdateProductImage = (productId, newImageUrl) => {
+        const updated = { ...customImages, [productId]: newImageUrl };
+        setCustomImages(updated);
+        try {
+          localStorage.setItem('syakira_custom_product_images', JSON.stringify(updated));
+        } catch (e) {}
+      };
+
+      const handleResetProductImage = (productId) => {
+        const updated = { ...customImages };
+        delete updated[productId];
+        setCustomImages(updated);
+        try {
+          localStorage.setItem('syakira_custom_product_images', JSON.stringify(updated));
+        } catch (e) {}
+      };
+
+      const handleResetAllProductImages = () => {
+        setCustomImages({});
+        try {
+          localStorage.removeItem('syakira_custom_product_images');
+        } catch (e) {}
+      };
+
+      const handleLoginSuccess = (user) => {
+        setCurrentUser(user);
+        try {
+          localStorage.setItem('syakira_current_user', JSON.stringify(user));
+        } catch (e) {}
+      };
+
+      const handleLogout = () => {
+        setCurrentUser(null);
+        try {
+          localStorage.removeItem('syakira_current_user');
+        } catch (e) {}
+      };
+
+      useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setMobileMenuOpen(false);
+        setProfileDropdownOpen(false);
+      }, [currentRoute]);
+
+      // Filtered products for Store & Catalog
+      const filteredProducts = useMemo(() => {
+        let list = [...PRODUCTS_DATA];
+        if (catalogCategory !== 'Semua') {
+          list = list.filter((p) => p.category === catalogCategory);
+        }
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.toLowerCase();
+          list = list.filter(
+            (p) =>
+              p.name.toLowerCase().includes(q) ||
+              p.category.toLowerCase().includes(q) ||
+              p.description.toLowerCase().includes(q)
+          );
+        }
+        if (sortBy === 'name-asc') {
+          list.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (sortBy === 'name-desc') {
+          list.sort((a, b) => b.name.localeCompare(a.name));
+        }
+        return list;
+      }, [catalogCategory, searchQuery, sortBy]);
+
+      const featuredJaket = PRODUCTS_DATA.filter((p) => p.category === 'Jaket Kulit Pria' && p.isFeatured).slice(0, 2);
+      const featuredSepatuPria = PRODUCTS_DATA.filter((p) => p.category === 'Sepatu Pria' && p.isFeatured).slice(0, 1);
+      const featuredSepatuWanita = PRODUCTS_DATA.filter((p) => p.category === 'Sepatu Wanita' && p.isFeatured).slice(0, 1);
+
+      return (
+        <div className="min-h-screen flex flex-col bg-cream text-charcoal">
+          {/* Top Bar */}
+          <div className="bg-forest-900 text-cream py-1.5 px-4 text-xs tracking-wider border-b border-warmbeige/20">
+            <div className="max-w-7xl mx-auto flex justify-between items-center">
+              <span className="flex items-center space-x-1.5 text-warmbeige">
+                <Icon name="map-pin" className="w-3.5 h-3.5" />
+                <span>Sukaregang, Garut - Sentra Kerajinan Kulit Indonesia</span>
+              </span>
+              <div className="hidden sm:flex items-center space-x-4 text-[11px] text-cream/70">
+                <span>Official Store: Syakira Leather</span>
+                <span>•</span>
+                <span className="text-warmbeige">Garansi Kulit Asli Garut</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Navbar with Profile in Top-Right Corner */}
+          <header className="sticky top-0 z-40 bg-forest/95 backdrop-blur-md text-cream border-b border-warmbeige/30 shadow-lg">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+              {/* Brand Logo */}
+              <button
+                onClick={() => setCurrentRoute('beranda')}
+                className="flex items-center space-x-3 text-left group"
+              >
+                <div className="w-11 h-11 rounded-xl bg-leather flex items-center justify-center text-cream shadow-md border border-warmbeige/40 group-hover:scale-105 transition">
+                  <Icon name="compass" className="w-6 h-6 text-warmbeige" />
+                </div>
+                <div>
+                  <h1 className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-cream">
+                    SUKAREGANG <span className="text-warmbeige font-light italic">DISCOVERY</span>
+                  </h1>
+                  <p className="text-[10px] tracking-widest uppercase text-warmbeige/80">
+                    Digital Tourism & Leather Heritage
+                  </p>
+                </div>
+              </button>
+
+              {/* Desktop Nav Links */}
+              <nav className="hidden xl:flex items-center space-x-1 text-xs font-medium">
+                {[
+                  { id: 'beranda', label: 'Beranda' },
+                  { id: 'store', label: 'Syakira Store' },
+                  { id: 'explore', label: 'Explore Sukaregang' },
+                  { id: 'sejarah', label: 'Sejarah' },
+                  { id: 'academy', label: 'Leather Academy' },
+                  { id: 'produksi', label: 'Proses Produksi' },
+                  { id: 'katalog', label: 'Katalog Produk' },
+                  { id: 'tentang', label: 'Tentang Kami' },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setCurrentRoute(item.id)}
+                    className={`px-3 py-2 rounded-xl transition ${
+                      currentRoute === item.id
+                        ? 'bg-warmbeige text-forest font-bold shadow'
+                        : 'text-cream/90 hover:text-warmbeige hover:bg-forest-700'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
+
+              {/* Right Area: Store CTA + Profil di Pojok Atas */}
+              <div className="hidden sm:flex items-center space-x-3">
+                <button
+                  onClick={() => setCurrentRoute('store')}
+                  className="px-3.5 py-2 rounded-xl bg-leather hover:bg-leather-dark text-white text-xs font-bold transition shadow flex items-center space-x-1.5"
+                >
+                  <Icon name="shopping-bag" className="w-3.5 h-3.5" />
+                  <span>Syakira Store</span>
+                </button>
+
+                {/* Profile Widget in Top-Right Corner */}
+                {currentUser ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                      className="flex items-center space-x-2.5 p-1.5 pr-3 rounded-full bg-forest-900 border border-warmbeige/40 hover:border-warmbeige transition"
+                    >
+                      <img
+                        src={currentUser.avatarUrl}
+                        alt={currentUser.name}
+                        className="w-8 h-8 rounded-full object-cover border border-warmbeige"
+                      />
+                      <div className="text-left text-xs leading-tight">
+                        <span className="font-bold text-cream block truncate max-w-[100px]">
+                          {currentUser.name.split(' ')[0]}
+                        </span>
+                        <span className="text-[10px] text-warmbeige block">
+                          {currentUser.role === 'admin' ? 'Admin' : 'Member'}
+                        </span>
+                      </div>
+                      <span className="text-xs text-warmbeige">▾</span>
+                    </button>
+
+                    {profileDropdownOpen && (
+                      <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-warmbeige/40 py-2 text-charcoal z-50 animate-fadeIn">
+                        <div className="px-4 py-2 border-b border-cream-dark">
+                          <p className="text-xs font-bold text-forest truncate">{currentUser.name}</p>
+                          <p className="text-[10px] text-charcoal/60 truncate">{currentUser.email}</p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            setIsProfileModalOpen(true);
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs hover:bg-cream flex items-center space-x-2"
+                        >
+                          <Icon name="user" className="w-3.5 h-3.5 text-leather" />
+                          <span>Lihat Profil Saya</span>
+                        </button>
+                        {currentUser.role === 'admin' && (
+                          <button
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              setIsAdminPhotoModalOpen(true);
+                            }}
+                            className="w-full text-left px-4 py-2 text-xs hover:bg-cream text-leather font-semibold flex items-center space-x-2"
+                          >
+                            <Icon name="camera" className="w-3.5 h-3.5 text-leather" />
+                            <span>Dashboard Upload Foto</span>
+                          </button>
+                        )}
+                        <button
+                          onClick={() => {
+                            setProfileDropdownOpen(false);
+                            setCurrentRoute('store');
+                          }}
+                          className="w-full text-left px-4 py-2 text-xs hover:bg-cream flex items-center space-x-2"
+                        >
+                          <Icon name="shopping-bag" className="w-3.5 h-3.5 text-leather" />
+                          <span>Buka Syakira Store</span>
+                        </button>
+                        <div className="border-t border-cream-dark mt-1 pt-1">
+                          <button
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              handleLogout();
+                            }}
+                            className="w-full text-left px-4 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center space-x-2 font-medium"
+                          >
+                            <Icon name="log-out" className="w-3.5 h-3.5 text-red-600" />
+                            <span>Keluar (Log Out)</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="px-3.5 py-2 rounded-xl bg-warmbeige hover:bg-warmbeige-dark text-forest text-xs font-bold transition shadow flex items-center space-x-1.5"
+                  >
+                    <Icon name="user" className="w-3.5 h-3.5" />
+                    <span>Masuk / Log In</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Mobile Hamburger Button */}
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="xl:hidden p-2 rounded-xl bg-forest-700 text-cream hover:text-warmbeige"
+              >
+                <Icon name={mobileMenuOpen ? 'x' : 'menu'} className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Mobile Drawer */}
+            {mobileMenuOpen && (
+              <div className="xl:hidden bg-forest-900 border-t border-warmbeige/20 px-4 pt-3 pb-6 space-y-1.5 animate-fadeIn">
+                <div className="p-3 bg-forest-700/50 rounded-xl mb-3 flex items-center justify-between border border-warmbeige/30">
+                  {currentUser ? (
+                    <div className="flex items-center space-x-3">
+                      <img src={currentUser.avatarUrl} alt={currentUser.name} className="w-9 h-9 rounded-full object-cover border border-warmbeige" />
+                      <div>
+                        <span className="text-xs font-bold text-cream block">{currentUser.name}</span>
+                        <span className="text-[10px] text-warmbeige block">{currentUser.role === 'admin' ? 'Admin Toko' : 'Member'}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-cream/80">Belum masuk akun</span>
+                  )}
+                  {currentUser ? (
+                    <button onClick={() => { setMobileMenuOpen(false); setIsProfileModalOpen(true); }} className="px-2.5 py-1 text-xs bg-forest text-warmbeige rounded-lg border border-warmbeige/40">Profil</button>
+                  ) : (
+                    <button onClick={() => { setMobileMenuOpen(false); setIsAuthModalOpen(true); }} className="px-3 py-1 text-xs bg-warmbeige text-forest font-bold rounded-lg">Log In</button>
+                  )}
+                </div>
+
+                {[
+                  { id: 'beranda', label: 'Beranda' },
+                  { id: 'store', label: 'Syakira Leather Store (20 Produk)' },
+                  { id: 'explore', label: 'Explore Sukaregang' },
+                  { id: 'sejarah', label: 'Sejarah Sukaregang' },
+                  { id: 'academy', label: 'Leather Academy' },
+                  { id: 'produksi', label: 'Proses Produksi' },
+                  { id: 'tentang', label: 'Tentang Kami' },
+                ].map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => { setCurrentRoute(item.id); setMobileMenuOpen(false); }}
+                    className={`w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium transition ${
+                      currentRoute === item.id ? 'bg-warmbeige text-forest font-bold' : 'text-cream/90 hover:bg-forest-700'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </header>
+
+          {/* Main Page Router */}
+          <main className="flex-1">
+            {/* ========================================================
+                1. LANDING PAGE DI AWAL (BERANDA)
+            ======================================================== */}
+            {currentRoute === 'beranda' && (
+              <div>
+                {/* Hero Section */}
+                <section className="relative bg-forest text-cream py-20 lg:py-28 overflow-hidden">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    <div className="lg:col-span-7 space-y-6">
+                      <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-warmbeige/20 text-warmbeige border border-warmbeige/40 text-xs font-semibold">
+                        <Icon name="award" className="w-4 h-4" />
+                        <span>Sentra Industri & Kerajinan Kulit Garut</span>
+                      </div>
+
+                      <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-cream leading-tight">
+                        DISCOVER THE <br />
+                        <span className="text-warmbeige italic font-normal">HERITAGE OF LEATHER</span>
+                      </h2>
+
+                      <p className="text-base sm:text-lg text-cream/80 max-w-xl font-normal leading-relaxed">
+                        Jelajahi Sukaregang, mengenal cerita di balik kerajinan kulit, dan temukan karya lokal yang memiliki nilai serta karakter.
+                      </p>
+
+                      <div className="flex flex-wrap gap-3 pt-2">
+                        <button
+                          onClick={() => setCurrentRoute('explore')}
+                          className="px-6 py-3.5 rounded-xl bg-warmbeige hover:bg-warmbeige-dark text-forest font-bold text-sm tracking-wide transition shadow-lg flex items-center space-x-2"
+                        >
+                          <Icon name="compass" className="w-4 h-4" />
+                          <span>Mulai Eksplorasi</span>
+                        </button>
+                        <button
+                          onClick={() => setCurrentRoute('store')}
+                          className="px-6 py-3.5 rounded-xl bg-leather hover:bg-leather-dark text-white font-bold text-sm tracking-wide transition shadow-lg flex items-center space-x-2"
+                        >
+                          <Icon name="shopping-bag" className="w-4 h-4" />
+                          <span>Kunjungi Syakira Store</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="lg:col-span-5 relative">
+                      <div className="rounded-3xl p-3 bg-white/10 backdrop-blur-md border border-warmbeige/40 shadow-2xl">
+                        <img
+                          src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=800&q=80"
+                          alt="Jaket Kulit Sukaregang"
+                          className="w-full h-[400px] object-cover rounded-2xl"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Mengenal Sukaregang */}
+                <section className="py-20 bg-cream">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                      <div className="lg:col-span-6">
+                        <img
+                          src="https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=1000&q=80"
+                          alt="Suasana Sukaregang"
+                          className="w-full h-[380px] object-cover rounded-3xl border-2 border-warmbeige/40 shadow-xl"
+                        />
+                      </div>
+                      <div className="lg:col-span-6 space-y-5">
+                        <span className="text-xs uppercase font-bold tracking-widest text-leather">Identitas Kawasan</span>
+                        <h3 className="font-serif text-3xl sm:text-4xl font-bold text-forest">Mengenal Sukaregang</h3>
+                        <p className="text-base text-charcoal/80 leading-relaxed">
+                          Sukaregang merupakan kawasan di Garut yang dikenal dengan aktivitas industri dan kerajinan kulit. Kawasan ini menjadi tempat berkembangnya berbagai produk berbahan kulit, mulai dari jaket hingga alas kaki.
+                        </p>
+                        <button
+                          onClick={() => setCurrentRoute('sejarah')}
+                          className="px-5 py-3 rounded-xl bg-forest hover:bg-forest-700 text-cream text-xs font-semibold tracking-wide transition shadow"
+                        >
+                          Selengkapnya Mengenai Sejarah →
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Tiga Kartu Eksplorasi */}
+                <section className="py-20 bg-forest-50 border-y border-warmbeige/30">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      <div className="bg-white rounded-3xl p-8 border border-warmbeige/40 shadow-lg">
+                        <span className="text-xs font-bold text-leather uppercase tracking-wider">01. Tourism</span>
+                        <h4 className="font-serif text-2xl font-bold text-forest mt-1 mb-3">Explore the Area</h4>
+                        <p className="text-sm text-charcoal/70 leading-relaxed mb-6">
+                          Jelajahi kawasan Sukaregang melalui peta dan pengalaman virtual tour.
+                        </p>
+                        <button onClick={() => setCurrentRoute('explore')} className="text-xs font-bold text-forest hover:text-leather">
+                          Mulai Jelajah Kawasan →
+                        </button>
+                      </div>
+
+                      <div className="bg-white rounded-3xl p-8 border border-warmbeige/40 shadow-lg">
+                        <span className="text-xs font-bold text-leather uppercase tracking-wider">02. Heritage</span>
+                        <h4 className="font-serif text-2xl font-bold text-forest mt-1 mb-3">Discover the Heritage</h4>
+                        <p className="text-sm text-charcoal/70 leading-relaxed mb-6">
+                          Pelajari sejarah dan perkembangan kerajinan kulit Sukaregang.
+                        </p>
+                        <button onClick={() => setCurrentRoute('sejarah')} className="text-xs font-bold text-forest hover:text-leather">
+                          Baca Garis Waktu Sejarah →
+                        </button>
+                      </div>
+
+                      <div className="bg-white rounded-3xl p-8 border border-warmbeige/40 shadow-lg">
+                        <span className="text-xs font-bold text-leather uppercase tracking-wider">03. Education</span>
+                        <h4 className="font-serif text-2xl font-bold text-forest mt-1 mb-3">Learn the Craft</h4>
+                        <p className="text-sm text-charcoal/70 leading-relaxed mb-6">
+                          Kenali jenis kulit serta proses pembuatan produk kulit.
+                        </p>
+                        <button onClick={() => setCurrentRoute('academy')} className="text-xs font-bold text-forest hover:text-leather">
+                          Masuk Leather Academy →
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Produk Unggulan */}
+                <section className="py-20 bg-cream">
+                  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between items-end mb-12">
+                      <div>
+                        <span className="text-xs uppercase font-bold tracking-widest text-leather">Koleksi Pilihan</span>
+                        <h3 className="font-serif text-3xl sm:text-4xl font-bold text-forest mt-1">Produk Unggulan Syakira Leather</h3>
+                      </div>
+                      <button onClick={() => setCurrentRoute('store')} className="px-5 py-2.5 rounded-xl border-2 border-forest text-forest hover:bg-forest hover:text-cream text-xs font-bold">
+                        Buka Syakira Store (20 Produk) →
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {[...featuredJaket, ...featuredSepatuPria, ...featuredSepatuWanita].map((product) => {
+                        const img = customImages[product.id] || product.imageUrl;
+                        return (
+                          <div key={product.id} className="bg-white rounded-2xl overflow-hidden border border-warmbeige/40 shadow-md hover:shadow-xl transition flex flex-col group">
+                            <div className="relative h-64 w-full bg-cream overflow-hidden">
+                              <img
+                                src={img}
+                                alt={product.name}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = product.category.includes('Jaket')
+                                    ? 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80'
+                                    : 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
+                                }}
+                                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                              />
+                              <div className="absolute top-3 left-3 bg-forest/85 text-cream px-2.5 py-1 rounded-full text-[11px] font-semibold border border-warmbeige/40">
+                                {product.category}
+                              </div>
+                            </div>
+                            <div className="p-5 flex-1 flex flex-col justify-between">
+                              <div>
+                                <h4 className="font-serif text-lg font-bold text-forest leading-snug group-hover:text-leather transition mb-2">{product.name}</h4>
+                                <p className="text-xs text-charcoal/70 line-clamp-2 leading-relaxed mb-3">{product.description}</p>
+                              </div>
+                              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-cream-dark">
+                                <button onClick={() => setSelectedProduct(product)} className="w-full py-2 px-3 rounded-xl border border-forest text-forest text-xs font-semibold">
+                                  Lihat Detail
+                                </button>
+                                <a href={product.shopeeUrl} target="_blank" rel="noopener noreferrer" className="w-full py-2 px-3 rounded-xl bg-leather hover:bg-leather-dark text-white text-xs font-semibold text-center">
+                                  Beli di Shopee
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </section>
+              </div>
+            )}
+
+            {/* ========================================================
+                2. HALAMAN KHUSUS: SYAKIRA LEATHER STORE
+            ======================================================== */}
+            {currentRoute === 'store' && (
+              <div className="py-8 bg-cream">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                  {/* 1. Banner Utama Syakira Leather */}
+                  <section className="relative rounded-3xl overflow-hidden bg-forest text-cream border-2 border-warmbeige/40 shadow-2xl p-8 sm:p-12 lg:p-16">
+                    <div className="relative max-w-3xl space-y-6">
+                      <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-warmbeige/20 text-warmbeige border border-warmbeige/40 text-xs font-semibold">
+                        <Icon name="store" className="w-4 h-4" />
+                        <span>Kawasan Industri Kulit Sukaregang, Garut</span>
+                      </div>
+
+                      <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-cream leading-tight">
+                        SYAKIRA LEATHER – <br />
+                        <span className="text-warmbeige italic font-normal">Authentic Leather Collection</span>
+                      </h1>
+
+                      <p className="text-base sm:text-lg text-cream/90 font-serif italic max-w-2xl leading-relaxed">
+                        "Discover the Art of Genuine Leather. Temukan berbagai koleksi produk kulit berkualitas dari Sukaregang, Garut."
+                      </p>
+
+                      <div className="flex flex-wrap gap-3 pt-2">
+                        <a
+                          href="#koleksi-store"
+                          className="px-6 py-3.5 rounded-xl bg-warmbeige hover:bg-warmbeige-dark text-forest font-bold text-xs tracking-wider uppercase transition shadow-lg flex items-center space-x-2"
+                        >
+                          <span>Jelajahi 20 Produk</span>
+                          <span>↓</span>
+                        </a>
+                        <button
+                          onClick={() => setIsAdminPhotoModalOpen(true)}
+                          className="px-5 py-3.5 rounded-xl bg-leather hover:bg-leather-dark text-white font-bold text-xs tracking-wider transition shadow flex items-center space-x-2"
+                        >
+                          <Icon name="camera" className="w-4 h-4" />
+                          <span>Dashboard Upload Foto Produk</span>
+                        </button>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* 2. Deskripsi Singkat Brand */}
+                  <section className="bg-white rounded-3xl p-8 sm:p-10 border-2 border-warmbeige/40 shadow-lg space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <span className="w-9 h-9 rounded-xl bg-forest text-warmbeige flex items-center justify-center font-bold text-base">S</span>
+                      <span className="text-xs uppercase font-bold tracking-widest text-leather">Profil Brand Mitra Pilihan</span>
+                    </div>
+
+                    <p className="text-base sm:text-lg text-charcoal/90 font-serif leading-relaxed italic border-l-4 border-leather pl-4 py-1">
+                      "Syakira Leather menghadirkan pilihan produk jaket kulit dan sepatu kulit untuk melengkapi kebutuhan serta gaya penggunanya. Melalui katalog digital Sukaregang Discovery, pengunjung dapat mengenal dan melihat koleksi produk Syakira Leather dengan lebih mudah."
+                    </p>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-cream-dark text-xs text-charcoal/80">
+                      <div>
+                        <strong>Kulit Asli Sukaregang Garut</strong>
+                        <p className="text-charcoal/70 text-[11px] mt-0.5">Kulit domba & sapi tersamak dari kawasan industri Garut.</p>
+                      </div>
+                      <div>
+                        <strong>Keahlian Perajin Lokal</strong>
+                        <p className="text-charcoal/70 text-[11px] mt-0.5">Pengerjaan pola dan jahitan presisi standar ekspor.</p>
+                      </div>
+                      <div>
+                        <strong>Belanja Aman di Shopee</strong>
+                        <p className="text-charcoal/70 text-[11px] mt-0.5">Terkoneksi langsung ke link Shopee resmi Syakira Leather.</p>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* 3 & 4. Kategori & Grid Produk */}
+                  <section id="koleksi-store" className="space-y-6">
+                    <div className="bg-white rounded-3xl p-6 border-2 border-warmbeige/40 shadow-lg space-y-6">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-cream-dark pb-4">
+                        <div>
+                          <span className="text-xs uppercase font-bold tracking-widest text-leather">Etalase Digital Toko</span>
+                          <h3 className="font-serif text-2xl font-bold text-forest mt-0.5">Koleksi Produk Syakira Leather</h3>
+                        </div>
+                        <button
+                          onClick={() => setIsAdminPhotoModalOpen(true)}
+                          className="px-3.5 py-2 rounded-xl bg-cream hover:bg-warmbeige/30 text-leather text-xs font-bold border border-warmbeige/40 transition flex items-center space-x-1.5 self-start md:self-auto"
+                        >
+                          <Icon name="upload" className="w-3.5 h-3.5" />
+                          <span>Upload / Ganti Foto Produk</span>
+                        </button>
+                      </div>
+
+                      {/* Category Tabs: Jaket Kulit Pria (13), Sepatu Pria (3), Sepatu Wanita (4) */}
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          { id: 'Semua', label: 'Semua Koleksi (20)' },
+                          { id: 'Jaket Kulit Pria', label: 'Jaket Kulit Pria (13)' },
+                          { id: 'Sepatu Pria', label: 'Sepatu Pria (3)' },
+                          { id: 'Sepatu Wanita', label: 'Sepatu Wanita (4)' },
+                        ].map((cat) => (
+                          <button
+                            key={cat.id}
+                            onClick={() => setCatalogCategory(cat.id)}
+                            className={`px-4 py-2.5 rounded-xl text-xs font-semibold transition ${
+                              catalogCategory === cat.id ? 'bg-forest text-cream shadow' : 'bg-cream text-charcoal hover:bg-cream-dark'
+                            }`}
+                          >
+                            {cat.label}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Search & Sort */}
+                      <div className="flex flex-col sm:flex-row gap-3 justify-between items-center pt-2">
+                        <div className="relative w-full sm:max-w-md">
+                          <input
+                            type="text"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            placeholder="Cari jaket jubah, domba, jangkis, sepatu formal..."
+                            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-warmbeige/40 bg-cream/40 text-xs text-charcoal focus:outline-none focus:border-forest"
+                          />
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-charcoal/40 text-xs">🔍</span>
+                        </div>
+
+                        <div className="flex items-center space-x-3 w-full sm:w-auto justify-between sm:justify-end">
+                          <span className="text-xs text-charcoal/60">
+                            Menampilkan <strong>{filteredProducts.length}</strong> produk
+                          </span>
+                          <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="px-3 py-2 rounded-xl border border-warmbeige/40 bg-cream/40 text-xs text-charcoal focus:outline-none focus:border-forest"
+                          >
+                            <option value="default">Urutan Standar</option>
+                            <option value="name-asc">Nama A - Z</option>
+                            <option value="name-desc">Nama Z - A</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Responsive Grid for All 20 Products */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                      {filteredProducts.map((product) => {
+                        const img = customImages[product.id] || product.imageUrl;
+                        return (
+                          <div
+                            key={product.id}
+                            className="bg-white rounded-2xl overflow-hidden border border-warmbeige/40 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col group"
+                          >
+                            <div className="relative h-64 w-full bg-cream overflow-hidden">
+                              <img
+                                src={img}
+                                alt={product.name}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = product.category.includes('Jaket')
+                                    ? 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80'
+                                    : 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
+                                }}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                              <div className="absolute top-3 left-3 bg-forest/85 backdrop-blur-sm text-cream px-2.5 py-1 rounded-full text-[11px] font-semibold border border-warmbeige/40">
+                                {product.category}
+                              </div>
+                              {customImages[product.id] && (
+                                <div className="absolute top-3 right-3 bg-leather text-white px-2 py-0.5 rounded-full text-[10px] font-bold">
+                                  Foto Kustom
+                                </div>
+                              )}
+                              <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-forest px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase border border-warmbeige/40">
+                                {product.storeName}
+                              </div>
+                            </div>
+
+                            <div className="p-5 flex-1 flex flex-col justify-between">
+                              <div>
+                                <h4 className="font-serif text-lg font-bold text-forest leading-snug group-hover:text-leather transition mb-2">
+                                  {product.name}
+                                </h4>
+                                <p className="text-xs text-charcoal/70 line-clamp-2 leading-relaxed mb-3">
+                                  {product.description}
+                                </p>
+                                <div className="text-[11px] text-leather font-medium flex items-center space-x-1 mb-4">
+                                  <span>✓ {product.materialInfo}</span>
+                                </div>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-2 pt-3 border-t border-cream-dark">
+                                <button
+                                  onClick={() => setSelectedProduct(product)}
+                                  className="w-full py-2 px-3 rounded-xl border border-forest text-forest hover:bg-forest hover:text-cream text-xs font-semibold transition text-center"
+                                >
+                                  Lihat Detail
+                                </button>
+                                <a
+                                  href={product.shopeeUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="w-full py-2 px-3 rounded-xl bg-leather hover:bg-leather-dark text-white text-xs font-semibold transition text-center shadow-sm flex items-center justify-center space-x-1"
+                                >
+                                  <span>Beli Sekarang</span>
+                                  <span className="text-[10px]">↗</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+
+                  {/* 7. Navigasi Media Sosial & Kontak Syakira Leather */}
+                  <section className="bg-forest rounded-3xl p-8 sm:p-12 text-cream border-2 border-warmbeige/40 shadow-xl space-y-6">
+                    <div className="text-center max-w-2xl mx-auto space-y-2">
+                      <span className="text-xs font-bold uppercase tracking-widest text-warmbeige">
+                        Hubungi & Ikuti Kami
+                      </span>
+                      <h3 className="font-serif text-2xl sm:text-3xl font-bold text-cream">
+                        Kanal Resmi Syakira Leather
+                      </h3>
+                      <p className="text-xs text-cream/80">
+                        Terhubung langsung dengan layanan pelanggan dan etalase resmi kami untuk konsultasi model dan ukuran.
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+                      <a
+                        href="https://shopee.co.id"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-4 rounded-2xl bg-forest-900 hover:bg-forest-700 border border-warmbeige/30 transition flex items-center space-x-3 group"
+                      >
+                        <span className="text-2xl p-2 rounded-xl bg-leather text-white">🛍️</span>
+                        <div>
+                          <span className="text-[10px] text-warmbeige uppercase font-bold block">Marketplace</span>
+                          <span className="text-xs font-bold text-cream group-hover:text-warmbeige">Shopee Official Store</span>
+                        </div>
+                      </a>
+
+                      <a
+                        href="https://wa.me/6281234567890"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-4 rounded-2xl bg-forest-900 hover:bg-forest-700 border border-warmbeige/30 transition flex items-center space-x-3 group"
+                      >
+                        <span className="text-2xl p-2 rounded-xl bg-emerald-700 text-white">💬</span>
+                        <div>
+                          <span className="text-[10px] text-warmbeige uppercase font-bold block">Layanan Konsultasi</span>
+                          <span className="text-xs font-bold text-cream group-hover:text-warmbeige">WhatsApp Syakira</span>
+                        </div>
+                      </a>
+
+                      <a
+                        href="https://instagram.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-4 rounded-2xl bg-forest-900 hover:bg-forest-700 border border-warmbeige/30 transition flex items-center space-x-3 group"
+                      >
+                        <span className="text-2xl p-2 rounded-xl bg-pink-700 text-white">📸</span>
+                        <div>
+                          <span className="text-[10px] text-warmbeige uppercase font-bold block">Galeri Foto</span>
+                          <span className="text-xs font-bold text-cream group-hover:text-warmbeige">Instagram @syakiraleather</span>
+                        </div>
+                      </a>
+
+                      <div className="p-4 rounded-2xl bg-forest-900 border border-warmbeige/30 flex items-center space-x-3">
+                        <span className="text-2xl p-2 rounded-xl bg-forest text-warmbeige border border-warmbeige/40">📍</span>
+                        <div>
+                          <span className="text-[10px] text-warmbeige uppercase font-bold block">Sentra Kerajinan</span>
+                          <span className="text-xs font-bold text-cream">Sukaregang, Garut Kota</span>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================
+                3. EXPLORE SUKAREGANG (PETA & 360 VIRTUAL TOUR)
+            ======================================================== */}
+            {currentRoute === 'explore' && (
+              <div className="py-12 bg-cream">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+                  <div className="text-center max-w-3xl mx-auto space-y-3">
+                    <span className="text-xs uppercase font-bold tracking-widest text-leather">Digital Tourism</span>
+                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-forest">Explore Sukaregang</h2>
+                    <p className="text-sm text-charcoal/70">Peta kawasan terverifikasi dan simulasi virtual tour 360 derajat.</p>
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl font-bold text-forest mb-4">A. Interactive Map Sentra Sukaregang</h3>
+                    <SukaregangMap locations={SUKAREGANG_LOCATIONS} />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl font-bold text-forest mb-4">B. Virtual Tour 360 Derajat</h3>
+                    <VirtualTour360 />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================
+                4. SEJARAH SUKAREGANG
+            ======================================================== */}
+            {currentRoute === 'sejarah' && (
+              <div className="py-12 bg-cream">
+                <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                  <div className="text-center max-w-3xl mx-auto space-y-3">
+                    <span className="text-xs uppercase font-bold tracking-widest text-leather">Storytelling & Narasi</span>
+                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-forest">Sejarah Sukaregang</h2>
+                  </div>
+                  <div className="space-y-6">
+                    {HISTORY_MILESTONES.map((item, idx) => (
+                      <div key={idx} className="bg-white p-6 rounded-3xl border border-warmbeige/40 shadow-md">
+                        <span className="text-xs font-bold text-leather">{item.yearRange} • {item.era}</span>
+                        <h3 className="font-serif text-xl font-bold text-forest mt-1 mb-2">{item.title}</h3>
+                        <p className="text-xs sm:text-sm text-charcoal/80 leading-relaxed mb-4">{item.narrative}</p>
+                        <ul className="text-xs space-y-1 text-charcoal/70">
+                          {item.keyHighlights.map((hl, hIdx) => (<li key={hIdx}>✓ {hl}</li>))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================
+                5. LEATHER ACADEMY
+            ======================================================== */}
+            {currentRoute === 'academy' && (
+              <div className="py-12 bg-cream">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-14">
+                  <div className="text-center max-w-3xl mx-auto space-y-3">
+                    <span className="text-xs uppercase font-bold tracking-widest text-leather">Interactive Education</span>
+                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-forest">Understand the Leather</h2>
+                    <p className="text-sm text-charcoal/80">Mengenal material kulit, karakteristik, kegunaan, dan cara merawatnya.</p>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                    {LEATHER_MATERIALS.map((mat) => (
+                      <button
+                        key={mat.id}
+                        onClick={() => setSelectedMaterial(mat)}
+                        className={`p-3.5 rounded-2xl border text-center transition ${
+                          selectedMaterial.id === mat.id ? 'bg-forest text-cream' : 'bg-white text-charcoal'
+                        }`}
+                      >
+                        <span className="text-xs font-bold">{mat.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="bg-white p-8 rounded-3xl border border-warmbeige/40 shadow-xl space-y-4">
+                    <h3 className="font-serif text-2xl font-bold text-forest">{selectedMaterial.name}</h3>
+                    <p className="text-sm text-charcoal/80">{selectedMaterial.origin}</p>
+                    <div className="bg-cream p-4 rounded-xl text-xs space-y-2">
+                      <div className="font-bold text-leather">Tekstur: {selectedMaterial.textureDescription}</div>
+                      <div>Diferensiasi Asli vs Sintetis: {selectedMaterial.genuineComparison}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================
+                6. PROSES PRODUKSI
+            ======================================================== */}
+            {currentRoute === 'produksi' && (
+              <div className="py-12 bg-cream">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                  <div className="text-center max-w-3xl mx-auto space-y-3">
+                    <span className="text-xs uppercase font-bold tracking-widest text-leather">Visual Storytelling</span>
+                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-forest">Behind the Leather Craft</h2>
+                    <p className="text-sm text-charcoal/80">Melihat bagaimana material kulit diolah menjadi produk yang memiliki fungsi, karakter, dan nilai kerajinan.</p>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {PRODUCTION_STEPS.map((st) => (
+                      <div key={st.step} className="bg-white p-6 rounded-3xl border border-warmbeige/40 shadow space-y-3">
+                        <span className="text-xs font-bold text-leather">Tahap 0{st.step}</span>
+                        <h4 className="font-serif text-xl font-bold text-forest">{st.title}</h4>
+                        <p className="text-xs text-charcoal/70">{st.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================
+                7. KATALOG PRODUK
+            ======================================================== */}
+            {currentRoute === 'katalog' && (
+              <div className="py-12 bg-cream">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                  <div className="text-center max-w-3xl mx-auto space-y-3">
+                    <span className="text-xs uppercase font-bold tracking-widest text-leather">Katalog Terkurasi</span>
+                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-forest">Katalog Produk Syakira Leather</h2>
+                    <p className="text-sm text-charcoal/70">20 Produk: 13 Jaket Kulit Pria, 3 Sepatu Pria, 4 Sepatu Wanita.</p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {filteredProducts.map((p) => {
+                      const img = customImages[p.id] || p.imageUrl;
+                      return (
+                        <div key={p.id} className="bg-white rounded-2xl p-4 border border-warmbeige/40 shadow">
+                          <img src={img} alt={p.name} className="w-full h-56 object-cover rounded-xl mb-3" />
+                          <span className="text-[10px] text-leather font-bold uppercase">{p.category}</span>
+                          <h4 className="font-serif font-bold text-forest text-base mt-1 mb-3">{p.name}</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            <button onClick={() => setSelectedProduct(p)} className="py-2 px-2 rounded-lg border border-forest text-xs font-semibold">Detail</button>
+                            <a href={p.shopeeUrl} target="_blank" rel="noopener noreferrer" className="py-2 px-2 rounded-lg bg-leather text-white text-xs font-semibold text-center">Shopee</a>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ========================================================
+                8. TENTANG KAMI
+            ======================================================== */}
+            {currentRoute === 'tentang' && (
+              <div className="py-12 bg-cream">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                  <div className="text-center space-y-3">
+                    <span className="text-xs uppercase font-bold tracking-widest text-leather">Inisiatif Platform</span>
+                    <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-forest">About Sukaregang Discovery</h2>
+                  </div>
+                  <div className="bg-white p-8 rounded-3xl border border-warmbeige/40 shadow-xl space-y-6">
+                    <p className="text-base sm:text-lg text-charcoal/90 leading-relaxed font-serif italic">
+                      "Sukaregang Discovery merupakan platform digital yang dirancang untuk memperkenalkan potensi kawasan Sukaregang, Garut, melalui pengalaman eksplorasi, informasi sejarah, edukasi kerajinan kulit, serta pengenalan produk lokal. Melalui platform ini, pengunjung dapat mengenal Sukaregang lebih dekat dalam satu pengalaman digital yang informatif dan interaktif."
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* --- MODAL DETAIL PRODUK --- */}
+          {selectedProduct && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/80 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border-2 border-warmbeige/40 relative max-h-[92vh] flex flex-col">
+                <div className="p-4 sm:p-6 bg-forest text-cream flex items-center justify-between border-b border-warmbeige/30">
+                  <div className="flex items-center space-x-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-warmbeige"></span>
+                    <span className="text-xs font-semibold tracking-wider uppercase text-warmbeige">{selectedProduct.category}</span>
+                    <span className="text-cream/50">|</span>
+                    <span className="text-xs font-semibold text-cream">{selectedProduct.storeName}</span>
+                  </div>
+                  <button onClick={() => setSelectedProduct(null)} className="w-8 h-8 rounded-full bg-forest-700 hover:bg-leather flex items-center justify-center text-cream transition">✕</button>
+                </div>
+
+                <div className="p-6 overflow-y-auto custom-scroll flex-1 grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                  <div className="rounded-2xl overflow-hidden bg-cream border border-warmbeige/40">
+                    <img
+                      src={customImages[selectedProduct.id] || selectedProduct.imageUrl}
+                      alt={selectedProduct.name}
+                      className="w-full h-80 object-cover"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-between h-full space-y-4">
+                    <div>
+                      <h3 className="font-serif text-2xl font-bold text-forest mb-2">{selectedProduct.name}</h3>
+                      <p className="text-xs text-charcoal/80 leading-relaxed bg-cream/40 p-3 rounded-xl border border-warmbeige/20 mb-3">
+                        {selectedProduct.description}
+                      </p>
+                      <div className="bg-cream p-3 rounded-xl border border-warmbeige/30 text-xs font-medium text-forest">
+                        🛡️ {selectedProduct.materialInfo}
+                      </div>
+                    </div>
+                    <a
+                      href={selectedProduct.shopeeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-3.5 px-4 rounded-xl bg-leather hover:bg-leather-dark text-white font-bold text-sm text-center transition flex items-center justify-center space-x-2 shadow-lg"
+                    >
+                      <Icon name="shopping-bag" className="w-4 h-4" />
+                      <span>Beli Langsung di Shopee Syakira Leather ↗</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* --- MODAL LOGIN (AUTH) --- */}
+          {isAuthModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/80 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border-2 border-warmbeige/40 relative">
+                <div className="p-6 bg-forest text-cream flex items-center justify-between border-b border-warmbeige/30">
+                  <h3 className="font-serif text-xl font-bold">Masuk / Log In</h3>
+                  <button onClick={() => setIsAuthModalOpen(false)} className="w-8 h-8 rounded-full bg-forest-700 hover:bg-leather flex items-center justify-center text-cream">✕</button>
+                </div>
+                <div className="p-6 space-y-4">
+                  <button
+                    onClick={() => {
+                      handleLoginSuccess({
+                        id: 'usr-admin-01',
+                        name: 'Alya Alifia',
+                        email: 'alya.alifia@sukaregang.id',
+                        role: 'admin',
+                        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+                        joinDate: '13 November 2026',
+                      });
+                      setIsAuthModalOpen(false);
+                    }}
+                    className="w-full py-3 bg-forest hover:bg-forest-700 text-cream font-bold text-xs rounded-xl shadow transition"
+                  >
+                    👑 Masuk Sebagai Admin Toko Syakira (Demo)
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleLoginSuccess({
+                        id: 'usr-member-02',
+                        name: 'Wisatawan Sukaregang',
+                        email: 'member@sukaregang.id',
+                        role: 'member',
+                        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
+                        joinDate: '13 November 2026',
+                      });
+                      setIsAuthModalOpen(false);
+                    }}
+                    className="w-full py-3 bg-cream hover:bg-cream-dark text-forest font-bold text-xs rounded-xl border border-warmbeige/40 transition"
+                  >
+                    👤 Masuk Sebagai Member Wisatawan (Demo)
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* --- MODAL PROFIL PENGGUNA --- */}
+          {isProfileModalOpen && currentUser && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/80 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border-2 border-warmbeige/40 relative">
+                <div className="p-6 bg-forest text-cream flex items-center justify-between border-b border-warmbeige/30">
+                  <h3 className="font-serif text-lg font-bold">Profil Pengguna</h3>
+                  <button onClick={() => setIsProfileModalOpen(false)} className="w-8 h-8 rounded-full bg-forest-700 hover:bg-leather flex items-center justify-center text-cream">✕</button>
+                </div>
+                <div className="p-6 space-y-5">
+                  <div className="flex items-center space-x-4 pb-4 border-b border-cream-dark">
+                    <img src={currentUser.avatarUrl} alt={currentUser.name} className="w-16 h-16 rounded-2xl object-cover border-2 border-warmbeige" />
+                    <div>
+                      <h4 className="font-serif text-lg font-bold text-forest">{currentUser.name}</h4>
+                      <p className="text-xs text-charcoal/70">{currentUser.email}</p>
+                      <span className="text-[11px] text-leather font-semibold block mt-1">
+                        {currentUser.role === 'admin' ? '👑 Admin Pengelola Toko Syakira' : '⭐ Member Wisatawan'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {currentUser.role === 'admin' && (
+                    <button
+                      onClick={() => {
+                        setIsProfileModalOpen(false);
+                        setIsAdminPhotoModalOpen(true);
+                      }}
+                      className="w-full py-2.5 px-4 bg-leather hover:bg-leather-dark text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center space-x-2"
+                    >
+                      <Icon name="camera" className="w-4 h-4" />
+                      <span>Buka Dashboard Upload Foto Produk</span>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      setIsProfileModalOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full py-2.5 px-4 bg-white hover:bg-red-50 text-red-600 text-xs font-bold rounded-xl border border-red-200 transition"
+                  >
+                    Keluar dari Akun (Log Out)
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* --- MODAL DASHBOARD ADMIN: UPLOAD FOTO PRODUK --- */}
+          {isAdminPhotoModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/80 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border-2 border-warmbeige/40 relative max-h-[92vh] flex flex-col">
+                <div className="p-5 bg-forest text-cream flex items-center justify-between border-b border-warmbeige/30">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-xl">📸</span>
+                    <div>
+                      <h3 className="font-serif text-lg font-bold">Dashboard Admin: Kelola & Upload Foto Produk</h3>
+                      <p className="text-[11px] text-warmbeige">Syakira Leather • Fitur khusus upload foto produk asli</p>
+                    </div>
+                  </div>
+                  <button onClick={() => setIsAdminPhotoModalOpen(false)} className="w-8 h-8 rounded-full bg-forest-700 hover:bg-leather flex items-center justify-center text-cream">✕</button>
+                </div>
+
+                <div className="p-6 overflow-y-auto custom-scroll flex-1 space-y-4">
+                  <p className="text-xs text-charcoal/80 bg-cream p-3 rounded-xl border border-warmbeige/40">
+                    ℹ️ <strong>Ketentuan:</strong> Jika foto Shopee tidak dapat diambil otomatis, unggah foto produk asli langsung dari komputer Anda. Foto akan disimpan secara lokal di browser dan langsung menggantikan tampilan produk di seluruh halaman.
+                  </p>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {PRODUCTS_DATA.map((p) => {
+                      const currentImg = customImages[p.id] || p.imageUrl;
+                      return (
+                        <div key={p.id} className="p-3.5 rounded-2xl border border-warmbeige/40 bg-white flex items-center space-x-3 shadow-sm">
+                          <img src={currentImg} alt={p.name} className="w-16 h-16 object-cover rounded-xl border border-warmbeige/40 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] text-leather font-bold uppercase">{p.category}</span>
+                            <h5 className="font-serif font-bold text-forest text-xs truncate">{p.name}</h5>
+                            <div className="mt-2 flex items-center space-x-2">
+                              <label className="cursor-pointer px-2 py-1 bg-forest text-cream text-[10px] font-semibold rounded-lg hover:bg-forest-700 transition">
+                                Unggah File
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      const reader = new FileReader();
+                                      reader.onload = (ev) => {
+                                        handleUpdateProductImage(p.id, ev.target.result);
+                                      };
+                                      reader.readAsDataURL(file);
+                                    }
+                                  }}
+                                />
+                              </label>
+                              {customImages[p.id] && (
+                                <button
+                                  onClick={() => handleResetProductImage(p.id)}
+                                  className="text-[10px] text-red-600 hover:underline"
+                                >
+                                  Reset Shopee
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Footer */}
+          <footer className="bg-forest text-cream border-t-2 border-warmbeige/40">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
+                <div className="md:col-span-4 space-y-4">
+                  <h4 className="font-serif text-xl font-bold tracking-tight text-cream">
+                    SUKAREGANG <span className="text-warmbeige font-light italic">DISCOVERY</span>
+                  </h4>
+                  <p className="text-xs text-cream/70 leading-relaxed">
+                    Platform digital interaktif yang memperkenalkan kawasan Sukaregang, Garut, sebagai sentra kerajinan kulit terkemuka di Indonesia.
+                  </p>
+                </div>
+                <div className="md:col-span-4 space-y-2">
+                  <h5 className="font-serif text-base font-bold text-warmbeige">Katalog & Store</h5>
+                  <button onClick={() => setCurrentRoute('store')} className="text-xs text-cream/80 hover:text-warmbeige block text-left">
+                    Syakira Leather Store (20 Produk)
+                  </button>
+                  <button onClick={() => setCurrentRoute('explore')} className="text-xs text-cream/80 hover:text-warmbeige block text-left">
+                    Explore Sukaregang & Virtual Tour
+                  </button>
+                </div>
+                <div className="md:col-span-4 space-y-2">
+                  <h5 className="font-serif text-base font-bold text-warmbeige">Official Marketplace</h5>
+                  <a href="https://shopee.co.id" target="_blank" rel="noopener noreferrer" className="inline-block px-4 py-2 bg-leather text-white text-xs font-bold rounded-xl">
+                    Kunjungi Shopee Syakira Leather ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

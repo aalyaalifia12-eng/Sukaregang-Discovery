@@ -1,7 +1,7 @@
 export type ProductCategory = 
   | 'Jaket Kulit Pria' 
-  | 'Sepatu Kulit Pria' 
-  | 'Sepatu Kulit Wanita';
+  | 'Sepatu Pria' 
+  | 'Sepatu Wanita';
 
 export interface Product {
   id: string;
@@ -14,6 +14,16 @@ export interface Product {
   description: string;
   materialInfo: string;
   isFeatured?: boolean;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'member';
+  avatarUrl: string;
+  phone?: string;
+  joinDate: string;
 }
 
 export interface ExplorationLocation {
