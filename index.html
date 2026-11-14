@@ -573,37 +573,20 @@
     // =========================================================================
     function LandingPage({ onLogin, onGoToAdmin, onOpenPromo }) {
       return (
-        <div className="min-h-screen bg-[#F8F4EC] text-[#35251D] flex flex-col justify-between font-sans antialiased selection:bg-[#E9D8BD]">
+        <div className="min-h-screen bg-[#F8F4EC] text-[#35251D] flex flex-col justify-between font-sans antialiased selection:bg-[#E9D8BD] p-4 sm:p-8">
           
-          {/* Top Bar Minimalis (Hanya Logo & Tombol Masuk - Tanpa Navigasi) */}
-          <header className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-5 flex items-center justify-between border-b border-[#E9D8BD]/50">
-            <div className="flex items-center space-x-3">
+          {/* Hero Section: Bersih Tanpa Header/Navigasi Apapun */}
+          <main className="max-w-7xl mx-auto w-full py-6 flex-1 flex flex-col justify-center">
+            
+            {/* Logo Besar & Identitas di Atas Hero */}
+            <div className="text-center mb-6 animate-fadeIn">
               <img 
                 src="./logo.png" 
                 alt="Logo Sukaregang Discovery" 
-                className="w-12 h-12 sm:w-16 sm:h-16 object-contain drop-shadow" 
+                className="w-24 h-24 sm:w-32 sm:h-32 mx-auto object-contain drop-shadow-xl hover:scale-105 transition duration-300" 
               />
-              <div>
-                <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#173D2B] block">
-                  SUKAREGANG <span className="text-[#8B4A2B] font-light italic">DISCOVERY</span>
-                </span>
-                <span className="text-[10px] tracking-widest uppercase text-[#8B4A2B] font-semibold">
-                  Sentra Industri Kerajinan Kulit Garut
-                </span>
-              </div>
             </div>
 
-            <button
-              onClick={onLogin}
-              className="px-6 py-2.5 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition flex items-center space-x-2"
-            >
-              <Icon name="log-in" className="w-4 h-4" />
-              <span>Log In</span>
-            </button>
-          </header>
-
-          {/* Hero Section: Kata-kata Resmi + Foto Orang Pakai Jaket Kulit & Sepatu Kulit */}
-          <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 flex-1 flex flex-col justify-center">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border-2 border-[#E9D8BD]/70 shadow-2xl">
               
               {/* Kolom Kiri: Kata-kata Sesuai Permintaan */}
@@ -634,7 +617,7 @@
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                   <button
                     onClick={onLogin}
-                    className="w-full sm:w-auto px-9 py-4 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl hover:shadow-2xl transition flex items-center justify-center space-x-2.5 group"
+                    className="w-full sm:w-auto px-10 py-4 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl hover:shadow-2xl transition flex items-center justify-center space-x-2.5 group"
                   >
                     <span>Masuk ke Aplikasi</span>
                     <Icon name="arrow-right" className="w-5 h-5 group-hover:translate-x-1 transition" />
@@ -1071,7 +1054,6 @@
       // Navigation Routes: 'landing', 'login', 'beranda', 'explore', 'sejarah', 'videos', 'galeri', 'reviews', 'admin_dashboard'
       const [currentRoute, setCurrentRoute] = useState('landing');
       const [isAdPromoOpen, setIsAdPromoOpen] = useState(false);
-      const [playingVideoId, setPlayingVideoId] = useState(null);
 
       // Mobile Hamburger Navigation Drawer
       const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
