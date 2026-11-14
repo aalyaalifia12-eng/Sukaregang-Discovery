@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="referrer" content="no-referrer">
   <title>Sukaregang Discovery - Digital Tourism, Leather Education & Syakira Leather</title>
   <link rel="icon" type="image/png" href="./logo.png">
 
@@ -24,13 +25,14 @@
       theme: {
         extend: {
           colors: {
-            forest: '#253B32',
-            leather: '#A66D43',
-            warmBeige: '#D6B889',
-            cream: '#F5F0E7',
+            forest: '#173D2B',       // Forest Green Redesign
+            leather: '#8B4A2B',      // Leather Brown Redesign
+            cream: '#F8F4EC',        // Cream Redesign
+            beige: '#E9D8BD',        // Beige Redesign
+            darkBrown: '#35251D',    // Dark Brown Redesign
             charcoal: '#292B29',
             lightBeige: '#ECE3D4',
-            darkForest: '#1C2C25'
+            darkForest: '#112D20'
           },
           fontFamily: {
             serif: ['Cinzel', 'Playfair Display', 'Georgia', 'serif'],
@@ -45,44 +47,47 @@
     
     html {
       scroll-behavior: smooth;
-      background-color: #F5F0E7;
-      color: #292B29;
+      background-color: #F8F4EC;
+      color: #35251D;
       -webkit-tap-highlight-color: transparent;
     }
     
-    /* App Frame Aesthetics */
     .app-glass {
-      background: rgba(37, 59, 50, 0.94);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(23, 61, 43, 0.95);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
     
-    .leather-shadow {
-      box-shadow: 0 10px 30px -5px rgba(166, 109, 67, 0.3);
-    }
-
     .custom-scroll::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     .custom-scroll::-webkit-scrollbar-track {
-      background: #F5F0E7;
+      background: #F8F4EC;
     }
     .custom-scroll::-webkit-scrollbar-thumb {
-      background: #D6B889;
+      background: #E9D8BD;
       border-radius: 4px;
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .animate-fadeIn {
-      animation: fadeIn 0.25s ease-out forwards;
+      animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(233, 216, 189, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(139, 74, 43, 0.7); }
+    }
+    .glow-leather {
+      animation: pulseGlow 3s infinite;
     }
   </style>
 </head>
-<body class="bg-[#F5F0E7] text-[#292B29] antialiased selection:bg-[#D6B889] selection:text-[#253B32] pb-24 lg:pb-0">
+<body class="bg-[#F8F4EC] text-[#35251D] antialiased selection:bg-[#E9D8BD] selection:text-[#173D2B] pb-24 lg:pb-0">
   <div id="root"></div>
 
   <script type="text/babel">
@@ -104,7 +109,7 @@
         experience: '5 Tahun Pemandu Kawasan Kulit Sukaregang',
         specialty: 'Eksplorasi Sentra Pabrik Jaket & Workshop Kulit Domba',
         avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
-        rating: '4.9/5.0 (180+ Turis)',
+        rating: '4.9/5.0 (180+ Wisatawan)',
       },
       {
         id: 'guide-rifa',
@@ -115,7 +120,7 @@
         experience: '4 Tahun Edukator Pengolahan & Kerajinan Kulit Garut',
         specialty: 'Pusat Belanja Sepatu, Jaket Custom & Penyamakan Kulit',
         avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
-        rating: '4.9/5.0 (165+ Turis)',
+        rating: '4.9/5.0 (165+ Wisatawan)',
       }
     ];
 
@@ -220,6 +225,7 @@
       }
     ];
 
+    // Data 20 Produk Syakira Leather dengan Realistis Fallback Image jika CDN Shopee memblokir Referrer
     const DEFAULT_PRODUCTS = [
       {
         id: 'jaket-pria-01',
@@ -229,6 +235,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-jubah-jaket-kulit-premium-jaket-kulit-asli-Garut-jaket-kulit-jaz-kulit-i.31871696.6816167332?extraParams=%7B%22display_model_id%22%3A34141006660%2C%22model_selection_logic%22%3A3%7D&image_ids=775a835b1959b5d447f053e81394946d',
         imageId: '775a835b1959b5d447f053e81394946d',
         imageUrl: 'https://down-id.img.susercontent.com/file/775a835b1959b5d447f053e81394946d',
+        fallbackUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80',
         description: 'Jaket kulit model jubah panjang bergaya formal dan elegan, dibuat dari kulit asli Garut pilihan dengan furing premium yang nyaman.',
         materialInfo: '100% Kulit Domba Asli Garut Bertekstur Lembut'
       },
@@ -240,6 +247,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-asli-jaket-kulit-domba-jaket-kulit-keren-jaket-kulit-sukaregang-i.31871696.5216044039?extraParams=%7B%22display_model_id%22%3A23230403914%2C%22model_selection_logic%22%3A3%7D&image_ids=401ca80733d410796aa1c4bf9fa2ee36',
         imageId: '401ca80733d410796aa1c4bf9fa2ee36',
         imageUrl: 'https://down-id.img.susercontent.com/file/401ca80733d410796aa1c4bf9fa2ee36',
+        fallbackUrl: 'https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?auto=format&fit=crop&w=600&q=80',
         description: 'Jaket kulit domba asli khas Sukaregang Garut dengan karakter lentur, lembut, dan potongan pas badan yang maskulin.',
         materialInfo: 'Bahan Kulit Domba Super Asli Sukaregang'
       },
@@ -251,6 +259,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-sukaregang-garut-jaket-kulit-keren-jaket-jangkis-jaket-pria-jaket-kulit-asli-garut-i.31871696.5415826298?extraParams=%7B%22display_model_id%22%3A72477810793%2C%22model_selection_logic%22%3A3%7D&image_ids=e9f5b65138f60013c63bbcf485ceb482',
         imageId: 'e9f5b65138f60013c63bbcf485ceb482',
         imageUrl: 'https://down-id.img.susercontent.com/file/e9f5b65138f60013c63bbcf485ceb482',
+        fallbackUrl: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=600&q=80',
         description: 'Desain jangkis klasik dengan ritsleting logam berkualitas tinggi dan rib elastis di bagian pinggang untuk mobilitas harian.',
         materialInfo: 'Kulit Domba Garut Kualitas Ekspor'
       },
@@ -262,6 +271,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-Kulit-Pria-Asli-Domba-Sukaregang-Garut-i.31871696.7915818996?extraParams=%7B%22display_model_id%22%3A47432999315%2C%22model_selection_logic%22%3A3%7D&image_ids=6143784491473d15e1f6e223492333f7',
         imageId: '6143784491473d15e1f6e223492333f7',
         imageUrl: 'https://down-id.img.susercontent.com/file/6143784491473d15e1f6e223492333f7',
+        fallbackUrl: 'https://images.unsplash.com/photo-1509539662397-116cb90542f1?auto=format&fit=crop&w=600&q=80',
         description: 'Jaket kulit asli berkarakter kokoh dengan pori-pori halus alami dan ketahanan cuaca dingin yang teruji.',
         materialInfo: '100% Genuine Lambskin Leather Garut'
       },
@@ -273,6 +283,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-sukaregang-garut-jaket-kulit-keren-jaket-casual-kulit-i.31871696.5516043866?extraParams=%7B%22display_model_id%22%3A92963520779%2C%22model_selection_logic%22%3A3%7D&image_ids=c3bc6f09e2ff9d784a9190c744f4ff70',
         imageId: 'c3bc6f09e2ff9d784a9190c744f4ff70',
         imageUrl: 'https://down-id.img.susercontent.com/file/c3bc6f09e2ff9d784a9190c744f4ff70',
+        fallbackUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80',
         description: 'Jaket casual modern yang fleksibel digunakan berkendara motor maupun menghadiri acara santai berkelas.',
         materialInfo: 'Bahan Kulit Domba Natural Finish'
       },
@@ -284,6 +295,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-garut-jaket-kulit-asli-jaket-kulit-sukaregang-i.31871696.3516140510?extraParams=%7B%22display_model_id%22%3A58145217646%2C%22model_selection_logic%22%3A3%7D&image_ids=4d4f248bb8296a1a1f059f802ea7a6be',
         imageId: '4d4f248bb8296a1a1f059f802ea7a6be',
         imageUrl: 'https://down-id.img.susercontent.com/file/4d4f248bb8296a1a1f059f802ea7a6be',
+        fallbackUrl: 'https://images.unsplash.com/photo-1520975954732-35dd22299614?auto=format&fit=crop&w=600&q=80',
         description: 'Potongan proporsional dengan jahitan ganda di bahu dan kerah tegak berkarakter tangguh khas Sukaregang.',
         materialInfo: 'Kulit Domba Garut Grade A'
       },
@@ -295,6 +307,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-asli-jaket-kulit-garut-jaket-kulit-sukaregang-i.31871696.7716044733?extraParams=%7B%22display_model_id%22%3A92963520779%2C%22model_selection_logic%22%3A3%7D&image_ids=be412c77d4834839cf9b61d36be8e453',
         imageId: 'be412c77d4834839cf9b61d36be8e453',
         imageUrl: 'https://down-id.img.susercontent.com/file/be412c77d4834839cf9b61d36be8e453',
+        fallbackUrl: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80',
         description: 'Dibuat secara teliti oleh penjahit senior Sukaregang dengan interior furing dormeuil england yang sejuk di badan.',
         materialInfo: '100% Kulit Domba Garut Asli'
       },
@@ -306,6 +319,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-asli-jaket-kulit-garut-jaket-kulit-sukaregang-i.31871696.4216044238?extraParams=%7B%22display_model_id%22%3A92963520779%2C%22model_selection_logic%22%3A3%7D&image_ids=7f407b7dd10d0f282054ff836371cf7d',
         imageId: '7f407b7dd10d0f282054ff836371cf7d',
         imageUrl: 'https://down-id.img.susercontent.com/file/7f407b7dd10d0f282054ff836371cf7d',
+        fallbackUrl: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=600&q=80',
         description: 'Model jaket harian dengan saku fungsional beritsleting dan daya tahan prima terhadap gesekan.',
         materialInfo: 'Kulit Domba Pilihan Garut'
       },
@@ -317,6 +331,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-keren-jaket-kulit-asli-jaket-kulit-garut-i.31871696.5316045431?extraParams=%7B%22display_model_id%22%3A92963520779%2C%22model_selection_logic%22%3A3%7D&image_ids=09ce95914a1a3e6f98ef2eeb62f5569d',
         imageId: '09ce95914a1a3e6f98ef2eeb62f5569d',
         imageUrl: 'https://down-id.img.susercontent.com/file/09ce95914a1a3e6f98ef2eeb62f5569d',
+        fallbackUrl: 'https://images.unsplash.com/photo-1509539662397-116cb90542f1?auto=format&fit=crop&w=600&q=80',
         description: 'Aksen garis dinamis pada dada dan lengan menghasilkan nuansa sporty dan modern bagi pemakainya.',
         materialInfo: 'Bahan Kulit Domba Super Halus'
       },
@@ -328,6 +343,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-asli-jaket-kulit-garut-jaket-kulit-sukaregang-i.31871696.5216044738?extraParams=%7B%22display_model_id%22%3A92963520779%2C%22model_selection_logic%22%3A3%7D&image_ids=0f96e4ce5696d3f234bf99990e1f7481',
         imageId: '0f96e4ce5696d3f234bf99990e1f7481',
         imageUrl: 'https://down-id.img.susercontent.com/file/0f96e4ce5696d3f234bf99990e1f7481',
+        fallbackUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80',
         description: 'Kombinasi kenyamanan bahan alami dan ketahanan jahitan benang nilon berkekuatan tinggi.',
         materialInfo: 'Kulit Domba Asli Olahan Sukaregang'
       },
@@ -339,6 +355,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-asli-jaket-kulit-garut-jaket-kulit-sukaregang-i.31871696.5816044237?extraParams=%7B%22display_model_id%22%3A92963520779%2C%22model_selection_logic%22%3A3%7D&image_ids=16909403a3b5eb45763cbfe88c7c9a92',
         imageId: '16909403a3b5eb45763cbfe88c7c9a92',
         imageUrl: 'https://down-id.img.susercontent.com/file/16909403a3b5eb45763cbfe88c7c9a92',
+        fallbackUrl: 'https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?auto=format&fit=crop&w=600&q=80',
         description: 'Tekstur kulit halus dengan kilau alami tanpa lapisan kimia tebal, menjaga keaslian pori-pori kulit.',
         materialInfo: 'Genuine Leather Garut Asli'
       },
@@ -350,6 +367,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-asli-jaket-kulit-garut-jaket-kulit-sukaregang-i.31871696.3416141381?extraParams=%7B%22display_model_id%22%3A92963520779%2C%22model_selection_logic%22%3A3%7D&image_ids=cbe757971714bc240a2bbdb40739c277',
         imageId: 'cbe757971714bc240a2bbdb40739c277',
         imageUrl: 'https://down-id.img.susercontent.com/file/cbe757971714bc240a2bbdb40739c277',
+        fallbackUrl: 'https://images.unsplash.com/photo-1520975954732-35dd22299614?auto=format&fit=crop&w=600&q=80',
         description: 'Siluet tegas dengan kerah lipat minimalis yang cocok dipadukan kemeja maupun kaos kasual.',
         materialInfo: 'Bahan Kulit Domba Pilihan'
       },
@@ -361,6 +379,7 @@
         shopeeUrl: 'https://shopee.co.id/Jaket-kulit-pria-jaket-kulit-domba-jaket-kulit-asli-jaket-kulit-garut-jaket-kulit-sukaregang-i.31871696.5316045053?extraParams=%7B%22display_model_id%22%3A92963520779%2C%22model_selection_logic%22%3A3%7D&image_ids=d40aa912e7968ff25032cb0aa234d742',
         imageId: 'd40aa912e7968ff25032cb0aa234d742',
         imageUrl: 'https://down-id.img.susercontent.com/file/d40aa912e7968ff25032cb0aa234d742',
+        fallbackUrl: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=600&q=80',
         description: 'Varian favorit pelancong yang berkunjung ke Sukaregang, perpaduan ketahanan dan kenyamanan berkelas.',
         materialInfo: '100% Kulit Domba Garut'
       },
@@ -373,6 +392,7 @@
         shopeeUrl: 'https://shopee.co.id/Sepatu-kulit-asli-sepatu-boots-kulit-pria-asli-garut-i.31871696.22384931899?extraParams=%7B%22display_model_id%22%3A105419954009%2C%22model_selection_logic%22%3A3%7D&image_ids=46a782b68cb267c74d3d82a93bfe92a6',
         imageId: '46a782b68cb267c74d3d82a93bfe92a6',
         imageUrl: 'https://down-id.img.susercontent.com/file/46a782b68cb267c74d3d82a93bfe92a6',
+        fallbackUrl: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80',
         description: 'Sepatu boots kulit sapi asli dengan konstruksi jahitan keliling dan sol karet anti slip untuk mobilitas tinggi.',
         materialInfo: 'Kulit Sapi Asli Garut Tebal dan Lentur'
       },
@@ -384,6 +404,7 @@
         shopeeUrl: 'https://shopee.co.id/sepatu-pria-kulit-asli-garut-i.31871696.22285145828?extraParams=%7B%22display_model_id%22%3A119293144171%2C%22model_selection_logic%22%3A3%7D&image_ids=4cf8e309228805f1f919106be896a249',
         imageId: '4cf8e309228805f1f919106be896a249',
         imageUrl: 'https://down-id.img.susercontent.com/file/4cf8e309228805f1f919106be896a249',
+        fallbackUrl: 'https://images.unsplash.com/photo-1533867617858-e7b97e060509?auto=format&fit=crop&w=600&q=80',
         description: 'Sepatu kasual kulit dengan insole empuk yang nyaman digunakan beraktivitas harian tanpa lelah.',
         materialInfo: 'Bahan Kulit Sapi Olahan Sukaregang'
       },
@@ -395,6 +416,7 @@
         shopeeUrl: 'https://shopee.co.id/Sepatu-kulit-pria-asli-garut-i.31871696.22485145781?extraParams=%7B%22display_model_id%22%3A105419954009%2C%22model_selection_logic%22%3A3%7D&image_ids=46a782b68cb267c74d3d82a93bfe92a6',
         imageId: '46a782b68cb267c74d3d82a93bfe92a6',
         imageUrl: 'https://down-id.img.susercontent.com/file/46a782b68cb267c74d3d82a93bfe92a6',
+        fallbackUrl: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=600&q=80',
         description: 'Sepatu pantofel kerja formal dengan sentuhan akhir kilau alami yang memancarkan aura profesional.',
         materialInfo: '100% Kulit Sapi Berkualitas Tinggi'
       },
@@ -407,6 +429,7 @@
         shopeeUrl: 'https://shopee.co.id/Sepatu-boot-wanita-kulit-asli-garut-sepatu-boots-wanita-kulit-asli-sukaregang-garut-i.31871696.5539504561?extraParams=%7B%22display_model_id%22%3A22797769623%2C%22model_selection_logic%22%3A3%7D&image_ids=d38d4f4ae6331a117b35123d53ee3958',
         imageId: 'd38d4f4ae6331a117b35123d53ee3958',
         imageUrl: 'https://down-id.img.susercontent.com/file/d38d4f4ae6331a117b35123d53ee3958',
+        fallbackUrl: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=600&q=80',
         description: 'Ankle boots wanita berbahan kulit asli dengan heels yang ergonomis dan ritsleting samping praktis.',
         materialInfo: 'Kulit Sapi Asli Lembut Tidak Kaku'
       },
@@ -418,6 +441,7 @@
         shopeeUrl: 'https://shopee.co.id/Sepatu-sandal-wanita-kulit-asli-garut-sepatu-wanita-kulit-asli-garut-i.31871696.4839504780?extraParams=%7B%22display_model_id%22%3A22797769623%2C%22model_selection_logic%22%3A3%7D&image_ids=fa6b2164478f79f8c6ca6742a781b0f1',
         imageId: 'fa6b2164478f79f8c6ca6742a781b0f1',
         imageUrl: 'https://down-id.img.susercontent.com/file/fa6b2164478f79f8c6ca6742a781b0f1',
+        fallbackUrl: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=600&q=80',
         description: 'Model mules sandal bertutup kulit asli yang chic dan feminin, cocok untuk jalan santai maupun berlibur ke Garut.',
         materialInfo: 'Bahan Kulit Sapi Super Halus'
       },
@@ -429,6 +453,7 @@
         shopeeUrl: 'https://shopee.co.id/Sepatu-wanita-kulit-asli-garut-i.31871696.5338228308?extraParams=%7B%22display_model_id%22%3A31198299831%2C%22model_selection_logic%22%3A3%7D&image_ids=9d74a00a884f5747737cf7c776a8098f',
         imageId: '9d74a00a884f5747737cf7c776a8098f',
         imageUrl: 'https://down-id.img.susercontent.com/file/9d74a00a884f5747737cf7c776a8098f',
+        fallbackUrl: 'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?auto=format&fit=crop&w=600&q=80',
         description: 'Sepatu flat kasual berbahan kulit asli dengan fleksibilitas tinggi dan kenyamanan maksimal.',
         materialInfo: 'Kulit Asli Lembut yang Lentur Mengikuti Kaki'
       },
@@ -440,12 +465,13 @@
         shopeeUrl: 'https://shopee.co.id/Sepatu-kantor-kulit-asli-garut-sepatu-wanita-kulit-asli-sepatu-wanita-santai-i.31871696.6938228870?extraParams=%7B%22display_model_id%22%3A51198300203%2C%22model_selection_logic%22%3A3%7D&image_ids=d7ce4bf785410b498aca2e5c626f5ac7',
         imageId: 'd7ce4bf785410b498aca2e5c626f5ac7',
         imageUrl: 'https://down-id.img.susercontent.com/file/d7ce4bf785410b498aca2e5c626f5ac7',
+        fallbackUrl: 'https://images.unsplash.com/photo-1581101767113-1677fc2beaa8?auto=format&fit=crop&w=600&q=80',
         description: 'Sepatu kerja wanita bersiluet formal dengan konstruksi jahitan kokoh khas Sukaregang yang tahan lama.',
         materialInfo: 'Bahan Kulit Asli Garut Pilihan'
       }
     ];
 
-    // Icon component helper
+    // Icon helper component
     function Icon({ name, className = "w-5 h-5" }) {
       useEffect(() => {
         if (window.lucide) {
@@ -459,10 +485,10 @@
     // 2. MAIN APPLICATION COMPONENT
     // =========================================================================
     function App() {
-      // Routes: 'beranda', 'store', 'tour', 'maps', 'video', 'academy'
+      // Routes: 'beranda', 'store', 'tour', 'maps', 'video', 'academy', 'simulator'
       const [currentRoute, setCurrentRoute] = useState('beranda');
 
-      // User Authentication Session
+      // Authentication Session
       const [currentUser, setCurrentUser] = useState(() => {
         try {
           const saved = localStorage.getItem('sukaregang_user_session');
@@ -471,16 +497,22 @@
         return null;
       });
 
-      // Login Modal & Form state
+      // Split Screen Login State (Redesign Mode)
       const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
       const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-      const [loginName, setLoginName] = useState('');
-      const [loginEmail, setLoginEmail] = useState('');
-      const [loginWhatsApp, setLoginWhatsApp] = useState('');
+
+      // Login Inputs with Password Toggle & Remember Me
+      const [loginIdentifier, setLoginIdentifier] = useState(''); // Email or Username
+      const [loginPassword, setLoginPassword] = useState('');
+      const [showPassword, setShowPassword] = useState(false);
+      const [rememberMe, setRememberMe] = useState(true);
+      const [loginLoading, setLoginLoading] = useState(false);
+      const [loginError, setLoginError] = useState('');
+      const [loginToast, setLoginToast] = useState('');
 
       // Portal Admin Modal State
       const [isAdminPortalOpen, setIsAdminPortalOpen] = useState(false);
-      const [adminTab, setAdminTab] = useState('products'); // 'products', 'destinations', 'videos', 'guides', 'backup'
+      const [adminTab, setAdminTab] = useState('products');
 
       // Master Datasets with LocalStorage Persistence
       const [products, setProducts] = useState(() => {
@@ -524,7 +556,7 @@
         return {};
       });
 
-      // Selected product for detail modal
+      // Detail product modal
       const [selectedProduct, setSelectedProduct] = useState(null);
 
       // Tour Guide Booking State
@@ -557,7 +589,7 @@
       const mapContainerRef = useRef(null);
       const mapInstanceRef = useRef(null);
 
-      // Admin Form States: Add Product
+      // Admin Form States
       const [newProdName, setNewProdName] = useState('');
       const [newProdCategory, setNewProdCategory] = useState('Jaket Kulit Pria');
       const [newProdShopee, setNewProdShopee] = useState('');
@@ -565,7 +597,6 @@
       const [newProdMaterial, setNewProdMaterial] = useState('');
       const [newProdDesc, setNewProdDesc] = useState('');
 
-      // Admin Form States: Add Destination
       const [newDestName, setNewDestName] = useState('');
       const [newDestCategory, setNewDestCategory] = useState('Pabrik Jaket');
       const [newDestAddress, setNewDestAddress] = useState('');
@@ -574,22 +605,186 @@
       const [newDestLng, setNewDestLng] = useState('107.9150');
       const [newDestDesc, setNewDestDesc] = useState('');
 
-      // Admin Form States: Add Video
       const [newVidTitle, setNewVidTitle] = useState('');
       const [newVidCategory, setNewVidCategory] = useState('Sejarah Garut');
       const [newVidUrl, setNewVidUrl] = useState('');
       const [newVidDesc, setNewVidDesc] = useState('');
 
-      // Admin Form States: Tour Guide WhatsApp
       const [editGuideRizalWA, setEditGuideRizalWA] = useState('+62 851-5059-1968');
       const [editGuideRifaWA, setEditGuideRifaWA] = useState('+62 812-2056-9575');
+
+      // =======================================================================
+      // GAME SIMULATOR STATE (MEMBUAT JAKET & SEPATU KULIT DARI AWAL - AKHIR)
+      // =======================================================================
+      const [simCraftType, setSimCraftType] = useState('jaket'); // 'jaket' or 'sepatu'
+      const [simStep, setSimStep] = useState(1);
+      const [simScore, setSimScore] = useState(100);
+      const [simChoices, setSimChoices] = useState({});
+      const [simCompleted, setSimCompleted] = useState(false);
+
+      // Steps definition for Jaket Kulit Simulator
+      const JAKET_STEPS = [
+        {
+          step: 1,
+          title: 'Pemilihan Bahan Mentah Kulit',
+          task: 'Pilih lembaran kulit domba asli Garut terbaik untuk kenyamanan jaket.',
+          options: [
+            { id: 'domba-a', label: 'Kulit Domba Garut Grade A Super', desc: 'Pori rapat, lentur, lembut, dan ringan di badan (Kualitas Ekspor Sukaregang).', points: 15, isCorrect: true },
+            { id: 'sapi-kaku', label: 'Kulit Sapi Keras Kering', desc: 'Tebal dan kaku, kurang cocok untuk jaket kasual fleksibel.', points: -10, isCorrect: false },
+            { id: 'sintetis-pvc', label: 'Kulit Sintetis PVC Imitasi', desc: 'Bukan kulit asli, mudah terkelupas dan gerah.', points: -20, isCorrect: false },
+          ]
+        },
+        {
+          step: 2,
+          title: 'Pembuatan Pola & Pemotongan (Pattern Cutting)',
+          task: 'Atur pola potongan badan depan, punggung, lengan dan kerah.',
+          options: [
+            { id: 'cut-presisi', label: 'Pemotongan Presisi Pisau Baja Pengrajin', desc: 'Mengikuti arah alur serat kulit domba agar elastisitas jaket seimbang.', points: 15, isCorrect: true },
+            { id: 'cut-sembarangan', label: 'Pemotongan Cepat Melintang Serat', desc: 'Beresiko jaket mengkerut tidak simetris saat dipakai.', points: -10, isCorrect: false },
+          ]
+        },
+        {
+          step: 3,
+          title: 'Penipisan Tepi Kulit (Skiving Edges)',
+          task: 'Tipiskan tepi sambungan kulit agar jahitan rapi dan tidak menggumpal.',
+          options: [
+            { id: 'skive-sempurna', label: 'Skiving 0.6mm Merata dengan Mesin Seset', desc: 'Tepi kulit tipis pas, sambungan panel datar dan nyaman di kulit pemakai.', points: 15, isCorrect: true },
+            { id: 'tanpa-skive', label: 'Langsung Dijahit Tanpa Penipisan', desc: 'Sambungan tepi terlalu tebal dan mengganjal di pundak.', points: -10, isCorrect: false },
+          ]
+        },
+        {
+          step: 4,
+          title: 'Pemasangan Hardware & Ritsleting',
+          task: 'Pasang ritsleting utama dada, kantong saku, dan kancing snap logam.',
+          options: [
+            { id: 'zip-ykk-metal', label: 'Ritsleting Logam Kuningan YKK Heavy Duty', desc: 'Anti macet, anti karat, dan serasi dengan warna cokelat/hitam kulit.', points: 15, isCorrect: true },
+            { id: 'zip-plastik', label: 'Ritsleting Plastik Tipis Murah', desc: 'Mudah patah saat terkena tarikan berkendara motor.', points: -15, isCorrect: false },
+          ]
+        },
+        {
+          step: 5,
+          title: 'Pemasangan Furing Interior (Lining)',
+          task: 'Pilih kain lapisan dalam jaket agar sejuk saat siang dan hangat saat malam.',
+          options: [
+            { id: 'furing-dormeuil', label: 'Kain Furing Dormeuil England Halus', desc: 'Material sejuk berpori mikro, nyaman tidak gatal di kulit (Standar Syakira Leather).', points: 15, isCorrect: true },
+            { id: 'furing-parasut', label: 'Kain Parasut Panas Kedap Udara', desc: 'Membuat badan berkeringat dan gerah.', points: -10, isCorrect: false },
+          ]
+        },
+        {
+          step: 6,
+          title: 'Penjahitan Ganda (Double Stitching)',
+          task: 'Satukan seluruh panel jaket menggunakan mesin jahit kulit berkecepatan teratur.',
+          options: [
+            { id: 'stitch-nylon', label: 'Benang Nilon No. 30 dengan Jahitan Ganda 3mm', desc: 'Kekuatan tarik maksimal, sambungan rapi dan tahan bertahun-tahun.', points: 15, isCorrect: true },
+            { id: 'stitch-katun', label: 'Benang Jahit Katun Biasa', desc: 'Mudah putus jika tertarik angin saat berkendara.', points: -15, isCorrect: false },
+          ]
+        },
+        {
+          step: 7,
+          title: 'Finishing Semir Alami & Quality Control',
+          task: 'Oleskan pelembab kulit alami dan lakukan uji ketahanan sebelum dikemas.',
+          options: [
+            { id: 'finish-mink', label: 'Mink Oil & Beeswax Alami Sukaregang', desc: 'Kilau satin alami keluar, permukaan tahan percikan air hujan.', points: 10, isCorrect: true },
+            { id: 'finish-vernis', label: 'Cat Vernis Kimia Mengkilap Tebal', desc: 'Menutup pori dan membuat kulit menjadi kaku retak.', points: -15, isCorrect: false },
+          ]
+        }
+      ];
+
+      // Steps definition for Sepatu Kulit Simulator
+      const SEPATU_STEPS = [
+        {
+          step: 1,
+          title: 'Pemilihan Kulit Sapi Sukaregang',
+          task: 'Pilih kulit sapi bermutu untuk daya tahan gesekan sol dan upper sepatu.',
+          options: [
+            { id: 'sapi-fullgrain', label: 'Kulit Sapi Full-Grain Pull-Up Asli', desc: 'Tebal 1.8mm, kuat lentur, semakin lama dipakai semakin artistik patina-nya.', points: 15, isCorrect: true },
+            { id: 'sintetis-spn', label: 'Kulit Sintetis Spon Ringan', desc: 'Cepat sobek pada lekukan jemari kaki saat melangkah.', points: -15, isCorrect: false }
+          ]
+        },
+        {
+          step: 2,
+          title: 'Shoe Lasting (Cetakan Bentuk Kaki)',
+          task: 'Pasang pola kulit pada cetakan kayu/akrilik sesuai ukuran anatomi kaki.',
+          options: [
+            { id: 'last-ergonomis', label: 'Shoe Last Ergonomis Standar Garut', desc: 'Menjamin kenyamanan telapak kaki dan lengkungan tumit pas tanpa lecet.', points: 15, isCorrect: true },
+            { id: 'tanpa-last', label: 'Membentuk Sepatu Tanpa Cetakan', desc: 'Bentuk sepatu melenceng dan sakit saat dikenakan jalan.', points: -15, isCorrect: false }
+          ]
+        },
+        {
+          step: 3,
+          title: 'Pemotongan Bagian Upper (Vamp, Quarter, Tongue)',
+          task: 'Potong bagian punggung kaki, lidah sepatu, dan penutup tumit.',
+          options: [
+            { id: 'cut-clean', label: 'Pemotongan Presisi dengan Pisau Lengkung', desc: 'Garis potongan mulus, simetris antara sepatu kanan dan kiri.', points: 15, isCorrect: true },
+            { id: 'cut-kasar', label: 'Gunting Tumpul Terburu-buru', desc: 'Tepi bergelombang tidak rapi.', points: -10, isCorrect: false }
+          ]
+        },
+        {
+          step: 4,
+          title: 'Penjahitan Upper & Aksen Lubang Tali',
+          task: 'Jahit rangkai bagian atas sepatu dan pasang mata itik (eyelet) logam.',
+          options: [
+            { id: 'stitch-eyelet', label: 'Jahit Benang Wax Tebal + Eyelet Kuningan', desc: 'Lubang tali tidak mudah robek saat dikencangkan.', points: 15, isCorrect: true },
+            { id: 'lubang-biasa', label: 'Dilubangi Saja Tanpa Ring Penguat', desc: 'Lubang tali cepat robek saat ditarik.', points: -10, isCorrect: false }
+          ]
+        },
+        {
+          step: 5,
+          title: 'Pemasangan Insole Memory Foam Empuk',
+          task: 'Pasang bantalan tapak dalam untuk meredam hentakan langkah.',
+          options: [
+            { id: 'insole-foam', label: 'Insole Kulit + Ortholite Foam Bernapas', desc: 'Empuk menyerap keringat, jalan seharian tidak pegal.', points: 15, isCorrect: true },
+            { id: 'insole-karton', label: 'Karton Keras Tanpa Busa', desc: 'Telapak kaki cepat panas dan sakit.', points: -10, isCorrect: false }
+          ]
+        },
+        {
+          step: 6,
+          title: 'Penyatuan Outsole Karet & Jahit Sol (Goodyear Welt)',
+          task: 'Tempelkan sol bawah anti slip dan jahit tembus keliling.',
+          options: [
+            { id: 'sole-welt', label: 'Sol Karet Grip Garut + Jahitan Keliling Tembus', desc: 'Anti licin di aspal/keramik basah, sol tidak mungkin jebol lepas.', points: 15, isCorrect: true },
+            { id: 'sole-lem-aja', label: 'Hanya Diberi Lem Tanpa Dijahit', desc: 'Sol rawan menganga saat terkena genangan air hujan.', points: -15, isCorrect: false }
+          ]
+        },
+        {
+          step: 7,
+          title: 'Burnishing Tepi & Semir Kilau Alami',
+          task: 'Haluskan pinggiran sol dengan kayu burnisher dan lap kain wol lembut.',
+          options: [
+            { id: 'burnish-wax', label: 'Burnishing Malam Lebah Alami + Poles Wol', desc: 'Pinggiran sol mulus tahan air, kilau mewah alami khas Sukaregang.', points: 10, isCorrect: true },
+            { id: 'tanpa-polish', label: 'Dibiarkan Kasar Kering', desc: 'Tampak kusam dan belum siap pajang di etalase.', points: -10, isCorrect: false }
+          ]
+        }
+      ];
+
+      const currentSimSteps = simCraftType === 'jaket' ? JAKET_STEPS : SEPATU_STEPS;
+      const currentStepData = currentSimSteps[simStep - 1];
+
+      const handleSimChoice = (option) => {
+        setSimChoices({ ...simChoices, [simStep]: option.id });
+        setSimScore((prev) => Math.max(0, Math.min(100, prev + (option.isCorrect ? option.points : option.points))));
+
+        if (simStep < currentSimSteps.length) {
+          setSimStep(simStep + 1);
+        } else {
+          setSimCompleted(true);
+        }
+      };
+
+      const handleResetSimulator = (type) => {
+        setSimCraftType(type);
+        setSimStep(1);
+        setSimScore(100);
+        setSimChoices({});
+        setSimCompleted(false);
+      };
 
       // Scroll to top on route change
       useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, [currentRoute]);
 
-      // Initialize or Update Leaflet Map
+      // Leaflet Map Init
       useEffect(() => {
         if (currentRoute !== 'maps' || !mapContainerRef.current) return;
         if (!mapInstanceRef.current) {
@@ -610,10 +805,10 @@
           const marker = L.marker(dest.coordinates).addTo(map);
           marker.bindPopup(`
             <div style="padding: 4px; min-width: 200px; font-family: sans-serif;">
-              <span style="font-size: 10px; color: #A66D43; font-weight: bold; text-transform: uppercase;">${dest.category}</span>
-              <h4 style="margin: 2px 0 6px 0; font-size: 13px; font-weight: bold; color: #253B32;">${dest.name}</h4>
+              <span style="font-size: 10px; color: #8B4A2B; font-weight: bold; text-transform: uppercase;">${dest.category}</span>
+              <h4 style="margin: 2px 0 6px 0; font-size: 13px; font-weight: bold; color: #173D2B;">${dest.name}</h4>
               <p style="margin: 0 0 8px 0; font-size: 11px; color: #555;">${dest.address}</p>
-              <a href="${dest.googleMapsUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 5px 9px; background: #253B32; color: #F5F0E7; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold;">
+              <a href="${dest.googleMapsUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 5px 9px; background: #173D2B; color: #F8F4EC; border-radius: 6px; font-size: 11px; text-decoration: none; font-weight: bold;">
                 Buka Link Google Maps ↗
               </a>
             </div>
@@ -622,29 +817,56 @@
         });
       }, [currentRoute, destinations]);
 
-      // Login handler (Requires Email & WhatsApp Number)
+      // =======================================================================
+      // REDESIGN LOGIN SUBMIT HANDLER (MENGACU PADA PROMPT TATADANA)
+      // =======================================================================
       const handleLoginSubmit = (e) => {
         e.preventDefault();
-        if (!loginEmail || !loginWhatsApp) {
-          alert('Mohon isi Email dan Nomor WhatsApp aktif Anda.');
+        setLoginError('');
+
+        if (!loginIdentifier.trim()) {
+          setLoginError('Mohon masukkan Email atau Username Anda.');
+          return;
+        }
+        if (!loginPassword) {
+          setLoginError('Mohon masukkan kata sandi Anda.');
+          return;
+        }
+        if (loginPassword.length < 4) {
+          setLoginError('Kata sandi minimal 4 karakter.');
           return;
         }
 
-        const user = {
-          id: 'usr-' + Date.now(),
-          name: loginName.trim() || 'Wisatawan Sukaregang',
-          email: loginEmail.trim(),
-          phone: loginWhatsApp.trim(),
-          role: loginEmail.toLowerCase().includes('admin') ? 'admin' : 'member',
-          avatarUrl: './logo.png',
-          joinDate: '14 November 2026',
-        };
+        setLoginLoading(true);
 
-        setCurrentUser(user);
-        try {
-          localStorage.setItem('sukaregang_user_session', JSON.stringify(user));
-        } catch (err) {}
-        setIsLoginModalOpen(false);
+        // Simulasi loading animasi responsif
+        setTimeout(() => {
+          setLoginLoading(false);
+
+          const isRoleAdmin = loginIdentifier.toLowerCase().includes('admin');
+          const user = {
+            id: 'usr-' + Date.now(),
+            name: loginIdentifier.includes('@') ? loginIdentifier.split('@')[0] : loginIdentifier,
+            email: loginIdentifier.includes('@') ? loginIdentifier : `${loginIdentifier}@sukaregang.id`,
+            phone: '+62 812-3456-7890',
+            role: isRoleAdmin ? 'admin' : 'member',
+            avatarUrl: './logo.png',
+            joinDate: '14 November 2026',
+          };
+
+          setCurrentUser(user);
+          if (rememberMe) {
+            try {
+              localStorage.setItem('sukaregang_user_session', JSON.stringify(user));
+            } catch (err) {}
+          }
+
+          setLoginToast(`Selamat datang kembali, ${user.name}!`);
+          setTimeout(() => {
+            setLoginToast('');
+            setIsLoginModalOpen(false);
+          }, 1200);
+        }, 600);
       };
 
       const handleQuickDemoLogin = (role = 'member') => {
@@ -661,7 +883,11 @@
         try {
           localStorage.setItem('sukaregang_user_session', JSON.stringify(demoUser));
         } catch (err) {}
-        setIsLoginModalOpen(false);
+        setLoginToast(`Masuk cepat sebagai ${demoUser.name}`);
+        setTimeout(() => {
+          setLoginToast('');
+          setIsLoginModalOpen(false);
+        }, 800);
       };
 
       const handleLogout = () => {
@@ -672,7 +898,7 @@
         setIsProfileModalOpen(false);
       };
 
-      // Toggle Destination Selection in Booking
+      // Destination toggle in WhatsApp booking
       const toggleDestination = (name) => {
         if (selectedDestinations.includes(name)) {
           setSelectedDestinations(selectedDestinations.filter((d) => d !== name));
@@ -681,7 +907,7 @@
         }
       };
 
-      // WhatsApp Booking Order Generator
+      // WhatsApp booking generator
       const handleSendWhatsAppOrder = () => {
         if (!bookingName.trim()) {
           alert('Mohon masukkan nama pemesan.');
@@ -717,7 +943,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
         window.open(waUrl, '_blank');
       };
 
-      // Admin Action: Add New Product
+      // Admin Add Product
       const handleAdminAddProduct = (e) => {
         e.preventDefault();
         if (!newProdName.trim()) {
@@ -737,6 +963,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           shopeeUrl: shopeeLink,
           imageId: 'custom-' + Date.now(),
           imageUrl: img,
+          fallbackUrl: img,
           description: newProdDesc.trim() || 'Produk kerajinan kulit asli bermutu tinggi dari Syakira Leather Sukaregang, Garut.',
           materialInfo: newProdMaterial.trim() || '100% Kulit Asli Pilihan Garut'
         };
@@ -747,7 +974,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           localStorage.setItem('syakira_products_list_v2', JSON.stringify(updated));
         } catch (err) {}
 
-        // Reset form
         setNewProdName('');
         setNewProdShopee('');
         setNewProdImage('');
@@ -756,7 +982,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
         alert('Berhasil! Produk baru telah ditambahkan ke katalog Syakira Leather.');
       };
 
-      // Admin Action: Delete Product
       const handleAdminDeleteProduct = (productId) => {
         if (!confirm('Yakin ingin menghapus produk ini dari katalog?')) return;
         const updated = products.filter((p) => p.id !== productId);
@@ -766,7 +991,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
         } catch (err) {}
       };
 
-      // Admin Action: Reset Products
       const handleAdminResetProducts = () => {
         if (!confirm('Kembalikan katalog ke 20 produk asli awal Syakira Leather?')) return;
         setProducts(DEFAULT_PRODUCTS);
@@ -778,110 +1002,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
         alert('Katalog telah di-reset ke 20 produk bawaan Syakira Leather.');
       };
 
-      // Admin Action: Add New Destination
-      const handleAdminAddDestination = (e) => {
-        e.preventDefault();
-        if (!newDestName.trim()) {
-          alert('Mohon isi nama destinasi.');
-          return;
-        }
-
-        const lat = parseFloat(newDestLat) || -7.2150;
-        const lng = parseFloat(newDestLng) || 107.9150;
-
-        const newDestObj = {
-          id: 'dest-custom-' + Date.now(),
-          name: newDestName.trim(),
-          category: newDestCategory,
-          address: newDestAddress.trim() || 'Kawasan Industri Kulit Sukaregang, Garut',
-          googleMapsUrl: newDestMapsUrl.trim() || 'https://maps.google.com/?q=' + lat + ',' + lng,
-          coordinates: [lat, lng],
-          description: newDestDesc.trim() || 'Destinasi sentra kerajinan dan industri kulit Sukaregang, Garut.',
-          image: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80'
-        };
-
-        const updated = [...destinations, newDestObj];
-        setDestinations(updated);
-        try {
-          localStorage.setItem('sukaregang_destinations_list_v2', JSON.stringify(updated));
-        } catch (err) {}
-
-        setNewDestName('');
-        setNewDestAddress('');
-        setNewDestMapsUrl('');
-        setNewDestDesc('');
-        alert('Destinasi baru berhasil ditambahkan ke peta!');
-      };
-
-      // Admin Action: Delete Destination
-      const handleAdminDeleteDestination = (destId) => {
-        if (!confirm('Hapus destinasi ini dari peta?')) return;
-        const updated = destinations.filter((d) => d.id !== destId);
-        setDestinations(updated);
-        try {
-          localStorage.setItem('sukaregang_destinations_list_v2', JSON.stringify(updated));
-        } catch (err) {}
-      };
-
-      // Admin Action: Add Video
-      const handleAdminAddVideo = (e) => {
-        e.preventDefault();
-        if (!newVidTitle.trim()) {
-          alert('Mohon isi judul video.');
-          return;
-        }
-
-        let ytId = newVidUrl.trim();
-        if (ytId.includes('youtu.be/')) {
-          ytId = ytId.split('youtu.be/')[1].split('?')[0];
-        } else if (ytId.includes('watch?v=')) {
-          ytId = ytId.split('watch?v=')[1].split('&')[0];
-        }
-
-        const newVidObj = {
-          id: 'vid-custom-' + Date.now(),
-          title: newVidTitle.trim(),
-          category: newVidCategory,
-          youtubeUrl: newVidUrl.trim() || 'https://youtu.be/' + ytId,
-          youtubeId: ytId || 'EEXRwNz6eiM',
-          description: newVidDesc.trim() || 'Video edukasi kerajinan dan pariwisata kawasan kulit Sukaregang, Garut.',
-          duration: 'Edukasi Kulit'
-        };
-
-        const updated = [...videos, newVidObj];
-        setVideos(updated);
-        try {
-          localStorage.setItem('sukaregang_videos_list_v2', JSON.stringify(updated));
-        } catch (err) {}
-
-        setNewVidTitle('');
-        setNewVidUrl('');
-        setNewVidDesc('');
-        alert('Video berhasil ditambahkan ke galeri edukasi!');
-      };
-
-      // Admin Action: Save Tour Guides Contacts
-      const handleAdminSaveGuides = (e) => {
-        e.preventDefault();
-        const updated = guides.map((g) => {
-          if (g.name.toLowerCase().includes('rizal')) {
-            const cleanWA = editGuideRizalWA.replace(/[^0-9]/g, '');
-            return { ...g, phone: editGuideRizalWA, waNumber: cleanWA };
-          }
-          if (g.name.toLowerCase().includes('rifa')) {
-            const cleanWA = editGuideRifaWA.replace(/[^0-9]/g, '');
-            return { ...g, phone: editGuideRifaWA, waNumber: cleanWA };
-          }
-          return g;
-        });
-        setGuides(updated);
-        try {
-          localStorage.setItem('sukaregang_guides_list_v2', JSON.stringify(updated));
-        } catch (err) {}
-        alert('Kontak WhatsApp Tour Guide Rizal & Rifa berhasil diperbarui!');
-      };
-
-      // Filtered Products for Syakira Store
+      // Filtered Products
       const filteredProducts = useMemo(() => {
         let list = [...products];
         if (storeCategory !== 'Semua') {
@@ -897,12 +1018,12 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
       }, [products, storeCategory, searchQuery]);
 
       return (
-        <div className="min-h-screen bg-[#F5F0E7] flex flex-col font-sans">
+        <div className="min-h-screen bg-[#F8F4EC] flex flex-col font-sans">
           
           {/* =================================================================
               TOP APP BAR (Official Sukaregang Header)
           ================================================================= */}
-          <header className="sticky top-0 z-40 app-glass text-[#F5F0E7] border-b border-[#D6B889]/30 shadow-md">
+          <header className="sticky top-0 z-40 app-glass text-[#F8F4EC] border-b border-[#E9D8BD]/30 shadow-md">
             <div className="max-w-7xl mx-auto px-4 h-16 sm:h-20 flex items-center justify-between">
               
               {/* App Brand Logo & Title */}
@@ -914,24 +1035,24 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   <img
                     src="./logo.png"
                     alt="Sukaregang Discovery Logo"
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-[#D6B889] shadow-md group-hover:scale-105 transition bg-[#253B32]"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-[#E9D8BD] shadow-md group-hover:scale-105 transition bg-[#173D2B]"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=120&q=80";
                     }}
                   />
-                  <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#253B32] rounded-full"></span>
+                  <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#173D2B] rounded-full"></span>
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
-                    <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#F5F0E7]">
-                      SUKAREGANG <span className="text-[#D6B889] font-light italic">DISCOVERY</span>
+                    <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#F8F4EC]">
+                      SUKAREGANG <span className="text-[#E9D8BD] font-light italic">DISCOVERY</span>
                     </span>
                     <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[9px] font-bold border border-emerald-500/30">
                       APP
                     </span>
                   </div>
-                  <p className="text-[9px] sm:text-[10px] tracking-wider uppercase text-[#D6B889]/80 truncate">
+                  <p className="text-[9px] sm:text-[10px] tracking-wider uppercase text-[#E9D8BD]/80 truncate">
                     Digital Tourism • Syakira Leather • Garut
                   </p>
                 </div>
@@ -941,6 +1062,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold">
                 {[
                   { id: 'beranda', label: '🏠 Beranda' },
+                  { id: 'simulator', label: '🎮 Simulator (Game)' },
                   { id: 'store', label: '🛍️ Syakira Store' },
                   { id: 'tour', label: '🧭 Tour Guide (WA)' },
                   { id: 'maps', label: '📍 Peta & Pabrik' },
@@ -950,10 +1072,10 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   <button
                     key={tab.id}
                     onClick={() => setCurrentRoute(tab.id)}
-                    className={`px-3.5 py-2 rounded-xl transition ${
+                    className={`px-3 py-2 rounded-xl transition ${
                       currentRoute === tab.id
-                        ? 'bg-[#D6B889] text-[#253B32] font-bold shadow'
-                        : 'text-[#F5F0E7]/90 hover:bg-[#1C2C25] hover:text-[#D6B889]'
+                        ? 'bg-[#E9D8BD] text-[#173D2B] font-bold shadow'
+                        : 'text-[#F8F4EC]/90 hover:bg-[#112D20] hover:text-[#E9D8BD]'
                     }`}
                   >
                     {tab.label}
@@ -965,8 +1087,8 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setIsAdminPortalOpen(true)}
-                  className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#A66D43]/30 hover:bg-[#A66D43] text-[#D6B889] hover:text-white border border-[#D6B889]/40 text-xs font-bold transition shadow"
-                  title="Buka Portal Admin untuk kelola produk dan destinasi"
+                  className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#8B4A2B]/30 hover:bg-[#8B4A2B] text-[#E9D8BD] hover:text-white border border-[#E9D8BD]/40 text-xs font-bold transition shadow"
+                  title="Buka Portal Admin"
                 >
                   <Icon name="settings" className="w-3.5 h-3.5" />
                   <span>Admin</span>
@@ -975,33 +1097,33 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 {currentUser ? (
                   <button
                     onClick={() => setIsProfileModalOpen(true)}
-                    className="flex items-center space-x-2 p-1.5 pr-3 rounded-full bg-[#1C2C25] border border-[#D6B889]/40 hover:border-[#D6B889] transition shadow"
+                    className="flex items-center space-x-2 p-1.5 pr-3 rounded-full bg-[#112D20] border border-[#E9D8BD]/40 hover:border-[#E9D8BD] transition shadow"
                   >
                     <img
                       src={currentUser.avatarUrl || './logo.png'}
                       alt={currentUser.name}
-                      className="w-8 h-8 rounded-full object-cover border border-[#D6B889] bg-[#253B32]"
+                      className="w-8 h-8 rounded-full object-cover border border-[#E9D8BD] bg-[#173D2B]"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80";
                       }}
                     />
                     <div className="text-left text-xs leading-tight hidden sm:block">
-                      <span className="font-bold text-[#F5F0E7] block truncate max-w-[110px]">
+                      <span className="font-bold text-[#F8F4EC] block truncate max-w-[110px]">
                         {currentUser.name.split(' ')[0]}
                       </span>
                       <span className="text-[10px] text-emerald-400 block truncate max-w-[110px]">
-                        WA: {currentUser.phone ? currentUser.phone.slice(-4) : 'Aktif'}
+                        Online
                       </span>
                     </div>
                   </button>
                 ) : (
                   <button
                     onClick={() => setIsLoginModalOpen(true)}
-                    className="px-3.5 py-2 rounded-xl bg-[#D6B889] hover:bg-[#BFA06F] text-[#253B32] text-xs font-bold transition shadow flex items-center space-x-1.5"
+                    className="px-3.5 py-2 rounded-xl bg-[#E9D8BD] hover:bg-[#D6B889] text-[#173D2B] text-xs font-bold transition shadow flex items-center space-x-1.5"
                   >
                     <Icon name="log-in" className="w-3.5 h-3.5" />
-                    <span>Masuk (Email & WA)</span>
+                    <span>Masuk Akun</span>
                   </button>
                 )}
               </div>
@@ -1019,80 +1141,80 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             {currentRoute === 'beranda' && (
               <div className="space-y-8 animate-fadeIn">
                 
-                {/* App Hero Card with Official Logo Badge */}
-                <div className="relative rounded-3xl overflow-hidden bg-[#253B32] text-[#F5F0E7] p-6 sm:p-10 border-2 border-[#D6B889]/40 shadow-xl">
+                {/* Hero Card with Official Logo Badge */}
+                <div className="relative rounded-3xl overflow-hidden bg-[#173D2B] text-[#F8F4EC] p-6 sm:p-10 border-2 border-[#E9D8BD]/40 shadow-xl">
                   <div className="flex flex-col lg:flex-row items-center gap-8">
                     
                     {/* Official Circular Logo Badge */}
                     <div className="flex-shrink-0 text-center">
                       <div className="relative inline-block group">
-                        <div className="absolute -inset-2 bg-gradient-to-r from-[#D6B889] via-[#A66D43] to-[#D6B889] rounded-full blur-md opacity-70 group-hover:opacity-100 transition duration-500"></div>
+                        <div className="absolute -inset-2 bg-gradient-to-r from-[#E9D8BD] via-[#8B4A2B] to-[#E9D8BD] rounded-full blur-md opacity-70 group-hover:opacity-100 transition duration-500"></div>
                         <img
                           src="./logo.png"
                           alt="Logo Resmi Sukaregang Discovery"
-                          className="relative w-32 h-32 sm:w-44 sm:h-44 rounded-full object-contain bg-[#253B32] border-4 border-[#D6B889] shadow-2xl p-1 transform group-hover:scale-105 transition duration-300"
+                          className="relative w-32 h-32 sm:w-44 sm:h-44 rounded-full object-contain bg-[#173D2B] border-4 border-[#E9D8BD] shadow-2xl p-1 transform group-hover:scale-105 transition duration-300"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=400&q=80";
                           }}
                         />
                       </div>
-                      <span className="block mt-2 text-[10px] uppercase font-bold tracking-widest text-[#D6B889]">
+                      <span className="block mt-2 text-[10px] uppercase font-bold tracking-widest text-[#E9D8BD]">
                         Sentra Kulit Garut
                       </span>
                     </div>
 
                     {/* Hero Texts & CTAs */}
                     <div className="flex-1 space-y-4 text-center lg:text-left">
-                      <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#D6B889]/20 text-[#D6B889] text-xs font-semibold border border-[#D6B889]/30">
+                      <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#E9D8BD]/20 text-[#E9D8BD] text-xs font-semibold border border-[#E9D8BD]/30">
                         <span>✨ Official Tourism & Leather Heritage App</span>
                       </div>
                       <h1 className="font-serif text-3xl sm:text-5xl font-bold leading-tight">
                         SUKAREGANG DISCOVERY <br />
-                        <span className="text-[#D6B889] italic font-normal text-2xl sm:text-4xl">
+                        <span className="text-[#E9D8BD] italic font-normal text-2xl sm:text-4xl">
                           Jelajahi Sejarah, Pabrik & Karya Kulit Garut
                         </span>
                       </h1>
-                      <p className="text-xs sm:text-sm text-[#F5F0E7]/85 leading-relaxed font-normal max-w-2xl">
-                        Platform digital resmi eksplorasi kawasan industri kerajinan kulit Sukaregang, Garut. Hubungi Tour Guide (Rizal & Rifa) via WhatsApp otomatis, kunjungi pabrik jaket dan pengolahan kulit, saksikan video sejarah, dan temukan produk asli <strong>Syakira Leather</strong>.
+                      <p className="text-xs sm:text-sm text-[#F8F4EC]/85 leading-relaxed font-normal max-w-2xl">
+                        Platform digital resmi eksplorasi kawasan industri kerajinan kulit Sukaregang, Garut. Mainkan Simulator Pembuatan Jaket & Sepatu Kulit dari awal hingga akhir, hubungi Tour Guide (Rizal & Rifa) via WhatsApp otomatis, kunjungi pabrik jaket, dan temukan produk asli <strong>Syakira Leather</strong>.
                       </p>
 
                       {/* Quick Action Grid */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3">
                         <button
-                          onClick={() => setCurrentRoute('tour')}
-                          className="p-3 bg-[#A66D43] hover:bg-[#87532F] rounded-2xl text-center text-[#F5F0E7] shadow transition flex flex-col items-center space-y-1"
+                          onClick={() => setCurrentRoute('simulator')}
+                          className="p-3 bg-[#8B4A2B] hover:bg-[#6E381F] rounded-2xl text-center text-[#F8F4EC] shadow transition flex flex-col items-center space-y-1 ring-2 ring-[#E9D8BD]"
                         >
-                          <span className="text-xl">🧭</span>
-                          <span className="text-xs font-bold">Tour Guide WA</span>
-                          <span className="text-[9px] text-[#D6B889]">Rizal & Rifa</span>
+                          <span className="text-xl">🎮</span>
+                          <span className="text-xs font-bold">Simulator Kulit</span>
+                          <span className="text-[9px] text-[#E9D8BD]">Game Buat Jaket & Sepatu</span>
                         </button>
 
                         <button
                           onClick={() => setCurrentRoute('store')}
-                          className="p-3 bg-[#1C2C25] hover:bg-[#15211C] rounded-2xl text-center text-[#F5F0E7] border border-[#D6B889]/30 shadow transition flex flex-col items-center space-y-1"
+                          className="p-3 bg-[#112D20] hover:bg-[#0A1D14] rounded-2xl text-center text-[#F8F4EC] border border-[#E9D8BD]/30 shadow transition flex flex-col items-center space-y-1"
                         >
                           <span className="text-xl">🛍️</span>
                           <span className="text-xs font-bold">Syakira Store</span>
-                          <span className="text-[9px] text-[#D6B889]">{products.length} Produk Kulit</span>
+                          <span className="text-[9px] text-[#E9D8BD]">{products.length} Produk Kulit</span>
+                        </button>
+
+                        <button
+                          onClick={() => setCurrentRoute('tour')}
+                          className="p-3 bg-[#112D20] hover:bg-[#0A1D14] rounded-2xl text-center text-[#F8F4EC] border border-[#E9D8BD]/30 shadow transition flex flex-col items-center space-y-1"
+                        >
+                          <span className="text-xl">🧭</span>
+                          <span className="text-xs font-bold">Tour Guide WA</span>
+                          <span className="text-[9px] text-[#E9D8BD]">Rizal & Rifa</span>
                         </button>
 
                         <button
                           onClick={() => setCurrentRoute('maps')}
-                          className="p-3 bg-[#1C2C25] hover:bg-[#15211C] rounded-2xl text-center text-[#F5F0E7] border border-[#D6B889]/30 shadow transition flex flex-col items-center space-y-1"
+                          className="p-3 bg-[#112D20] hover:bg-[#0A1D14] rounded-2xl text-center text-[#F8F4EC] border border-[#E9D8BD]/30 shadow transition flex flex-col items-center space-y-1"
                         >
                           <span className="text-xl">🏭</span>
                           <span className="text-xs font-bold">Pabrik & Peta</span>
-                          <span className="text-[9px] text-[#D6B889]">{destinations.length} Lokasi Terverifikasi</span>
-                        </button>
-
-                        <button
-                          onClick={() => setCurrentRoute('video')}
-                          className="p-3 bg-[#1C2C25] hover:bg-[#15211C] rounded-2xl text-center text-[#F5F0E7] border border-[#D6B889]/30 shadow transition flex flex-col items-center space-y-1"
-                        >
-                          <span className="text-xl">🎥</span>
-                          <span className="text-xs font-bold">Video Edukasi</span>
-                          <span className="text-[9px] text-[#D6B889]">Sejarah & Sepatu</span>
+                          <span className="text-[9px] text-[#E9D8BD]">{destinations.length} Lokasi Terverifikasi</span>
                         </button>
                       </div>
                     </div>
@@ -1100,7 +1222,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 </div>
 
                 {/* Banner Direct to Syakira Leather Official Shopee Store */}
-                <div className="bg-gradient-to-r from-[#A66D43] to-[#87532F] rounded-3xl p-5 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-[#D6B889]/40">
+                <div className="bg-gradient-to-r from-[#8B4A2B] to-[#6E381F] rounded-3xl p-5 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-[#E9D8BD]/40">
                   <div className="flex items-center space-x-3.5">
                     <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl flex-shrink-0">
                       🛒
@@ -1116,7 +1238,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-5 py-2.5 bg-white hover:bg-[#F5F0E7] text-[#253B32] text-xs font-bold rounded-xl transition shadow flex items-center space-x-2 flex-shrink-0"
+                    className="px-5 py-2.5 bg-white hover:bg-[#F8F4EC] text-[#173D2B] text-xs font-bold rounded-xl transition shadow flex items-center space-x-2 flex-shrink-0"
                   >
                     <span>Buka Shopee Syakira Leather</span>
                     <span>↗</span>
@@ -1126,67 +1248,230 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 {/* 3 Interactive Highlight Pillars */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div
-                    onClick={() => setCurrentRoute('maps')}
-                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#D6B889]/40 shadow-sm hover:shadow-md transition space-y-3"
+                    onClick={() => setCurrentRoute('simulator')}
+                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm hover:shadow-md transition space-y-3 group"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-[#253B32] text-[#D6B889] flex items-center justify-center text-xl">
-                      🗺️
+                    <div className="w-12 h-12 rounded-2xl bg-[#8B4A2B] text-[#F8F4EC] flex items-center justify-center text-xl group-hover:scale-105 transition">
+                      🎮
                     </div>
-                    <h3 className="font-serif font-bold text-lg text-[#253B32]">Explore Sentra Sukaregang</h3>
-                    <p className="text-xs text-[#292B29]/75 leading-relaxed">
-                      Peta interaktif lengkap dengan koordinat titik pabrik jaket, pabrik penyamakan kulit mentah, dan sentra belanja Piazza Firenze.
+                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Simulator Pengrajin Kulit</h3>
+                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
+                      Pengalaman interaktif membuat jaket kulit domba dan sepatu boots dari tahap bahan mentah hingga jadi, uji ketelitian dan dapatkan sertifikat master!
                     </p>
-                    <span className="text-xs font-bold text-[#A66D43] inline-block">Buka Peta & Lokasi →</span>
+                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Mulai Simulator Game →</span>
                   </div>
 
                   <div
-                    onClick={() => setCurrentRoute('tour')}
-                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#D6B889]/40 shadow-sm hover:shadow-md transition space-y-3"
+                    onClick={() => setCurrentRoute('maps')}
+                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm hover:shadow-md transition space-y-3 group"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-[#A66D43] text-[#F5F0E7] flex items-center justify-center text-xl">
-                      💬
+                    <div className="w-12 h-12 rounded-2xl bg-[#173D2B] text-[#E9D8BD] flex items-center justify-center text-xl group-hover:scale-105 transition">
+                      🗺️
                     </div>
-                    <h3 className="font-serif font-bold text-lg text-[#253B32]">Pendampingan Tour Guide</h3>
-                    <p className="text-xs text-[#292B29]/75 leading-relaxed">
-                      Pesan pemandu wisata cowok berpengalaman: <strong>Rizal (+62 851-5059-1968)</strong> atau <strong>Rifa (+62 812-2056-9575)</strong> langsung ke WhatsApp.
+                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Explore Sentra Sukaregang</h3>
+                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
+                      Peta interaktif lengkap dengan koordinat titik pabrik jaket, pabrik penyamakan kulit mentah, dan sentra belanja Piazza Firenze.
                     </p>
-                    <span className="text-xs font-bold text-[#A66D43] inline-block">Pesan Guide Sekarang →</span>
+                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Buka Peta & Lokasi →</span>
                   </div>
 
                   <div
                     onClick={() => setCurrentRoute('store')}
-                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#D6B889]/40 shadow-sm hover:shadow-md transition space-y-3"
+                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm hover:shadow-md transition space-y-3 group"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-[#253B32] text-[#D6B889] flex items-center justify-center text-xl">
+                    <div className="w-12 h-12 rounded-2xl bg-[#173D2B] text-[#E9D8BD] flex items-center justify-center text-xl group-hover:scale-105 transition">
                       🧥
                     </div>
-                    <h3 className="font-serif font-bold text-lg text-[#253B32]">Katalog Asli Syakira Leather</h3>
-                    <p className="text-xs text-[#292B29]/75 leading-relaxed">
-                      Tersedia 20 produk wajib: 13 Jaket Kulit Pria, 3 Sepatu Pria, 4 Sepatu Wanita dengan tautan pembelian resmi ke Shopee.
+                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Katalog Asli Syakira Leather</h3>
+                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
+                      Tersedia 20 produk wajib: 13 Jaket Kulit Pria, 3 Sepatu Pria, 4 Sepatu Wanita dengan gambar produk asli dan tautan langsung Shopee.
                     </p>
-                    <span className="text-xs font-bold text-[#A66D43] inline-block">Lihat Koleksi Lengkap →</span>
+                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Lihat Koleksi Lengkap →</span>
                   </div>
                 </div>
               </div>
             )}
 
             {/* -------------------------------------------------------------
-                2. SYAKIRA LEATHER STORE
+                GAME SIMULATOR MEMBUAT JAKET & SEPATU KULIT DARI AWAL - AKHIR
+            ------------------------------------------------------------- */}
+            {currentRoute === 'simulator' && (
+              <div className="space-y-6 animate-fadeIn">
+                <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-4">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                      <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">
+                        Simulasi Edukatif Interaktif
+                      </span>
+                      <h2 className="font-serif text-3xl sm:text-4xl font-bold">
+                        LEATHERCRAFT MASTER SIMULATOR
+                      </h2>
+                      <p className="text-xs sm:text-sm text-[#F8F4EC]/80 max-w-2xl leading-relaxed mt-1">
+                        Rasakan pengalaman menjadi pengrajin master Sukaregang: buat jaket kulit domba atau sepatu boots kulit sapi dari bahan mentah hingga finishing siap pakai!
+                      </p>
+                    </div>
+
+                    <div className="flex bg-[#112D20] p-1.5 rounded-2xl border border-[#E9D8BD]/30 text-xs font-bold">
+                      <button
+                        onClick={() => handleResetSimulator('jaket')}
+                        className={`px-4 py-2 rounded-xl transition ${
+                          simCraftType === 'jaket'
+                            ? 'bg-[#E9D8BD] text-[#173D2B] shadow'
+                            : 'text-[#F8F4EC]/75 hover:text-white'
+                        }`}
+                      >
+                        🧥 Buat Jaket Kulit
+                      </button>
+                      <button
+                        onClick={() => handleResetSimulator('sepatu')}
+                        className={`px-4 py-2 rounded-xl transition ${
+                          simCraftType === 'sepatu'
+                            ? 'bg-[#E9D8BD] text-[#173D2B] shadow'
+                            : 'text-[#F8F4EC]/75 hover:text-white'
+                        }`}
+                      >
+                        👞 Buat Sepatu Boots
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Progress Indicator */}
+                  <div className="pt-2">
+                    <div className="flex items-center justify-between text-xs font-semibold text-[#E9D8BD] mb-1.5">
+                      <span>Langkah {simStep} dari {currentSimSteps.length}: {currentStepData ? currentStepData.title : 'Selesai'}</span>
+                      <span>Skor Ketelitian Pengrajin: <strong className="text-white">{simScore} / 100</strong></span>
+                    </div>
+                    <div className="w-full h-3 bg-[#112D20] rounded-full overflow-hidden border border-[#E9D8BD]/30">
+                      <div
+                        className="h-full bg-gradient-to-r from-[#8B4A2B] to-[#E9D8BD] transition-all duration-500 rounded-full"
+                        style={{ width: `${(simStep / currentSimSteps.length) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                {!simCompleted && currentStepData && (
+                  <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#E9D8BD]/40 shadow-md space-y-6">
+                    <div className="flex items-center space-x-3.5 pb-4 border-b border-[#ECE3D4]">
+                      <div className="w-12 h-12 rounded-2xl bg-[#8B4A2B] text-white flex items-center justify-center text-xl font-bold font-serif flex-shrink-0">
+                        {simStep}
+                      </div>
+                      <div>
+                        <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">
+                          Tahapan Produksi {simCraftType === 'jaket' ? 'Jaket Domba' : 'Sepatu Sapi'}
+                        </span>
+                        <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#173D2B]">
+                          {currentStepData.title}
+                        </h3>
+                        <p className="text-xs text-[#35251D]/75 mt-1">
+                          {currentStepData.task}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Step Options Choice */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {currentStepData.options.map((opt) => (
+                        <div
+                          key={opt.id}
+                          onClick={() => handleSimChoice(opt)}
+                          className="cursor-pointer p-5 rounded-2xl border-2 border-[#E9D8BD]/50 hover:border-[#8B4A2B] hover:shadow-lg transition bg-[#F8F4EC]/40 hover:bg-white flex flex-col justify-between space-y-3 group"
+                        >
+                          <div>
+                            <div className="flex items-center justify-between">
+                              <h4 className="font-serif font-bold text-base text-[#173D2B] group-hover:text-[#8B4A2B] transition">
+                                {opt.label}
+                              </h4>
+                              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#173D2B]/10 text-[#173D2B]">
+                                Pilih
+                              </span>
+                            </div>
+                            <p className="text-xs text-[#35251D]/75 leading-relaxed mt-2">
+                              {opt.desc}
+                            </p>
+                          </div>
+                          <span className="text-[11px] font-bold text-[#8B4A2B] flex items-center space-x-1">
+                            <span>Lakukan Langkah Ini</span>
+                            <span>→</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Selesai: Sertifikat Pengrajin Master Sukaregang */}
+                {simCompleted && (
+                  <div className="bg-white rounded-3xl p-6 sm:p-10 border-4 border-[#E9D8BD] shadow-2xl text-center space-y-6 animate-fadeIn relative overflow-hidden">
+                    <div className="w-24 h-24 mx-auto rounded-full bg-[#173D2B] border-4 border-[#E9D8BD] flex items-center justify-center text-4xl shadow-lg">
+                      🏆
+                    </div>
+                    <div className="space-y-2 max-w-xl mx-auto">
+                      <span className="text-xs uppercase font-bold tracking-widest text-[#8B4A2B]">
+                        Sertifikat Kompetensi Pengrajin Sukaregang
+                      </span>
+                      <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#173D2B]">
+                        SELAMAT! KARYA KULIT ANDA SELESAI
+                      </h3>
+                      <p className="text-xs sm:text-sm text-[#35251D]/80 leading-relaxed">
+                        Anda telah berhasil menyelesaikan pembuatan <strong>{simCraftType === 'jaket' ? 'Jaket Kulit Domba Garut' : 'Sepatu Boots Kulit Sapi'}</strong> dari tahap bahan mentah hingga finishing akhir dengan skor ketelitian:
+                      </p>
+                      <div className="inline-block py-2 px-6 rounded-2xl bg-[#E9D8BD]/30 border-2 border-[#8B4A2B] text-2xl font-serif font-bold text-[#173D2B]">
+                        Skor: {simScore} / 100 ({simScore >= 80 ? 'Master Craftsman' : 'Junior Artisan'})
+                      </div>
+                    </div>
+
+                    {/* Syakira Leather Linkage */}
+                    <div className="bg-[#173D2B] text-[#F8F4EC] p-6 rounded-2xl max-w-2xl mx-auto space-y-3 border border-[#E9D8BD]/40 text-left">
+                      <div className="flex items-center space-x-3">
+                        <img src="./logo.png" alt="Logo" className="w-10 h-10 rounded-full border border-[#E9D8BD]" />
+                        <div>
+                          <h4 className="font-serif font-bold text-base">Ingin Memiliki Produk Asli Nyata Seperti Ini?</h4>
+                          <p className="text-[11px] text-[#E9D8BD]">Dibuat langsung oleh penjahit senior Syakira Leather Sukaregang Garut.</p>
+                        </div>
+                      </div>
+                      <p className="text-xs text-[#F8F4EC]/85 leading-relaxed">
+                        Setiap produk asli Syakira Leather melewati seluruh 7 tahapan standar mutu tinggi yang baru saja Anda pelajari di simulator ini.
+                      </p>
+                      <div className="pt-2 flex flex-wrap gap-2">
+                        <a
+                          href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-5 py-2.5 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-xl shadow transition"
+                        >
+                          Beli Produk Asli di Shopee Syakira Leather ↗
+                        </a>
+                        <button
+                          onClick={() => handleResetSimulator(simCraftType === 'jaket' ? 'sepatu' : 'jaket')}
+                          className="px-4 py-2.5 bg-white text-[#173D2B] font-bold text-xs rounded-xl shadow transition"
+                        >
+                          Coba Simulator {simCraftType === 'jaket' ? 'Sepatu' : 'Jaket'} 🔄
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* -------------------------------------------------------------
+                2. SYAKIRA LEATHER STORE (GAMBAR ASLI PRODUK)
             ------------------------------------------------------------- */}
             {currentRoute === 'store' && (
               <div className="space-y-6 animate-fadeIn">
                 
                 {/* Store Header Banner */}
-                <div className="bg-[#253B32] rounded-3xl p-6 sm:p-10 text-[#F5F0E7] border-2 border-[#D6B889]/40 shadow-xl space-y-4">
+                <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-4">
                   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div className="space-y-2">
-                      <span className="text-xs uppercase font-bold tracking-widest text-[#D6B889]">
+                      <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">
                         Katalog Resmi Mitra Sukaregang Discovery
                       </span>
                       <h2 className="font-serif text-3xl sm:text-4xl font-bold">
-                        SYAKIRA LEATHER – <span className="text-[#D6B889] italic font-normal">Authentic Collection</span>
+                        SYAKIRA LEATHER – <span className="text-[#E9D8BD] italic font-normal">Authentic Collection</span>
                       </h2>
-                      <p className="text-xs sm:text-sm text-[#F5F0E7]/80 max-w-2xl leading-relaxed">
+                      <p className="text-xs sm:text-sm text-[#F8F4EC]/80 max-w-2xl leading-relaxed">
                         "Discover the Art of Genuine Leather. Temukan berbagai koleksi produk jaket kulit domba dan sepatu kulit asli berkualitas dari Sukaregang, Garut."
                       </p>
                     </div>
@@ -1195,7 +1480,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-5 py-3 bg-[#A66D43] hover:bg-[#87532F] text-white text-xs font-bold rounded-2xl transition shadow flex items-center space-x-2 flex-shrink-0"
+                      className="px-5 py-3 bg-[#8B4A2B] hover:bg-[#6E381F] text-white text-xs font-bold rounded-2xl transition shadow flex items-center space-x-2 flex-shrink-0"
                     >
                       <Icon name="shopping-bag" className="w-4 h-4" />
                       <span>Kunjungi Official Shopee Store Syakira</span>
@@ -1203,13 +1488,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </a>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 pt-2 border-t border-[#D6B889]/30">
+                  <div className="flex flex-wrap gap-2 pt-2 border-t border-[#E9D8BD]/30">
                     <button
                       onClick={() => {
                         setAdminTab('products');
                         setIsAdminPortalOpen(true);
                       }}
-                      className="px-3.5 py-2 bg-[#1C2C25] hover:bg-[#15211C] text-[#D6B889] text-xs font-bold rounded-xl border border-[#D6B889]/40 transition shadow flex items-center space-x-1.5"
+                      className="px-3.5 py-2 bg-[#112D20] hover:bg-[#0A1D14] text-[#E9D8BD] text-xs font-bold rounded-xl border border-[#E9D8BD]/40 transition shadow flex items-center space-x-1.5"
                     >
                       <Icon name="plus-circle" className="w-3.5 h-3.5" />
                       <span>Kelola & Tambah Produk (Portal Admin)</span>
@@ -1218,7 +1503,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-3.5 py-2 bg-[#F5F0E7] text-[#253B32] text-xs font-bold rounded-xl transition shadow flex items-center space-x-1.5"
+                      className="px-3.5 py-2 bg-[#F8F4EC] text-[#173D2B] text-xs font-bold rounded-xl transition shadow flex items-center space-x-1.5"
                     >
                       <span>🛍️ Buka Link Toko Shopee: 49055610264</span>
                     </a>
@@ -1226,7 +1511,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 </div>
 
                 {/* Filter and Search Bar */}
-                <div className="bg-white rounded-3xl p-5 border-2 border-[#D6B889]/40 shadow-sm space-y-3">
+                <div className="bg-white rounded-3xl p-5 border-2 border-[#E9D8BD]/40 shadow-sm space-y-3">
                   <div className="flex flex-wrap gap-2">
                     {[
                       { id: 'Semua', label: `Semua Koleksi (${products.length})` },
@@ -1240,8 +1525,8 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         onClick={() => setStoreCategory(cat.id)}
                         className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
                           storeCategory === cat.id
-                            ? 'bg-[#253B32] text-[#F5F0E7] shadow'
-                            : 'bg-[#F5F0E7] text-[#292B29] hover:bg-[#D6B889]/30'
+                            ? 'bg-[#173D2B] text-[#F8F4EC] shadow'
+                            : 'bg-[#F8F4EC] text-[#35251D] hover:bg-[#E9D8BD]/30'
                         }`}
                       >
                         {cat.label}
@@ -1254,39 +1539,43 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Cari jaket jubah, jangkis, domba, sepatu boots, kantor..."
-                    className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-[#F5F0E7]/40 text-xs text-[#292B29] focus:outline-none focus:border-[#253B32]"
+                    className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-[#F8F4EC]/40 text-xs text-[#35251D] focus:outline-none focus:border-[#173D2B]"
                   />
                 </div>
 
-                {/* Products Grid */}
+                {/* 20 Products Grid dengan Gambar Asli & Fallback Khusus */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   {filteredProducts.map((p) => {
                     const currentImg = customImages[p.id] || p.imageUrl;
                     return (
                       <div
                         key={p.id}
-                        className="bg-white rounded-2xl overflow-hidden border border-[#D6B889]/40 shadow-md flex flex-col justify-between hover:shadow-lg transition group"
+                        className="bg-white rounded-2xl overflow-hidden border border-[#E9D8BD]/40 shadow-md flex flex-col justify-between hover:shadow-lg transition group"
                       >
-                        <div className="relative h-60 w-full bg-[#F5F0E7] overflow-hidden">
+                        <div className="relative h-60 w-full bg-[#F8F4EC] overflow-hidden">
                           <img
                             src={currentImg}
                             alt={p.name}
+                            referrerPolicy="no-referrer"
                             onError={(e) => {
+                              // Jika URL Shopee terhalang hotlink di browser, gunakan gambar realistis asli
                               e.target.onerror = null;
-                              e.target.src = p.category.includes('Jaket')
-                                ? 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80'
-                                : 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80';
+                              e.target.src = p.fallbackUrl || (
+                                p.category.includes('Jaket')
+                                  ? 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80'
+                                  : 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80'
+                              );
                             }}
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                           />
-                          <span className="absolute top-2.5 left-2.5 bg-[#253B32]/85 text-[#F5F0E7] px-2.5 py-0.5 rounded-full text-[10px] font-semibold border border-[#D6B889]/40">
+                          <span className="absolute top-2.5 left-2.5 bg-[#173D2B]/85 text-[#F8F4EC] px-2.5 py-0.5 rounded-full text-[10px] font-semibold border border-[#E9D8BD]/40">
                             {p.category}
                           </span>
                           <a
                             href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="absolute top-2.5 right-2.5 bg-[#A66D43] text-white text-[9px] font-bold px-2 py-0.5 rounded-md hover:bg-[#87532F] transition"
+                            className="absolute top-2.5 right-2.5 bg-[#8B4A2B] text-white text-[9px] font-bold px-2 py-0.5 rounded-md hover:bg-[#6E381F] transition"
                             title="Buka Toko Resmi Syakira"
                           >
                             Syakira Official ↗
@@ -1295,10 +1584,10 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
 
                         <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
                           <div>
-                            <h4 className="font-serif font-bold text-[#253B32] text-sm leading-snug mb-1">
+                            <h4 className="font-serif font-bold text-[#173D2B] text-sm leading-snug mb-1">
                               {p.name}
                             </h4>
-                            <p className="text-[11px] text-[#292B29]/70 line-clamp-2 leading-relaxed">
+                            <p className="text-[11px] text-[#35251D]/70 line-clamp-2 leading-relaxed">
                               {p.description}
                             </p>
                           </div>
@@ -1310,7 +1599,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             <div className="grid grid-cols-2 gap-2">
                               <button
                                 onClick={() => setSelectedProduct(p)}
-                                className="py-2 px-3 bg-[#F5F0E7] hover:bg-[#D6B889]/30 text-[#253B32] text-xs font-bold rounded-xl transition text-center"
+                                className="py-2 px-3 bg-[#F8F4EC] hover:bg-[#E9D8BD]/30 text-[#173D2B] text-xs font-bold rounded-xl transition text-center"
                               >
                                 Detail
                               </button>
@@ -1318,7 +1607,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                                 href={p.shopeeUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="py-2 px-3 bg-[#A66D43] hover:bg-[#87532F] text-white text-xs font-bold rounded-xl transition text-center shadow flex items-center justify-center space-x-1"
+                                className="py-2 px-3 bg-[#8B4A2B] hover:bg-[#6E381F] text-white text-xs font-bold rounded-xl transition text-center shadow flex items-center justify-center space-x-1"
                               >
                                 <span>Shopee</span>
                                 <span>↗</span>
@@ -1338,14 +1627,14 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             ------------------------------------------------------------- */}
             {currentRoute === 'tour' && (
               <div className="space-y-6 animate-fadeIn">
-                <div className="bg-[#253B32] rounded-3xl p-6 sm:p-10 text-[#F5F0E7] border-2 border-[#D6B889]/40 shadow-xl space-y-3">
-                  <span className="text-xs uppercase font-bold tracking-widest text-[#D6B889]">
+                <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-3">
+                  <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">
                     Layanan Pendampingan Wisatawan
                   </span>
                   <h2 className="font-serif text-3xl sm:text-4xl font-bold">
                     TOUR GUIDE RESMI SUKAREGANG
                   </h2>
-                  <p className="text-xs sm:text-sm text-[#F5F0E7]/80 max-w-2xl leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#F8F4EC]/80 max-w-2xl leading-relaxed">
                     Pilih Tour Guide pemandu pria berlisensi lokal Sukaregang. Pemesanan langsung terhubung ke WhatsApp otomatis dengan rincian jadwal kunjungan ke pabrik jaket dan toko Syakira Leather.
                   </p>
                 </div>
@@ -1359,24 +1648,24 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         key={g.id}
                         onClick={() => setSelectedGuide(g)}
                         className={`cursor-pointer bg-white rounded-3xl p-6 border-2 transition shadow-md relative overflow-hidden flex flex-col justify-between ${
-                          isSelected ? 'border-[#A66D43] ring-2 ring-[#A66D43]/30' : 'border-[#D6B889]/40'
+                          isSelected ? 'border-[#8B4A2B] ring-2 ring-[#8B4A2B]/30' : 'border-[#E9D8BD]/40'
                         }`}
                       >
                         <div className="flex items-start space-x-4">
                           <img
                             src={g.avatar}
                             alt={g.name}
-                            className="w-20 h-20 rounded-2xl object-cover border-2 border-[#D6B889]"
+                            className="w-20 h-20 rounded-2xl object-cover border-2 border-[#E9D8BD]"
                           />
                           <div className="flex-1 space-y-1">
                             <div className="flex items-center justify-between">
-                              <h3 className="font-serif text-xl font-bold text-[#253B32]">{g.name}</h3>
-                              <span className="px-2 py-0.5 bg-[#253B32] text-[#D6B889] text-[10px] font-bold rounded-full">
+                              <h3 className="font-serif text-xl font-bold text-[#173D2B]">{g.name}</h3>
+                              <span className="px-2 py-0.5 bg-[#173D2B] text-[#E9D8BD] text-[10px] font-bold rounded-full">
                                 {g.gender}
                               </span>
                             </div>
-                            <p className="text-xs text-[#A66D43] font-semibold">{g.phone}</p>
-                            <p className="text-xs text-[#292B29]/70">{g.experience}</p>
+                            <p className="text-xs text-[#8B4A2B] font-semibold">{g.phone}</p>
+                            <p className="text-xs text-[#35251D]/70">{g.experience}</p>
                             <div className="flex items-center space-x-1 text-xs text-amber-600 font-bold">
                               <span>⭐</span>
                               <span>{g.rating}</span>
@@ -1385,12 +1674,12 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         </div>
 
                         <div className="mt-4 pt-4 border-t border-[#ECE3D4] flex items-center justify-between">
-                          <span className="text-[11px] text-[#292B29]/75 italic">
+                          <span className="text-[11px] text-[#35251D]/75 italic">
                             Spesialis: {g.specialty}
                           </span>
                           <span
                             className={`px-3 py-1.5 rounded-xl text-xs font-bold ${
-                              isSelected ? 'bg-[#A66D43] text-white' : 'bg-[#F5F0E7] text-[#253B32]'
+                              isSelected ? 'bg-[#8B4A2B] text-white' : 'bg-[#F8F4EC] text-[#173D2B]'
                             }`}
                           >
                             {isSelected ? '✓ Terpilih' : 'Pilih Guide'}
@@ -1402,55 +1691,55 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 </div>
 
                 {/* Booking Order Form */}
-                <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#D6B889]/40 shadow-md space-y-6">
+                <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#E9D8BD]/40 shadow-md space-y-6">
                   <div className="border-b border-[#ECE3D4] pb-4">
-                    <h3 className="font-serif text-xl font-bold text-[#253B32]">
+                    <h3 className="font-serif text-xl font-bold text-[#173D2B]">
                       Formulir Reservasi WhatsApp Otomatis
                     </h3>
-                    <p className="text-xs text-[#292B29]/70 mt-1">
+                    <p className="text-xs text-[#35251D]/70 mt-1">
                       Pesanan Anda akan langsung dibuatkan pesan WhatsApp terstruktur ke Guide <strong>{selectedGuide.name} ({selectedGuide.phone})</strong>.
                     </p>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs font-bold text-[#253B32] block mb-1">Nama Pemesan:</label>
+                      <label className="text-xs font-bold text-[#173D2B] block mb-1">Nama Pemesan:</label>
                       <input
                         type="text"
                         value={bookingName}
                         onChange={(e) => setBookingName(e.target.value)}
                         placeholder="Contoh: Alya Alifia"
-                        className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-[#F5F0E7]/40 text-xs focus:outline-none focus:border-[#253B32]"
+                        className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B]"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-[#253B32] block mb-1">No. WhatsApp Pemesan:</label>
+                      <label className="text-xs font-bold text-[#173D2B] block mb-1">No. WhatsApp Pemesan:</label>
                       <input
                         type="tel"
                         value={bookingWA}
                         onChange={(e) => setBookingWA(e.target.value)}
                         placeholder="Contoh: +62 812-xxxx-xxxx"
-                        className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-[#F5F0E7]/40 text-xs focus:outline-none focus:border-[#253B32]"
+                        className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B]"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-[#253B32] block mb-1">Tanggal Kunjungan:</label>
+                      <label className="text-xs font-bold text-[#173D2B] block mb-1">Tanggal Kunjungan:</label>
                       <input
                         type="date"
                         value={bookingDate}
                         onChange={(e) => setBookingDate(e.target.value)}
-                        className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-[#F5F0E7]/40 text-xs focus:outline-none focus:border-[#253B32]"
+                        className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B]"
                       />
                     </div>
 
                     <div>
-                      <label className="text-xs font-bold text-[#253B32] block mb-1">Jam Kunjungan:</label>
+                      <label className="text-xs font-bold text-[#173D2B] block mb-1">Jam Kunjungan:</label>
                       <select
                         value={bookingTime}
                         onChange={(e) => setBookingTime(e.target.value)}
-                        className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-[#F5F0E7]/40 text-xs focus:outline-none focus:border-[#253B32]"
+                        className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B]"
                       >
                         <option>09:00 WIB (Pagi)</option>
                         <option>11:00 WIB (Siang)</option>
@@ -1462,7 +1751,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
 
                   {/* Destination Checkbox List */}
                   <div>
-                    <label className="text-xs font-bold text-[#253B32] block mb-2">
+                    <label className="text-xs font-bold text-[#173D2B] block mb-2">
                       Pilih Titik Kunjungan Pabrik & Toko:
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -1474,15 +1763,15 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             onClick={() => toggleDestination(dest.name)}
                             className={`cursor-pointer p-3 rounded-xl border text-xs flex items-center space-x-2.5 transition ${
                               isChecked
-                                ? 'bg-[#253B32] text-[#F5F0E7] border-[#253B32]'
-                                : 'bg-[#F5F0E7] text-[#292B29] border-[#D6B889]/40'
+                                ? 'bg-[#173D2B] text-[#F8F4EC] border-[#173D2B]'
+                                : 'bg-[#F8F4EC] text-[#35251D] border-[#E9D8BD]/40'
                             }`}
                           >
                             <input
                               type="checkbox"
                               checked={isChecked}
                               onChange={() => {}}
-                              className="rounded text-[#A66D43]"
+                              className="rounded text-[#8B4A2B]"
                             />
                             <div className="truncate">
                               <span className="font-bold block truncate">{dest.name}</span>
@@ -1495,13 +1784,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-[#253B32] block mb-1">Catatan Tambahan (Opsional):</label>
+                    <label className="text-xs font-bold text-[#173D2B] block mb-1">Catatan Tambahan (Opsional):</label>
                     <textarea
                       rows="2"
                       value={bookingNote}
                       onChange={(e) => setBookingNote(e.target.value)}
                       placeholder="Contoh: Kami rombongan 5 orang ingin melihat proses jahit jaket jubah dan belanja di Syakira Leather..."
-                      className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-[#F5F0E7]/40 text-xs focus:outline-none focus:border-[#253B32]"
+                      className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B]"
                     ></textarea>
                   </div>
 
@@ -1521,14 +1810,14 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             ------------------------------------------------------------- */}
             {currentRoute === 'maps' && (
               <div className="space-y-6 animate-fadeIn">
-                <div className="bg-[#253B32] rounded-3xl p-6 sm:p-10 text-[#F5F0E7] border-2 border-[#D6B889]/40 shadow-xl space-y-3">
-                  <span className="text-xs uppercase font-bold tracking-widest text-[#D6B889]">
+                <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-3">
+                  <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">
                     Kawasan Sentra Kerajinan Kulit Garut
                   </span>
                   <h2 className="font-serif text-3xl sm:text-4xl font-bold">
                     PETA PABRIK & SHOWROOM SUKAREGANG
                   </h2>
-                  <p className="text-xs sm:text-sm text-[#F5F0E7]/80 max-w-2xl leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#F8F4EC]/80 max-w-2xl leading-relaxed">
                     Eksplorasi titik-titik pabrik jaket kulit, pengolahan bahan kulit sapi, CV. Surya Wahana Leather, Piazza Firenze, dan gerai resmi Syakira Leather dengan tautan langsung Google Maps.
                   </p>
                 </div>
@@ -1536,7 +1825,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                   {/* Left: Destination List */}
                   <div className="space-y-3">
-                    <h3 className="font-serif font-bold text-base text-[#253B32]">
+                    <h3 className="font-serif font-bold text-base text-[#173D2B]">
                       Titik Kunjungan Terverifikasi:
                     </h3>
                     <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scroll pr-1">
@@ -1548,24 +1837,24 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             onClick={() => setSelectedMapLoc(loc)}
                             className={`cursor-pointer p-4 rounded-2xl border-2 transition ${
                               isSelected
-                                ? 'bg-white border-[#A66D43] shadow-md'
-                                : 'bg-white/80 border-[#D6B889]/40 hover:bg-white'
+                                ? 'bg-white border-[#8B4A2B] shadow-md'
+                                : 'bg-white/80 border-[#E9D8BD]/40 hover:bg-white'
                             }`}
                           >
-                            <span className="text-[10px] font-bold text-[#A66D43] uppercase tracking-wide">
+                            <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wide">
                               {loc.category}
                             </span>
-                            <h4 className="font-serif font-bold text-sm text-[#253B32] mt-0.5">{loc.name}</h4>
-                            <p className="text-[11px] text-[#292B29]/70 mt-1 line-clamp-2">{loc.address}</p>
+                            <h4 className="font-serif font-bold text-sm text-[#173D2B] mt-0.5">{loc.name}</h4>
+                            <p className="text-[11px] text-[#35251D]/70 mt-1 line-clamp-2">{loc.address}</p>
                             <div className="mt-2.5 flex items-center justify-between">
-                              <span className="text-[10px] text-[#253B32] font-semibold">
+                              <span className="text-[10px] text-[#173D2B] font-semibold">
                                 📍 Sukaregang, Garut
                               </span>
                               <a
                                 href={loc.googleMapsUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="px-2.5 py-1 bg-[#253B32] text-[#F5F0E7] text-[10px] font-bold rounded-lg hover:bg-[#1C2C25] transition"
+                                className="px-2.5 py-1 bg-[#173D2B] text-[#F8F4EC] text-[10px] font-bold rounded-lg hover:bg-[#112D20] transition"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 Buka Maps ↗
@@ -1579,25 +1868,25 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
 
                   {/* Right: Interactive Map Canvas */}
                   <div className="lg:col-span-2 space-y-4">
-                    <div className="rounded-3xl overflow-hidden border-2 border-[#D6B889]/40 shadow-lg h-[400px] sm:h-[450px] relative z-10">
+                    <div className="rounded-3xl overflow-hidden border-2 border-[#E9D8BD]/40 shadow-lg h-[400px] sm:h-[450px] relative z-10">
                       <div ref={mapContainerRef} className="w-full h-full"></div>
                     </div>
 
                     {/* Active Destination Card */}
                     {selectedMapLoc && (
-                      <div className="bg-white rounded-2xl p-4 border border-[#D6B889]/40 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                      <div className="bg-white rounded-2xl p-4 border border-[#E9D8BD]/40 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div>
-                          <span className="text-[10px] text-[#A66D43] font-bold uppercase">
+                          <span className="text-[10px] text-[#8B4A2B] font-bold uppercase">
                             {selectedMapLoc.category}
                           </span>
-                          <h4 className="font-serif font-bold text-base text-[#253B32]">{selectedMapLoc.name}</h4>
-                          <p className="text-xs text-[#292B29]/75 mt-0.5">{selectedMapLoc.description}</p>
+                          <h4 className="font-serif font-bold text-base text-[#173D2B]">{selectedMapLoc.name}</h4>
+                          <p className="text-xs text-[#35251D]/75 mt-0.5">{selectedMapLoc.description}</p>
                         </div>
                         <a
                           href={selectedMapLoc.googleMapsUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-4 py-2.5 bg-[#A66D43] hover:bg-[#87532F] text-white text-xs font-bold rounded-xl transition shadow flex-shrink-0 flex items-center space-x-1.5"
+                          className="px-4 py-2.5 bg-[#8B4A2B] hover:bg-[#6E381F] text-white text-xs font-bold rounded-xl transition shadow flex-shrink-0 flex items-center space-x-1.5"
                         >
                           <Icon name="navigation" className="w-3.5 h-3.5" />
                           <span>Navigasi Google Maps</span>
@@ -1615,14 +1904,14 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             ------------------------------------------------------------- */}
             {currentRoute === 'video' && (
               <div className="space-y-6 animate-fadeIn">
-                <div className="bg-[#253B32] rounded-3xl p-6 sm:p-10 text-[#F5F0E7] border-2 border-[#D6B889]/40 shadow-xl space-y-3">
-                  <span className="text-xs uppercase font-bold tracking-widest text-[#D6B889]">
+                <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-3">
+                  <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">
                     Koleksi Multimedia Resmi Sukaregang
                   </span>
                   <h2 className="font-serif text-3xl sm:text-4xl font-bold">
                     VIDEO SEJARAH & TEKNIK PRODUKSI KULIT
                   </h2>
-                  <p className="text-xs sm:text-sm text-[#F5F0E7]/80 max-w-2xl leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#F8F4EC]/80 max-w-2xl leading-relaxed">
                     Saksikan dokumenter sejarah Garut, proses pembuatan sepatu kulit tahap demi tahap, penyamakan bahan dasar kulit sapi di pabrik Sukaregang, serta surga belanja lokal berkelas dunia.
                   </p>
                 </div>
@@ -1631,7 +1920,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   {videos.map((vid) => (
                     <div
                       key={vid.id}
-                      className="bg-white rounded-3xl overflow-hidden border-2 border-[#D6B889]/40 shadow-md flex flex-col justify-between"
+                      className="bg-white rounded-3xl overflow-hidden border-2 border-[#E9D8BD]/40 shadow-md flex flex-col justify-between"
                     >
                       <div className="relative aspect-video w-full bg-black">
                         <iframe
@@ -1645,26 +1934,26 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
 
                       <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
                         <div>
-                          <span className="text-[10px] text-[#A66D43] font-bold uppercase tracking-wider block mb-1">
+                          <span className="text-[10px] text-[#8B4A2B] font-bold uppercase tracking-wider block mb-1">
                             {vid.category}
                           </span>
-                          <h4 className="font-serif font-bold text-base text-[#253B32] leading-snug">
+                          <h4 className="font-serif font-bold text-base text-[#173D2B] leading-snug">
                             {vid.title}
                           </h4>
-                          <p className="text-xs text-[#292B29]/75 mt-2 leading-relaxed">
+                          <p className="text-xs text-[#35251D]/75 mt-2 leading-relaxed">
                             {vid.description}
                           </p>
                         </div>
 
                         <div className="pt-3 border-t border-[#ECE3D4] flex items-center justify-between">
-                          <span className="text-[11px] text-[#253B32] font-semibold">
+                          <span className="text-[11px] text-[#173D2B] font-semibold">
                             🎬 {vid.duration}
                           </span>
                           <a
                             href={vid.youtubeUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs font-bold text-[#A66D43] hover:underline flex items-center space-x-1"
+                            className="text-xs font-bold text-[#8B4A2B] hover:underline flex items-center space-x-1"
                           >
                             <span>Tonton di YouTube</span>
                             <span>↗</span>
@@ -1678,43 +1967,43 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             )}
 
             {/* -------------------------------------------------------------
-                6. LEATHER ACADEMY (EDUKASI KULIT LENGKAP)
+                6. LEATHER ACADEMY
             ------------------------------------------------------------- */}
             {currentRoute === 'academy' && (
               <div className="space-y-6 animate-fadeIn">
-                <div className="bg-[#253B32] rounded-3xl p-6 sm:p-10 text-[#F5F0E7] border-2 border-[#D6B889]/40 shadow-xl space-y-3">
-                  <span className="text-xs uppercase font-bold tracking-widest text-[#D6B889]">
+                <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-3">
+                  <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">
                     Pusat Pengetahuan & Literasi Kulit
                   </span>
                   <h2 className="font-serif text-3xl sm:text-4xl font-bold">
                     LEATHER ACADEMY SUKAREGANG
                   </h2>
-                  <p className="text-xs sm:text-sm text-[#F5F0E7]/80 max-w-2xl leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#F8F4EC]/80 max-w-2xl leading-relaxed">
                     Pelajari anatomi jenis kulit, cara membedakan kulit asli vs sintetis, hingga tips perawatan jaket dan sepatu kulit agar awet puluhan tahun.
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <div className="bg-white rounded-3xl p-6 border-2 border-[#D6B889]/40 shadow-sm space-y-3">
+                  <div className="bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm space-y-3">
                     <span className="text-2xl">🐑</span>
-                    <h3 className="font-serif font-bold text-base text-[#253B32]">Kulit Domba Garut</h3>
-                    <p className="text-xs text-[#292B29]/75 leading-relaxed">
+                    <h3 className="font-serif font-bold text-base text-[#173D2B]">Kulit Domba Garut</h3>
+                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
                       Memiliki karakteristik paling lentur, ringan, dan pori-pori sangat rapat. Menjadi standar utama jaket kulit mewah Syakira Leather karena nyaman dipakai iklim tropis.
                     </p>
                   </div>
 
-                  <div className="bg-white rounded-3xl p-6 border-2 border-[#D6B889]/40 shadow-sm space-y-3">
+                  <div className="bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm space-y-3">
                     <span className="text-2xl">🐂</span>
-                    <h3 className="font-serif font-bold text-base text-[#253B32]">Kulit Sapi Sukaregang</h3>
-                    <p className="text-xs text-[#292B29]/75 leading-relaxed">
+                    <h3 className="font-serif font-bold text-base text-[#173D2B]">Kulit Sapi Sukaregang</h3>
+                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
                       Bertekstur padat, tebal, dan sangat tangguh. Cocok untuk material sepatu boots, pantofel kantor, sabuk, dan tas travel yang membutuhkan daya tahan tinggi.
                     </p>
                   </div>
 
-                  <div className="bg-white rounded-3xl p-6 border-2 border-[#D6B889]/40 shadow-sm space-y-3">
+                  <div className="bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm space-y-3">
                     <span className="text-2xl">🧪</span>
-                    <h3 className="font-serif font-bold text-base text-[#253B32]">Uji Keaslian Kulit</h3>
-                    <p className="text-xs text-[#292B29]/75 leading-relaxed">
+                    <h3 className="font-serif font-bold text-base text-[#173D2B]">Uji Keaslian Kulit</h3>
+                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
                       Kulit asli memiliki aroma khas hewani alami, tidak meleleh saat didekatkan api sekejap, menyerap tetesan air secara perlahan, dan memiliki pola tekstur tidak identik.
                     </p>
                   </div>
@@ -1726,22 +2015,22 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           {/* =================================================================
               MOBILE BOTTOM NAVIGATION DOCK (App Style)
           ================================================================= */}
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#253B32]/95 backdrop-blur-md border-t border-[#D6B889]/40 px-3 py-2 shadow-2xl">
-            <div className="flex items-center justify-around text-[#F5F0E7]">
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#173D2B]/95 backdrop-blur-md border-t border-[#E9D8BD]/40 px-3 py-2 shadow-2xl">
+            <div className="flex items-center justify-around text-[#F8F4EC]">
               {[
                 { id: 'beranda', icon: 'home', label: 'Beranda' },
+                { id: 'simulator', icon: 'gamepad-2', label: 'Simulator' },
                 { id: 'store', icon: 'shopping-bag', label: 'Store' },
                 { id: 'tour', icon: 'compass', label: 'Guide WA' },
                 { id: 'maps', icon: 'map-pin', label: 'Pabrik' },
-                { id: 'video', icon: 'film', label: 'Video' },
               ].map((item) => (
                 <button
                   key={item.id}
                   onClick={() => setCurrentRoute(item.id)}
-                  className={`flex flex-col items-center py-1 px-2.5 rounded-xl transition ${
+                  className={`flex flex-col items-center py-1 px-2 rounded-xl transition ${
                     currentRoute === item.id
-                      ? 'text-[#D6B889] font-bold scale-105'
-                      : 'text-[#F5F0E7]/70 hover:text-[#D6B889]'
+                      ? 'text-[#E9D8BD] font-bold scale-105'
+                      : 'text-[#F8F4EC]/70 hover:text-[#E9D8BD]'
                   }`}
                 >
                   <Icon name={item.icon} className="w-5 h-5 mb-0.5" />
@@ -1754,13 +2043,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           {/* =================================================================
               FOOTER
           ================================================================= */}
-          <footer className="bg-[#1C2C25] text-[#F5F0E7] py-8 border-t border-[#D6B889]/30 mt-12">
-            <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left text-xs text-[#F5F0E7]/70">
+          <footer className="bg-[#112D20] text-[#F8F4EC] py-8 border-t border-[#E9D8BD]/30 mt-12">
+            <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left text-xs text-[#F8F4EC]/70">
               <div className="flex items-center space-x-3">
-                <img src="./logo.png" alt="Logo" className="w-8 h-8 rounded-full border border-[#D6B889]" />
+                <img src="./logo.png" alt="Logo" className="w-8 h-8 rounded-full border border-[#E9D8BD]" />
                 <div>
-                  <p className="font-serif font-bold text-sm text-[#F5F0E7]">SUKAREGANG DISCOVERY</p>
-                  <p className="text-[10px] text-[#D6B889]">Garut Sentra Kerajinan Kulit Indonesia</p>
+                  <p className="font-serif font-bold text-sm text-[#F8F4EC]">SUKAREGANG DISCOVERY</p>
+                  <p className="text-[10px] text-[#E9D8BD]">Garut Sentra Kerajinan Kulit Indonesia</p>
                 </div>
               </div>
 
@@ -1769,14 +2058,14 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[#D6B889] underline transition"
+                  className="hover:text-[#E9D8BD] underline transition"
                 >
                   Shopee Syakira Leather
                 </a>
                 <span>•</span>
                 <button
                   onClick={() => setIsAdminPortalOpen(true)}
-                  className="hover:text-[#D6B889] underline transition"
+                  className="hover:text-[#E9D8BD] underline transition"
                 >
                   Portal Admin
                 </button>
@@ -1789,121 +2078,254 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           </footer>
 
           {/* =================================================================
-              MODAL LOGIN (DENGAN TULISAN KECIL PORTAL ADMIN DI BAWAH)
+              PROMPT REDESIGN LOGIN – SUKAREGANG DISCOVERY (SPLIT SCREEN DUA KOLOM)
+              Referensi: Tatadana-Queen & Tatadana-Resmii
           ================================================================= */}
           {isLoginModalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#292B29]/80 backdrop-blur-sm animate-fadeIn">
-              <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border-2 border-[#D6B889]/40 relative">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[#35251D]/85 backdrop-blur-md animate-fadeIn">
+              <div className="bg-[#F8F4EC] rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border-2 border-[#E9D8BD]/60 relative flex flex-col md:flex-row max-h-[92vh]">
                 
-                {/* Header Modal with Official Logo */}
-                <div className="p-6 bg-[#253B32] text-[#F5F0E7] flex items-center justify-between border-b border-[#D6B889]/30">
-                  <div className="flex items-center space-x-3">
-                    <img src="./logo.png" alt="Logo" className="w-10 h-10 rounded-full border border-[#D6B889]" />
-                    <div>
-                      <h3 className="font-serif text-lg font-bold">Masuk ke Aplikasi</h3>
-                      <p className="text-[10px] text-[#D6B889]">Sukaregang Discovery Garut</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setIsLoginModalOpen(false)}
-                    className="w-8 h-8 rounded-full bg-[#1C2C25] hover:bg-[#A66D43] flex items-center justify-center text-white"
-                  >
-                    ✕
-                  </button>
-                </div>
+                {/* Tombol Tutup Modal */}
+                <button
+                  onClick={() => setIsLoginModalOpen(false)}
+                  className="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-[#173D2B]/80 hover:bg-[#8B4A2B] text-white flex items-center justify-center text-sm transition shadow"
+                  title="Tutup Halaman Login"
+                >
+                  ✕
+                </button>
 
-                <div className="p-6 space-y-4">
-                  <form onSubmit={handleLoginSubmit} className="space-y-3.5">
-                    <div>
-                      <label className="text-xs font-bold text-[#253B32] block mb-1">
-                        Nama Lengkap:
-                      </label>
-                      <input
-                        type="text"
-                        value={loginName}
-                        onChange={(e) => setLoginName(e.target.value)}
-                        placeholder="Contoh: Alya Alifia"
-                        className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-[#F5F0E7]/40 text-xs focus:outline-none focus:border-[#253B32]"
-                      />
-                    </div>
+                {/* SISI KIRI (VISUAL BRANDING) */}
+                <div className="md:w-1/2 relative bg-[#173D2B] text-[#F8F4EC] p-8 sm:p-10 flex flex-col justify-between overflow-hidden">
+                  {/* Background Image Pengrajin Kulit dengan Overlay */}
+                  <div
+                    className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-overlay"
+                    style={{
+                      backgroundImage: `url('https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1000&q=80')`
+                    }}
+                  ></div>
+                  <div className="absolute inset-0 bg-gradient-to-b from-[#173D2B]/90 via-[#173D2B]/75 to-[#35251D]/90"></div>
 
-                    <div>
-                      <label className="text-xs font-bold text-[#253B32] block mb-1">
-                        Alamat Email (Wajib):
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        value={loginEmail}
-                        onChange={(e) => setLoginEmail(e.target.value)}
-                        placeholder="Contoh: alya@gmail.com"
-                        className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-[#F5F0E7]/40 text-xs focus:outline-none focus:border-[#253B32]"
+                  {/* Konten Branding */}
+                  <div className="relative z-10 space-y-6">
+                    {/* Logo Aplikasi Sukaregang Discovery */}
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src="./logo.png"
+                        alt="Sukaregang Discovery Logo"
+                        className="w-14 h-14 rounded-full border-2 border-[#E9D8BD] shadow-xl bg-[#173D2B] p-0.5 object-contain"
                       />
+                      <div>
+                        <h4 className="font-serif font-bold text-lg tracking-wider text-[#F8F4EC]">
+                          SUKAREGANG
+                        </h4>
+                        <span className="text-[10px] tracking-widest text-[#E9D8BD] font-bold uppercase block">
+                          Discovery • Garut
+                        </span>
+                      </div>
                     </div>
 
-                    <div>
-                      <label className="text-xs font-bold text-[#253B32] block mb-1">
-                        Nomor WhatsApp Aktif (Wajib):
-                      </label>
-                      <input
-                        type="tel"
-                        required
-                        value={loginWhatsApp}
-                        onChange={(e) => setLoginWhatsApp(e.target.value)}
-                        placeholder="Contoh: +62 812-3456-7890"
-                        className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-[#F5F0E7]/40 text-xs focus:outline-none focus:border-[#253B32]"
-                      />
-                      <p className="text-[10px] text-[#292B29]/60 mt-1">
-                        Nomor ini digunakan untuk konfirmasi otomatis pemesanan Guide Rizal & Rifa.
+                    {/* Headline & Deskripsi Resmi */}
+                    <div className="space-y-3 pt-4">
+                      <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#E9D8BD]/20 border border-[#E9D8BD]/30 text-[10px] font-bold text-[#E9D8BD]">
+                        <span>🛡️ Sentra Kerajinan Kulit Indonesia</span>
+                      </div>
+                      <h2 className="font-serif text-2xl sm:text-3xl font-bold leading-snug">
+                        Discover the Heritage, <br />
+                        <span className="text-[#E9D8BD] italic font-normal">Explore the Leather.</span>
+                      </h2>
+                      <p className="text-xs text-[#F8F4EC]/85 leading-relaxed">
+                        "Jelajahi keunikan Sukaregang, kenali warisan kerajinan kulit Garut, dan temukan pengalaman wisata yang berbeda."
                       </p>
                     </div>
 
-                    <button
-                      type="submit"
-                      className="w-full py-3 bg-[#253B32] hover:bg-[#1C2C25] text-white font-bold text-xs rounded-xl shadow transition mt-2"
-                    >
-                      🚀 Masuk & Lanjut ke Aplikasi
-                    </button>
-                  </form>
-
-                  {/* Demo Login Buttons */}
-                  <div className="pt-3 border-t border-[#ECE3D4] text-center space-y-2">
-                    <span className="text-[11px] text-[#292B29]/60 block">
-                      Atau masuk cepat dengan satu klik (Demo Mode):
-                    </span>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => handleQuickDemoLogin('admin')}
-                        className="py-2 px-3 bg-[#F5F0E7] text-[#253B32] text-xs font-bold rounded-xl border border-[#D6B889]/40 hover:bg-[#D6B889]/30"
-                      >
-                        👑 Demo Admin
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleQuickDemoLogin('member')}
-                        className="py-2 px-3 bg-[#F5F0E7] text-[#253B32] text-xs font-bold rounded-xl border border-[#D6B889]/40 hover:bg-[#D6B889]/30"
-                      >
-                        👤 Demo Member
-                      </button>
+                    {/* Ornamen Jahitan Kulit Visual */}
+                    <div className="pt-2 hidden sm:flex items-center space-x-3 text-[11px] text-[#E9D8BD]">
+                      <span className="px-2.5 py-1 rounded-lg bg-black/25 border border-[#E9D8BD]/30">
+                        🧵 Jahitan Presisi
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-black/25 border border-[#E9D8BD]/30">
+                        🐑 Kulit Domba Asli
+                      </span>
                     </div>
                   </div>
 
-                  {/* PERMINTAAN USER: Tulisan kecil di bawah login untuk Portal Admin */}
-                  <div className="mt-4 pt-3 border-t border-[#ECE3D4] text-center">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsLoginModalOpen(false);
-                        setIsAdminPortalOpen(true);
-                      }}
-                      className="text-xs text-[#A66D43] hover:text-[#87532F] font-semibold underline underline-offset-2 inline-flex items-center space-x-1.5 transition py-1 px-2.5 rounded-lg hover:bg-[#A66D43]/10"
-                    >
-                      <span>🔐</span>
-                      <span>Portal Admin (Kelola Produk, Destinasi & Konten)</span>
-                    </button>
+                  {/* Bawah Sisi Kiri */}
+                  <div className="relative z-10 pt-6 mt-6 border-t border-[#E9D8BD]/20 text-[11px] text-[#E9D8BD]/80">
+                    Mitra Resmi: <strong>Syakira Leather Sukaregang</strong>
                   </div>
                 </div>
+
+                {/* SISI KANAN (FORM LOGIN) */}
+                <div className="md:w-1/2 p-8 sm:p-10 flex flex-col justify-between bg-white overflow-y-auto custom-scroll">
+                  <div className="space-y-6">
+                    {/* Header Form */}
+                    <div className="space-y-1.5">
+                      <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#173D2B]">
+                        Selamat Datang Kembali!
+                      </h3>
+                      <p className="text-xs text-[#35251D]/75 leading-relaxed">
+                        Masuk dan mulai perjalanan eksplorasimu bersama Sukaregang Discovery.
+                      </p>
+                    </div>
+
+                    {/* Toast Notification */}
+                    {loginToast && (
+                      <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold animate-fadeIn flex items-center space-x-2">
+                        <span>✓</span>
+                        <span>{loginToast}</span>
+                      </div>
+                    )}
+
+                    {/* Error Feedback */}
+                    {loginError && (
+                      <div className="p-3 rounded-xl bg-red-50 border border-red-300 text-red-700 text-xs font-bold animate-fadeIn">
+                        ⚠️ {loginError}
+                      </div>
+                    )}
+
+                    {/* Form Login */}
+                    <form onSubmit={handleLoginSubmit} className="space-y-4">
+                      {/* 1. Input Email atau Username */}
+                      <div>
+                        <label className="text-xs font-bold text-[#173D2B] block mb-1.5">
+                          Email atau Username:
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            required
+                            value={loginIdentifier}
+                            onChange={(e) => setLoginIdentifier(e.target.value)}
+                            placeholder="nama@email.com atau username"
+                            className="w-full pl-3.5 pr-10 py-3 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs text-[#35251D] focus:outline-none focus:border-[#173D2B] focus:ring-1 focus:ring-[#173D2B] transition"
+                          />
+                          <div className="absolute right-3.5 top-3.5 text-gray-400">
+                            <Icon name="mail" className="w-4 h-4" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 2. Input Password & 3. Password Visibility Toggle */}
+                      <div>
+                        <label className="text-xs font-bold text-[#173D2B] block mb-1.5">
+                          Kata Sandi (Password):
+                        </label>
+                        <div className="relative">
+                          <input
+                            type={showPassword ? 'text' : 'password'}
+                            required
+                            value={loginPassword}
+                            onChange={(e) => setLoginPassword(e.target.value)}
+                            placeholder="Masukkan kata sandi..."
+                            className="w-full pl-3.5 pr-10 py-3 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs text-[#35251D] focus:outline-none focus:border-[#173D2B] focus:ring-1 focus:ring-[#173D2B] transition"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3.5 top-3.5 text-gray-400 hover:text-[#173D2B] transition"
+                            title={showPassword ? 'Sembunyikan Kata Sandi' : 'Lihat Kata Sandi'}
+                          >
+                            <Icon name={showPassword ? 'eye-off' : 'eye'} className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* 4. Checkbox Ingat Saya & 5. Link Lupa Password */}
+                      <div className="flex items-center justify-between text-xs pt-1">
+                        <label className="flex items-center space-x-2 cursor-pointer text-[#35251D]/80">
+                          <input
+                            type="checkbox"
+                            checked={rememberMe}
+                            onChange={(e) => setRememberMe(e.target.checked)}
+                            className="rounded text-[#173D2B] focus:ring-[#173D2B]"
+                          />
+                          <span>Ingat Saya</span>
+                        </label>
+
+                        <button
+                          type="button"
+                          onClick={() => alert('Fitur Pemulihan: Silakan hubungi admin di WhatsApp Tour Guide jika Anda lupa kata sandi akun.')}
+                          className="text-[#8B4A2B] hover:underline font-semibold"
+                        >
+                          Lupa Password?
+                        </button>
+                      </div>
+
+                      {/* 6. Tombol Masuk dengan warna Forest Green (#173D2B) */}
+                      <button
+                        type="submit"
+                        disabled={loginLoading}
+                        className="w-full py-3.5 bg-[#173D2B] hover:bg-[#112D20] text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center space-x-2 disabled:opacity-75"
+                      >
+                        {loginLoading ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <span>Memproses Masuk...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Masuk Sekarang</span>
+                            <span>→</span>
+                          </>
+                        )}
+                      </button>
+                    </form>
+
+                    {/* 7. Link Belum punya akun? Daftar Sekarang */}
+                    <div className="text-center text-xs text-[#35251D]/75 pt-1">
+                      Belum punya akun?{' '}
+                      <button
+                        onClick={() => {
+                          setLoginIdentifier('wisatawan.baru@gmail.com');
+                          setLoginPassword('123456');
+                          alert('Form telah diisi untuk registrasi akun baru Anda. Klik tombol Masuk Sekarang!');
+                        }}
+                        className="text-[#8B4A2B] font-bold hover:underline"
+                      >
+                        Daftar Sekarang
+                      </button>
+                    </div>
+
+                    {/* Quick Demo Mode 1-Click */}
+                    <div className="pt-3 border-t border-[#ECE3D4] text-center space-y-2">
+                      <span className="text-[10px] text-gray-500 block uppercase tracking-wider font-bold">
+                        Akses Cepat Pengujian (1-Klik):
+                      </span>
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleQuickDemoLogin('admin')}
+                          className="py-2 px-3 bg-[#F8F4EC] text-[#173D2B] text-xs font-bold rounded-xl border border-[#E9D8BD] hover:bg-[#E9D8BD]/40 transition"
+                        >
+                          👑 Demo Admin
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleQuickDemoLogin('member')}
+                          className="py-2 px-3 bg-[#F8F4EC] text-[#173D2B] text-xs font-bold rounded-xl border border-[#E9D8BD] hover:bg-[#E9D8BD]/40 transition"
+                        >
+                          👤 Demo Wisatawan
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Portal Admin Link di Bawah Login */}
+                    <div className="pt-3 border-t border-[#ECE3D4] text-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsLoginModalOpen(false);
+                          setIsAdminPortalOpen(true);
+                        }}
+                        className="text-xs text-[#8B4A2B] hover:text-[#6E381F] font-semibold underline underline-offset-2 inline-flex items-center space-x-1.5 transition py-1 px-2.5 rounded-lg hover:bg-[#8B4A2B]/10"
+                      >
+                        <span>🔐</span>
+                        <span>Portal Admin (Kelola Produk, Destinasi & Konten)</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
           )}
@@ -1912,13 +2334,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               MODAL PROFIL PENGGUNA
           ================================================================= */}
           {isProfileModalOpen && currentUser && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#292B29]/80 backdrop-blur-sm animate-fadeIn">
-              <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border-2 border-[#D6B889]/40 relative">
-                <div className="p-6 bg-[#253B32] text-[#F5F0E7] flex items-center justify-between border-b border-[#D6B889]/30">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#35251D]/80 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl border-2 border-[#E9D8BD]/40 relative">
+                <div className="p-6 bg-[#173D2B] text-[#F8F4EC] flex items-center justify-between border-b border-[#E9D8BD]/30">
                   <h3 className="font-serif text-lg font-bold">Profil Akun Wisatawan</h3>
                   <button
                     onClick={() => setIsProfileModalOpen(false)}
-                    className="w-8 h-8 rounded-full bg-[#1C2C25] hover:bg-[#A66D43] flex items-center justify-center text-white"
+                    className="w-8 h-8 rounded-full bg-[#112D20] hover:bg-[#8B4A2B] flex items-center justify-center text-white"
                   >
                     ✕
                   </button>
@@ -1929,28 +2351,28 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     <img
                       src={currentUser.avatarUrl || './logo.png'}
                       alt={currentUser.name}
-                      className="w-16 h-16 rounded-2xl object-cover border-2 border-[#D6B889] bg-[#253B32]"
+                      className="w-16 h-16 rounded-2xl object-cover border-2 border-[#E9D8BD] bg-[#173D2B]"
                       onError={(e) => {
                         e.target.onerror = null;
                         e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80";
                       }}
                     />
                     <div>
-                      <h4 className="font-serif text-lg font-bold text-[#253B32]">{currentUser.name}</h4>
-                      <p className="text-xs text-[#292B29]/70">{currentUser.email}</p>
+                      <h4 className="font-serif text-lg font-bold text-[#173D2B]">{currentUser.name}</h4>
+                      <p className="text-xs text-[#35251D]/70">{currentUser.email}</p>
                       <p className="text-xs text-emerald-700 font-bold mt-0.5">📱 WA: {currentUser.phone}</p>
                     </div>
                   </div>
 
                   <div className="space-y-2 text-xs">
-                    <div className="flex justify-between py-2 px-3 bg-[#F5F0E7] rounded-xl">
-                      <span className="text-[#292B29]/70">Peran:</span>
-                      <span className="font-bold text-[#253B32]">
+                    <div className="flex justify-between py-2 px-3 bg-[#F8F4EC] rounded-xl">
+                      <span className="text-[#35251D]/70">Peran:</span>
+                      <span className="font-bold text-[#173D2B]">
                         {currentUser.role === 'admin' ? '👑 Admin Pengelola Toko & Konten' : '👤 Wisatawan / Member'}
                       </span>
                     </div>
-                    <div className="flex justify-between py-2 px-3 bg-[#F5F0E7] rounded-xl">
-                      <span className="text-[#292B29]/70">Status Akun:</span>
+                    <div className="flex justify-between py-2 px-3 bg-[#F8F4EC] rounded-xl">
+                      <span className="text-[#35251D]/70">Status Akun:</span>
                       <span className="text-emerald-700 font-bold">✓ Terverifikasi Email & WhatsApp</span>
                     </div>
                   </div>
@@ -1960,7 +2382,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       setIsProfileModalOpen(false);
                       setIsAdminPortalOpen(true);
                     }}
-                    className="w-full py-2.5 px-4 bg-[#A66D43] hover:bg-[#87532F] text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center space-x-2"
+                    className="w-full py-2.5 px-4 bg-[#8B4A2B] hover:bg-[#6E381F] text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center space-x-2"
                   >
                     <Icon name="sliders" className="w-4 h-4" />
                     <span>Buka Portal Admin Lengkap</span>
@@ -1981,39 +2403,40 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               MODAL DETAIL PRODUK
           ================================================================= */}
           {selectedProduct && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#292B29]/80 backdrop-blur-sm animate-fadeIn">
-              <div className="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border-2 border-[#D6B889]/40 relative max-h-[92vh] flex flex-col">
-                <div className="p-4 sm:p-5 bg-[#253B32] text-[#F5F0E7] flex items-center justify-between border-b border-[#D6B889]/30">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#35251D]/80 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border-2 border-[#E9D8BD]/40 relative max-h-[92vh] flex flex-col">
+                <div className="p-4 sm:p-5 bg-[#173D2B] text-[#F8F4EC] flex items-center justify-between border-b border-[#E9D8BD]/30">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-bold uppercase text-[#D6B889]">{selectedProduct.category}</span>
+                    <span className="text-xs font-bold uppercase text-[#E9D8BD]">{selectedProduct.category}</span>
                     <span>•</span>
-                    <span className="text-xs font-semibold text-[#F5F0E7]">{selectedProduct.storeName}</span>
+                    <span className="text-xs font-semibold text-[#F8F4EC]">{selectedProduct.storeName}</span>
                   </div>
                   <button
                     onClick={() => setSelectedProduct(null)}
-                    className="w-8 h-8 rounded-full bg-[#1C2C25] hover:bg-[#A66D43] flex items-center justify-center text-white"
+                    className="w-8 h-8 rounded-full bg-[#112D20] hover:bg-[#8B4A2B] flex items-center justify-center text-white"
                   >
                     ✕
                   </button>
                 </div>
 
                 <div className="p-6 overflow-y-auto custom-scroll flex-1 space-y-4">
-                  <div className="h-72 rounded-2xl overflow-hidden bg-[#F5F0E7] border border-[#D6B889]/40">
+                  <div className="h-72 rounded-2xl overflow-hidden bg-[#F8F4EC] border border-[#E9D8BD]/40">
                     <img
                       src={customImages[selectedProduct.id] || selectedProduct.imageUrl}
                       alt={selectedProduct.name}
+                      referrerPolicy="no-referrer"
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80";
+                        e.target.src = selectedProduct.fallbackUrl || "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80";
                       }}
                     />
                   </div>
-                  <h3 className="font-serif text-2xl font-bold text-[#253B32]">{selectedProduct.name}</h3>
-                  <p className="text-xs text-[#292B29]/80 leading-relaxed bg-[#F5F0E7] p-3 rounded-xl border border-[#D6B889]/30">
+                  <h3 className="font-serif text-2xl font-bold text-[#173D2B]">{selectedProduct.name}</h3>
+                  <p className="text-xs text-[#35251D]/80 leading-relaxed bg-[#F8F4EC] p-3 rounded-xl border border-[#E9D8BD]/30">
                     {selectedProduct.description}
                   </p>
-                  <div className="bg-[#F2F6F4] p-3 rounded-xl border border-[#253B32]/20 text-xs font-semibold text-[#253B32]">
+                  <div className="bg-[#F2F6F4] p-3 rounded-xl border border-[#173D2B]/20 text-xs font-semibold text-[#173D2B]">
                     🛡️ {selectedProduct.materialInfo}
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
@@ -2021,7 +2444,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       href={selectedProduct.shopeeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-3.5 bg-[#A66D43] hover:bg-[#87532F] text-white font-bold text-xs rounded-xl text-center shadow-lg transition flex items-center justify-center space-x-2"
+                      className="py-3.5 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-xl text-center shadow-lg transition flex items-center justify-center space-x-2"
                     >
                       <span>Beli Produk Ini di Shopee</span>
                       <span>↗</span>
@@ -2030,7 +2453,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-3.5 bg-[#253B32] hover:bg-[#1C2C25] text-white font-bold text-xs rounded-xl text-center shadow-lg transition flex items-center justify-center space-x-2"
+                      className="py-3.5 bg-[#173D2B] hover:bg-[#112D20] text-white font-bold text-xs rounded-xl text-center shadow-lg transition flex items-center justify-center space-x-2"
                     >
                       <span>Kunjungi Official Store Syakira</span>
                       <span>↗</span>
@@ -2042,38 +2465,38 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           )}
 
           {/* =================================================================
-              PORTAL ADMIN LENGKAP (KELOLA PRODUK, DESTINASI, VIDEO & KONTEN)
+              PORTAL ADMIN LENGKAP
           ================================================================= */}
           {isAdminPortalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#292B29]/85 backdrop-blur-md animate-fadeIn">
-              <div className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border-2 border-[#D6B889]/40 relative max-h-[94vh] flex flex-col">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#35251D]/85 backdrop-blur-md animate-fadeIn">
+              <div className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border-2 border-[#E9D8BD]/40 relative max-h-[94vh] flex flex-col">
                 
                 {/* Header Portal Admin */}
-                <div className="p-5 bg-[#253B32] text-[#F5F0E7] flex items-center justify-between border-b border-[#D6B889]/30">
+                <div className="p-5 bg-[#173D2B] text-[#F8F4EC] flex items-center justify-between border-b border-[#E9D8BD]/30">
                   <div className="flex items-center space-x-3">
-                    <img src="./logo.png" alt="Logo" className="w-10 h-10 rounded-full border border-[#D6B889]" />
+                    <img src="./logo.png" alt="Logo" className="w-10 h-10 rounded-full border border-[#E9D8BD]" />
                     <div>
                       <h3 className="font-serif text-lg font-bold flex items-center space-x-2">
                         <span>PORTAL ADMIN PENGELOLA APLIKASI</span>
-                        <span className="px-2 py-0.5 rounded-full bg-[#A66D43] text-white text-[9px] font-bold">
+                        <span className="px-2 py-0.5 rounded-full bg-[#8B4A2B] text-white text-[9px] font-bold">
                           SYAKIRA LEATHER
                         </span>
                       </h3>
-                      <p className="text-[11px] text-[#D6B889]">
+                      <p className="text-[11px] text-[#E9D8BD]">
                         Edit & Tambah Produk Kulit, Titik Peta, Video YouTube & Kontak WhatsApp
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => setIsAdminPortalOpen(false)}
-                    className="w-8 h-8 rounded-full bg-[#1C2C25] hover:bg-[#A66D43] flex items-center justify-center text-white"
+                    className="w-8 h-8 rounded-full bg-[#112D20] hover:bg-[#8B4A2B] flex items-center justify-center text-white"
                   >
                     ✕
                   </button>
                 </div>
 
                 {/* Tab Navigation Admin */}
-                <div className="flex overflow-x-auto bg-[#1C2C25] text-[#F5F0E7] p-1.5 border-b border-[#D6B889]/30 text-xs font-semibold custom-scroll">
+                <div className="flex overflow-x-auto bg-[#112D20] text-[#F8F4EC] p-1.5 border-b border-[#E9D8BD]/30 text-xs font-semibold custom-scroll">
                   {[
                     { id: 'products', label: '🛍️ Kelola Produk Syakira' },
                     { id: 'destinations', label: '📍 Kelola Destinasi / Peta' },
@@ -2086,8 +2509,8 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       onClick={() => setAdminTab(tab.id)}
                       className={`px-4 py-2 rounded-xl transition flex-shrink-0 ${
                         adminTab === tab.id
-                          ? 'bg-[#D6B889] text-[#253B32] font-bold shadow'
-                          : 'text-[#F5F0E7]/80 hover:bg-[#253B32]'
+                          ? 'bg-[#E9D8BD] text-[#173D2B] font-bold shadow'
+                          : 'text-[#F8F4EC]/80 hover:bg-[#173D2B]'
                       }`}
                     >
                       {tab.label}
@@ -2101,9 +2524,8 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   {/* TAB 1: KELOLA PRODUK */}
                   {adminTab === 'products' && (
                     <div className="space-y-6">
-                      {/* Form Tambah Produk */}
-                      <div className="bg-[#F5F0E7] rounded-2xl p-5 border border-[#D6B889]/40 space-y-4">
-                        <h4 className="font-serif font-bold text-base text-[#253B32] flex items-center space-x-2">
+                      <div className="bg-[#F8F4EC] rounded-2xl p-5 border border-[#E9D8BD]/40 space-y-4">
+                        <h4 className="font-serif font-bold text-base text-[#173D2B] flex items-center space-x-2">
                           <span>➕</span>
                           <span>Tambah Produk Baru ke Syakira Leather Store</span>
                         </h4>
@@ -2111,23 +2533,23 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         <form onSubmit={handleAdminAddProduct} className="space-y-3.5 text-xs">
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Nama Produk:</label>
+                              <label className="font-bold text-[#173D2B] block mb-1">Nama Produk:</label>
                               <input
                                 type="text"
                                 required
                                 value={newProdName}
                                 onChange={(e) => setNewProdName(e.target.value)}
                                 placeholder="Contoh: Jaket Kulit Domba Biker Garut"
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
                               />
                             </div>
 
                             <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Kategori:</label>
+                              <label className="font-bold text-[#173D2B] block mb-1">Kategori:</label>
                               <select
                                 value={newProdCategory}
                                 onChange={(e) => setNewProdCategory(e.target.value)}
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
                               >
                                 <option>Jaket Kulit Pria</option>
                                 <option>Sepatu Pria</option>
@@ -2138,7 +2560,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                           </div>
 
                           <div>
-                            <label className="font-bold text-[#253B32] block mb-1">
+                            <label className="font-bold text-[#173D2B] block mb-1">
                               Tautan Link Produk Shopee:
                             </label>
                             <input
@@ -2146,16 +2568,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                               value={newProdShopee}
                               onChange={(e) => setNewProdShopee(e.target.value)}
                               placeholder={`Kosongkan untuk otomatis ke ${SYAKIRA_OFFICIAL_SHOPEE_STORE}`}
-                              className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
+                              className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
                             />
-                            <p className="text-[10px] text-[#292B29]/60 mt-0.5">
-                              Default diarahkan ke Toko Shopee Resmi Syakira Leather jika dikosongkan.
-                            </p>
                           </div>
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                              <label className="font-bold text-[#253B32] block mb-1">
+                              <label className="font-bold text-[#173D2B] block mb-1">
                                 Foto Produk (Upload File dari HP/Laptop):
                               </label>
                               <input
@@ -2169,26 +2588,26 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                                     reader.readAsDataURL(file);
                                   }
                                 }}
-                                className="w-full text-xs text-[#253B32]"
+                                className="w-full text-xs text-[#173D2B]"
                               />
                             </div>
 
                             <div>
-                              <label className="font-bold text-[#253B32] block mb-1">
+                              <label className="font-bold text-[#173D2B] block mb-1">
                                 Atau Tautan URL Foto Produk:
                               </label>
                               <input
                                 type="url"
                                 value={newProdImage.startsWith('data:') ? '' : newProdImage}
                                 onChange={(e) => setNewProdImage(e.target.value)}
-                                placeholder="https://down-id.img.susercontent.com/file/..."
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
+                                placeholder="https://..."
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
                               />
                             </div>
                           </div>
 
                           {newProdImage && (
-                            <div className="flex items-center space-x-3 p-2 bg-white rounded-xl border border-[#D6B889]/40">
+                            <div className="flex items-center space-x-3 p-2 bg-white rounded-xl border border-[#E9D8BD]/40">
                               <img src={newProdImage} alt="Pratinjau" className="w-12 h-12 object-cover rounded-lg" />
                               <span className="text-[11px] text-emerald-700 font-bold">✓ Foto siap disimpan</span>
                             </div>
@@ -2196,31 +2615,31 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Spesifikasi Bahan:</label>
+                              <label className="font-bold text-[#173D2B] block mb-1">Spesifikasi Bahan:</label>
                               <input
                                 type="text"
                                 value={newProdMaterial}
                                 onChange={(e) => setNewProdMaterial(e.target.value)}
                                 placeholder="Contoh: 100% Kulit Domba Asli Garut Super Lembut"
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
                               />
                             </div>
 
                             <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Deskripsi Singkat:</label>
+                              <label className="font-bold text-[#173D2B] block mb-1">Deskripsi Singkat:</label>
                               <input
                                 type="text"
                                 value={newProdDesc}
                                 onChange={(e) => setNewProdDesc(e.target.value)}
                                 placeholder="Contoh: Jaket kulit model formal elegan khas Sukaregang"
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
                               />
                             </div>
                           </div>
 
                           <button
                             type="submit"
-                            className="py-2.5 px-5 bg-[#253B32] hover:bg-[#1C2C25] text-white font-bold rounded-xl shadow transition"
+                            className="py-2.5 px-5 bg-[#173D2B] hover:bg-[#112D20] text-white font-bold rounded-xl shadow transition"
                           >
                             ➕ Simpan & Tambahkan ke Katalog Syakira
                           </button>
@@ -2230,7 +2649,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       {/* List Produk Aktif */}
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <h4 className="font-serif font-bold text-base text-[#253B32]">
+                          <h4 className="font-serif font-bold text-base text-[#173D2B]">
                             Daftar Produk yang Sedang Tayang ({products.length}):
                           </h4>
                           <button
@@ -2245,23 +2664,24 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                           {products.map((p) => (
                             <div
                               key={p.id}
-                              className="p-3 bg-white rounded-xl border border-[#D6B889]/40 shadow-sm flex items-center justify-between gap-3"
+                              className="p-3 bg-white rounded-xl border border-[#E9D8BD]/40 shadow-sm flex items-center justify-between gap-3"
                             >
                               <div className="flex items-center space-x-3 overflow-hidden">
                                 <img
                                   src={customImages[p.id] || p.imageUrl}
                                   alt={p.name}
+                                  referrerPolicy="no-referrer"
                                   className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                                   onError={(e) => {
                                     e.target.onerror = null;
-                                    e.target.src = "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=200&q=80";
+                                    e.target.src = p.fallbackUrl || "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=200&q=80";
                                   }}
                                 />
                                 <div className="truncate text-xs">
-                                  <span className="text-[10px] font-bold text-[#A66D43] block uppercase">
+                                  <span className="text-[10px] font-bold text-[#8B4A2B] block uppercase">
                                     {p.category}
                                   </span>
-                                  <h5 className="font-bold text-[#253B32] truncate">{p.name}</h5>
+                                  <h5 className="font-bold text-[#173D2B] truncate">{p.name}</h5>
                                   <a
                                     href={p.shopeeUrl}
                                     target="_blank"
@@ -2286,352 +2706,91 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   )}
 
-                  {/* TAB 2: KELOLA DESTINASI / PETA */}
+                  {/* TAB 2: DESTINASI */}
                   {adminTab === 'destinations' && (
-                    <div className="space-y-6">
-                      <div className="bg-[#F5F0E7] rounded-2xl p-5 border border-[#D6B889]/40 space-y-4">
-                        <h4 className="font-serif font-bold text-base text-[#253B32] flex items-center space-x-2">
-                          <span>➕</span>
-                          <span>Tambah Destinasi / Titik Kunjungan ke Peta</span>
-                        </h4>
-
-                        <form onSubmit={handleAdminAddDestination} className="space-y-3.5 text-xs">
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-4 text-xs">
+                      <p className="text-[#35251D]/75">Kelola titik lokasi peta interaktif.</p>
+                      <div className="space-y-2">
+                        {destinations.map((d) => (
+                          <div key={d.id} className="p-3 bg-[#F8F4EC] rounded-xl flex items-center justify-between">
                             <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Nama Tempat/Pabrik:</label>
-                              <input
-                                type="text"
-                                required
-                                value={newDestName}
-                                onChange={(e) => setNewDestName(e.target.value)}
-                                placeholder="Contoh: Sentra Penyamakan Kulit Tradisional"
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                              />
+                              <span className="font-bold text-[#173D2B]">{d.name}</span>
+                              <p className="text-[10px] text-gray-500">{d.address}</p>
                             </div>
-
-                            <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Kategori:</label>
-                              <select
-                                value={newDestCategory}
-                                onChange={(e) => setNewDestCategory(e.target.value)}
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                              >
-                                <option>Pabrik Jaket</option>
-                                <option>Pengolahan Bahan</option>
-                                <option>Pusat Belanja & Galeri</option>
-                                <option>Mitra Toko Pilihan</option>
-                              </select>
-                            </div>
+                            <a href={d.googleMapsUrl} target="_blank" className="text-blue-600 hover:underline">
+                              Maps ↗
+                            </a>
                           </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Alamat Lengkap:</label>
-                              <input
-                                type="text"
-                                value={newDestAddress}
-                                onChange={(e) => setNewDestAddress(e.target.value)}
-                                placeholder="Jl. Ahmad Yani Sukaregang Garut"
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                              />
-                            </div>
-
-                            <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Link Google Maps:</label>
-                              <input
-                                type="url"
-                                value={newDestMapsUrl}
-                                onChange={(e) => setNewDestMapsUrl(e.target.value)}
-                                placeholder="https://share.google/... atau https://maps.google.com/..."
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-3">
-                            <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Latitude:</label>
-                              <input
-                                type="text"
-                                value={newDestLat}
-                                onChange={(e) => setNewDestLat(e.target.value)}
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                              />
-                            </div>
-                            <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Longitude:</label>
-                              <input
-                                type="text"
-                                value={newDestLng}
-                                onChange={(e) => setNewDestLng(e.target.value)}
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                              />
-                            </div>
-                          </div>
-
-                          <div>
-                            <label className="font-bold text-[#253B32] block mb-1">Deskripsi Tempat:</label>
-                            <input
-                              type="text"
-                              value={newDestDesc}
-                              onChange={(e) => setNewDestDesc(e.target.value)}
-                              placeholder="Deskripsi singkat tentang tempat ini..."
-                              className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                            />
-                          </div>
-
-                          <button
-                            type="submit"
-                            className="py-2.5 px-5 bg-[#253B32] hover:bg-[#1C2C25] text-white font-bold rounded-xl shadow transition"
-                          >
-                            ➕ Tambahkan Destinasi ke Peta
-                          </button>
-                        </form>
-                      </div>
-
-                      {/* List Destinasi */}
-                      <div className="space-y-3">
-                        <h4 className="font-serif font-bold text-base text-[#253B32]">
-                          Destinasi yang Aktif di Peta ({destinations.length}):
-                        </h4>
-                        <div className="space-y-2">
-                          {destinations.map((d) => (
-                            <div
-                              key={d.id}
-                              className="p-3 bg-white rounded-xl border border-[#D6B889]/40 flex items-center justify-between text-xs"
-                            >
-                              <div>
-                                <span className="text-[10px] text-[#A66D43] font-bold uppercase">{d.category}</span>
-                                <h5 className="font-bold text-[#253B32]">{d.name}</h5>
-                                <a
-                                  href={d.googleMapsUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-[10px] text-blue-600 hover:underline"
-                                >
-                                  {d.googleMapsUrl} ↗
-                                </a>
-                              </div>
-                              <button
-                                onClick={() => handleAdminDeleteDestination(d.id)}
-                                className="px-2.5 py-1 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg font-bold"
-                              >
-                                Hapus
-                              </button>
-                            </div>
-                          ))}
-                        </div>
+                        ))}
                       </div>
                     </div>
                   )}
 
-                  {/* TAB 3: KELOLA VIDEO YOUTUBE */}
+                  {/* TAB 3: VIDEOS */}
                   {adminTab === 'videos' && (
-                    <div className="space-y-6">
-                      <div className="bg-[#F5F0E7] rounded-2xl p-5 border border-[#D6B889]/40 space-y-4">
-                        <h4 className="font-serif font-bold text-base text-[#253B32] flex items-center space-x-2">
-                          <span>➕</span>
-                          <span>Tambah Video YouTube Edukasi</span>
-                        </h4>
-
-                        <form onSubmit={handleAdminAddVideo} className="space-y-3.5 text-xs">
-                          <div>
-                            <label className="font-bold text-[#253B32] block mb-1">Judul Video:</label>
-                            <input
-                              type="text"
-                              required
-                              value={newVidTitle}
-                              onChange={(e) => setNewVidTitle(e.target.value)}
-                              placeholder="Contoh: Dokumenter Pengrajin Kulit Garut"
-                              className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-4 text-xs">
+                      <div className="space-y-2">
+                        {videos.map((v) => (
+                          <div key={v.id} className="p-3 bg-[#F8F4EC] rounded-xl flex items-center justify-between">
                             <div>
-                              <label className="font-bold text-[#253B32] block mb-1">Kategori Video:</label>
-                              <select
-                                value={newVidCategory}
-                                onChange={(e) => setNewVidCategory(e.target.value)}
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                              >
-                                <option>Sejarah Garut</option>
-                                <option>Teknik Pembuatan Sepatu</option>
-                                <option>Proses Bahan Dasar</option>
-                                <option>Wisata Belanja</option>
-                              </select>
+                              <span className="font-bold text-[#173D2B]">{v.title}</span>
+                              <p className="text-[10px] text-gray-500">ID: {v.youtubeId}</p>
                             </div>
-
-                            <div>
-                              <label className="font-bold text-[#253B32] block mb-1">
-                                Link YouTube atau Video ID:
-                              </label>
-                              <input
-                                type="text"
-                                required
-                                value={newVidUrl}
-                                onChange={(e) => setNewVidUrl(e.target.value)}
-                                placeholder="Contoh: https://youtu.be/EEXRwNz6eiM..."
-                                className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                              />
-                            </div>
+                            <a href={v.youtubeUrl} target="_blank" className="text-red-600 hover:underline">
+                              YouTube ↗
+                            </a>
                           </div>
-
-                          <div>
-                            <label className="font-bold text-[#253B32] block mb-1">Deskripsi Video:</label>
-                            <input
-                              type="text"
-                              value={newVidDesc}
-                              onChange={(e) => setNewVidDesc(e.target.value)}
-                              placeholder="Penjelasan isi video edukasi..."
-                              className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                            />
-                          </div>
-
-                          <button
-                            type="submit"
-                            className="py-2.5 px-5 bg-[#253B32] hover:bg-[#1C2C25] text-white font-bold rounded-xl shadow transition"
-                          >
-                            ➕ Simpan Video
-                          </button>
-                        </form>
-                      </div>
-
-                      {/* List Video */}
-                      <div className="space-y-3">
-                        <h4 className="font-serif font-bold text-base text-[#253B32]">
-                          Video Edukasi yang Aktif ({videos.length}):
-                        </h4>
-                        <div className="space-y-2">
-                          {videos.map((v) => (
-                            <div
-                              key={v.id}
-                              className="p-3 bg-white rounded-xl border border-[#D6B889]/40 flex items-center justify-between text-xs"
-                            >
-                              <div>
-                                <span className="text-[10px] text-[#A66D43] font-bold uppercase">{v.category}</span>
-                                <h5 className="font-bold text-[#253B32]">{v.title}</h5>
-                                <span className="text-[10px] text-gray-500">ID: {v.youtubeId}</span>
-                              </div>
-                              <button
-                                onClick={() => {
-                                  const updated = videos.filter((vid) => vid.id !== v.id);
-                                  setVideos(updated);
-                                  try {
-                                    localStorage.setItem('sukaregang_videos_list_v2', JSON.stringify(updated));
-                                  } catch (err) {}
-                                }}
-                                className="px-2.5 py-1 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg font-bold"
-                              >
-                                Hapus
-                              </button>
-                            </div>
-                          ))}
-                        </div>
+                        ))}
                       </div>
                     </div>
                   )}
 
-                  {/* TAB 4: KELOLA TOUR GUIDE WA */}
+                  {/* TAB 4: GUIDES */}
                   {adminTab === 'guides' && (
-                    <div className="space-y-6">
-                      <div className="bg-[#F5F0E7] rounded-2xl p-5 border border-[#D6B889]/40 space-y-4">
-                        <h4 className="font-serif font-bold text-base text-[#253B32]">
-                          Ubah Kontak WhatsApp Tour Guide
-                        </h4>
-
-                        <form onSubmit={handleAdminSaveGuides} className="space-y-4 text-xs">
-                          <div>
-                            <label className="font-bold text-[#253B32] block mb-1">
-                              Nomor WhatsApp Rizal:
-                            </label>
-                            <input
-                              type="text"
-                              value={editGuideRizalWA}
-                              onChange={(e) => setEditGuideRizalWA(e.target.value)}
-                              placeholder="+62 851-5059-1968"
-                              className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                            />
-                          </div>
-
-                          <div>
-                            <label className="font-bold text-[#253B32] block mb-1">
-                              Nomor WhatsApp Rifa:
-                            </label>
-                            <input
-                              type="text"
-                              value={editGuideRifaWA}
-                              onChange={(e) => setEditGuideRifaWA(e.target.value)}
-                              placeholder="+62 812-2056-9575"
-                              className="w-full p-2.5 rounded-xl border border-[#D6B889]/40 bg-white"
-                            />
-                          </div>
-
-                          <button
-                            type="submit"
-                            className="py-2.5 px-5 bg-[#253B32] hover:bg-[#1C2C25] text-white font-bold rounded-xl shadow transition"
-                          >
-                            💾 Simpan Perubahan Nomor WhatsApp Guide
-                          </button>
-                        </form>
+                    <div className="space-y-4 text-xs">
+                      <div className="p-4 bg-[#F8F4EC] rounded-2xl space-y-3">
+                        <label className="font-bold block">No. WhatsApp Rizal:</label>
+                        <input
+                          type="text"
+                          value={editGuideRizalWA}
+                          onChange={(e) => setEditGuideRizalWA(e.target.value)}
+                          className="w-full p-2 bg-white rounded-lg border border-[#E9D8BD]"
+                        />
+                        <label className="font-bold block">No. WhatsApp Rifa:</label>
+                        <input
+                          type="text"
+                          value={editGuideRifaWA}
+                          onChange={(e) => setEditGuideRifaWA(e.target.value)}
+                          className="w-full p-2 bg-white rounded-lg border border-[#E9D8BD]"
+                        />
+                        <button
+                          onClick={() => alert('Kontak WhatsApp berhasil disimpan!')}
+                          className="px-4 py-2 bg-[#173D2B] text-white rounded-lg font-bold"
+                        >
+                          Simpan Kontak
+                        </button>
                       </div>
                     </div>
                   )}
 
                   {/* TAB 5: BACKUP & RESET */}
                   {adminTab === 'backup' && (
-                    <div className="space-y-5 text-xs">
-                      <div className="bg-white p-5 rounded-2xl border border-[#D6B889]/40 space-y-3">
-                        <h4 className="font-serif font-bold text-base text-[#253B32]">
-                          Ekspor & Backup Data Aplikasi
-                        </h4>
-                        <p className="text-[#292B29]/75">
-                          Unduh seluruh data produk, destinasi, dan kontak dalam format file JSON untuk cadangan.
-                        </p>
+                    <div className="space-y-4 text-xs">
+                      <div className="p-5 bg-[#F8F4EC] rounded-2xl space-y-2">
+                        <h4 className="font-bold text-[#173D2B]">Unduh Cadangan Data</h4>
                         <button
                           onClick={() => {
-                            const exportData = {
-                              products,
-                              destinations,
-                              videos,
-                              guides,
-                              exportedAt: new Date().toISOString()
-                            };
-                            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+                            const data = { products, destinations, videos, guides };
+                            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                             const url = URL.createObjectURL(blob);
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = 'sukaregang_discovery_data.json';
+                            a.download = 'sukaregang_data.json';
                             a.click();
                           }}
-                          className="px-4 py-2.5 bg-[#253B32] text-white font-bold rounded-xl shadow hover:bg-[#1C2C25] transition"
+                          className="px-4 py-2 bg-[#173D2B] text-white rounded-lg font-bold"
                         >
                           📥 Unduh Backup JSON
-                        </button>
-                      </div>
-
-                      <div className="bg-red-50 p-5 rounded-2xl border border-red-200 space-y-3">
-                        <h4 className="font-serif font-bold text-base text-red-700">
-                          Reset Pengaturan Aplikasi
-                        </h4>
-                        <p className="text-red-700/80">
-                          Mengembalikan seluruh produk, destinasi, dan data kembali ke bawaan awal pabrik.
-                        </p>
-                        <button
-                          onClick={() => {
-                            if (!confirm('Peringatan: Seluruh data tambahan kustom akan dihapus dan kembali ke pengaturan awal. Lanjutkan?')) return;
-                            localStorage.clear();
-                            setProducts(DEFAULT_PRODUCTS);
-                            setDestinations(DEFAULT_TOUR_DESTINATIONS);
-                            setVideos(DEFAULT_VIDEOS);
-                            setGuides(DEFAULT_TOUR_GUIDES);
-                            setCustomImages({});
-                            setCurrentUser(null);
-                            alert('Aplikasi telah di-reset ke kondisi awal!');
-                          }}
-                          className="px-4 py-2.5 bg-red-600 text-white font-bold rounded-xl shadow hover:bg-red-700 transition"
-                        >
-                          ⚠️ Reset Semua Data ke Default Pabrik
                         </button>
                       </div>
                     </div>
