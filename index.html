@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="referrer" content="no-referrer">
-  <title>Sukaregang Discovery - Digital Tourism, Leather Education & Syakira Leather</title>
+  <title>SUKAREGANG DISCOVERY - Heritage, Tourism & Syakira Leather</title>
   <link rel="icon" type="image/png" href="./logo.png">
 
   <!-- Tailwind CSS CDN -->
@@ -25,14 +25,14 @@
       theme: {
         extend: {
           colors: {
-            forest: '#173D2B',       // Forest Green Redesign
-            leather: '#8B4A2B',      // Leather Brown Redesign
-            cream: '#F8F4EC',        // Cream Redesign
-            beige: '#E9D8BD',        // Beige Redesign
-            darkBrown: '#35251D',    // Dark Brown Redesign
+            forest: '#173D2B',       // Forest Green
+            leather: '#8B4A2B',      // Leather Brown
+            cream: '#F8F4EC',        // Cream
+            beige: '#E9D8BD',        // Beige
+            darkBrown: '#35251D',    // Dark Brown
             charcoal: '#292B29',
             lightBeige: '#ECE3D4',
-            darkForest: '#112D20'
+            darkForest: '#102B1E'
           },
           fontFamily: {
             serif: ['Cinzel', 'Playfair Display', 'Georgia', 'serif'],
@@ -53,7 +53,7 @@
     }
     
     .app-glass {
-      background: rgba(23, 61, 43, 0.95);
+      background: rgba(23, 61, 43, 0.96);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
     }
@@ -78,12 +78,12 @@
       animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 15px rgba(233, 216, 189, 0.4); }
-      50% { box-shadow: 0 0 30px rgba(139, 74, 43, 0.7); }
+    @keyframes pulseSew {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
     }
-    .glow-leather {
-      animation: pulseGlow 3s infinite;
+    .sewing-pulse {
+      animation: pulseSew 0.8s infinite;
     }
   </style>
 </head>
@@ -225,7 +225,38 @@
       }
     ];
 
-    // Data 20 Produk Syakira Leather dengan Realistis Fallback Image jika CDN Shopee memblokir Referrer
+    // Data Kesan & Pesan Wisatawan Awal (Buku Tamu Sukaregang)
+    const DEFAULT_REVIEWS = [
+      {
+        id: 'rev-01',
+        name: 'Hendra Gunawan',
+        city: 'Jakarta Selatan',
+        date: '10 November 2026',
+        rating: 5,
+        destinationVisited: 'Pabrik Jaket & Showroom Syakira Leather',
+        comment: 'Luar biasa sekali pengalaman ke Sukaregang! Jaket kulit domba dari Syakira Leather sangat lembut dan adem saat dipakai riding balik ke Jakarta. Tour Guide Rizal sangat menguasai seluk beluk pabrik.'
+      },
+      {
+        id: 'rev-02',
+        name: 'Siti Nurhaliza & Keluarga',
+        city: 'Bandung',
+        date: '5 November 2026',
+        rating: 5,
+        destinationVisited: 'Piazza Firenze & Pengolahan Kulit',
+        comment: 'Piazza Firenze megah sekali, anak-anak senang melihat proses pembuatan sepatu kulit langsung dari pengrajinnya. Harganya jauh lebih ramah dibanding beli di mall.'
+      },
+      {
+        id: 'rev-03',
+        name: 'Budi Santoso',
+        city: 'Surabaya',
+        date: '28 Oktober 2026',
+        rating: 5,
+        destinationVisited: 'CV. Surya Wahana Leather & Syakira Store',
+        comment: 'Garut memang surga kerajinan kulit Indonesia. Sepatu boots sapi yang saya beli awet dan jahitannya sangat rapi. Terima kasih Sukaregang Discovery atas panduan petanya!'
+      }
+    ];
+
+    // Data 20 Produk Syakira Leather dengan Gambar Asli & Fallback
     const DEFAULT_PRODUCTS = [
       {
         id: 'jaket-pria-01',
@@ -485,7 +516,7 @@
     // 2. MAIN APPLICATION COMPONENT
     // =========================================================================
     function App() {
-      // Routes: 'beranda', 'store', 'tour', 'maps', 'video', 'academy', 'simulator'
+      // Routes: 'beranda', 'simulator', 'store', 'tour', 'maps', 'video', 'reviews', 'academy'
       const [currentRoute, setCurrentRoute] = useState('beranda');
 
       // Authentication Session
@@ -502,7 +533,7 @@
       const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
       // Login Inputs with Password Toggle & Remember Me
-      const [loginIdentifier, setLoginIdentifier] = useState(''); // Email or Username
+      const [loginIdentifier, setLoginIdentifier] = useState('');
       const [loginPassword, setLoginPassword] = useState('');
       const [showPassword, setShowPassword] = useState(false);
       const [rememberMe, setRememberMe] = useState(true);
@@ -547,6 +578,22 @@
         return DEFAULT_TOUR_GUIDES;
       });
 
+      // Kesan & Pesan Wisatawan
+      const [reviews, setReviews] = useState(() => {
+        try {
+          const saved = localStorage.getItem('sukaregang_visitor_reviews');
+          if (saved) return JSON.parse(saved);
+        } catch (e) {}
+        return DEFAULT_REVIEWS;
+      });
+
+      // Form Kirim Kesan & Pesan Baru
+      const [revName, setRevName] = useState('');
+      const [revCity, setRevCity] = useState('');
+      const [revVisited, setRevVisited] = useState('Showroom Syakira Leather Sukaregang');
+      const [revRating, setRevRating] = useState(5);
+      const [revComment, setRevComment] = useState('');
+
       // Custom images uploaded via Admin Studio
       const [customImages, setCustomImages] = useState(() => {
         try {
@@ -572,7 +619,7 @@
       ]);
       const [bookingNote, setBookingNote] = useState('');
 
-      // Auto-fill booking info from logged in user
+      // Auto-fill booking info
       useEffect(() => {
         if (currentUser) {
           if (!bookingName) setBookingName(currentUser.name);
@@ -614,169 +661,106 @@
       const [editGuideRifaWA, setEditGuideRifaWA] = useState('+62 812-2056-9575');
 
       // =======================================================================
-      // GAME SIMULATOR STATE (MEMBUAT JAKET & SEPATU KULIT DARI AWAL - AKHIR)
+      // GAME WORKSHOP SIMULATOR (PILIH DESAIN -> POTONG BAGIAN -> JAHIT -> JADI)
       // =======================================================================
-      const [simCraftType, setSimCraftType] = useState('jaket'); // 'jaket' or 'sepatu'
-      const [simStep, setSimStep] = useState(1);
-      const [simScore, setSimScore] = useState(100);
-      const [simChoices, setSimChoices] = useState({});
-      const [simCompleted, setSimCompleted] = useState(false);
+      const [simMode, setSimMode] = useState('jaket'); // 'jaket' or 'sepatu'
+      const [simStage, setSimStage] = useState(1); // 1: Pilih Desain & Warna, 2: Memotong Bagian, 3: Menjahit, 4: Finishing Selesai!
+      
+      // State Game Jaket
+      const [jaketDesign, setJaketDesign] = useState('Biker Rockstar');
+      const [jaketColor, setJaketColor] = useState('Hitam Glossy');
+      const [jaketCutParts, setJaketCutParts] = useState({
+        dadaDepan: false,
+        punggungBelakang: false,
+        lenganKiri: false,
+        lenganKanan: false,
+        kerahSaku: false
+      });
+      const [jaketSewSteps, setJaketSewSteps] = useState({
+        panelDada: false,
+        zipperYKK: false,
+        furingDormeuil: false,
+        lenganManset: false
+      });
 
-      // Steps definition for Jaket Kulit Simulator
-      const JAKET_STEPS = [
-        {
-          step: 1,
-          title: 'Pemilihan Bahan Mentah Kulit',
-          task: 'Pilih lembaran kulit domba asli Garut terbaik untuk kenyamanan jaket.',
-          options: [
-            { id: 'domba-a', label: 'Kulit Domba Garut Grade A Super', desc: 'Pori rapat, lentur, lembut, dan ringan di badan (Kualitas Ekspor Sukaregang).', points: 15, isCorrect: true },
-            { id: 'sapi-kaku', label: 'Kulit Sapi Keras Kering', desc: 'Tebal dan kaku, kurang cocok untuk jaket kasual fleksibel.', points: -10, isCorrect: false },
-            { id: 'sintetis-pvc', label: 'Kulit Sintetis PVC Imitasi', desc: 'Bukan kulit asli, mudah terkelupas dan gerah.', points: -20, isCorrect: false },
-          ]
-        },
-        {
-          step: 2,
-          title: 'Pembuatan Pola & Pemotongan (Pattern Cutting)',
-          task: 'Atur pola potongan badan depan, punggung, lengan dan kerah.',
-          options: [
-            { id: 'cut-presisi', label: 'Pemotongan Presisi Pisau Baja Pengrajin', desc: 'Mengikuti arah alur serat kulit domba agar elastisitas jaket seimbang.', points: 15, isCorrect: true },
-            { id: 'cut-sembarangan', label: 'Pemotongan Cepat Melintang Serat', desc: 'Beresiko jaket mengkerut tidak simetris saat dipakai.', points: -10, isCorrect: false },
-          ]
-        },
-        {
-          step: 3,
-          title: 'Penipisan Tepi Kulit (Skiving Edges)',
-          task: 'Tipiskan tepi sambungan kulit agar jahitan rapi dan tidak menggumpal.',
-          options: [
-            { id: 'skive-sempurna', label: 'Skiving 0.6mm Merata dengan Mesin Seset', desc: 'Tepi kulit tipis pas, sambungan panel datar dan nyaman di kulit pemakai.', points: 15, isCorrect: true },
-            { id: 'tanpa-skive', label: 'Langsung Dijahit Tanpa Penipisan', desc: 'Sambungan tepi terlalu tebal dan mengganjal di pundak.', points: -10, isCorrect: false },
-          ]
-        },
-        {
-          step: 4,
-          title: 'Pemasangan Hardware & Ritsleting',
-          task: 'Pasang ritsleting utama dada, kantong saku, dan kancing snap logam.',
-          options: [
-            { id: 'zip-ykk-metal', label: 'Ritsleting Logam Kuningan YKK Heavy Duty', desc: 'Anti macet, anti karat, dan serasi dengan warna cokelat/hitam kulit.', points: 15, isCorrect: true },
-            { id: 'zip-plastik', label: 'Ritsleting Plastik Tipis Murah', desc: 'Mudah patah saat terkena tarikan berkendara motor.', points: -15, isCorrect: false },
-          ]
-        },
-        {
-          step: 5,
-          title: 'Pemasangan Furing Interior (Lining)',
-          task: 'Pilih kain lapisan dalam jaket agar sejuk saat siang dan hangat saat malam.',
-          options: [
-            { id: 'furing-dormeuil', label: 'Kain Furing Dormeuil England Halus', desc: 'Material sejuk berpori mikro, nyaman tidak gatal di kulit (Standar Syakira Leather).', points: 15, isCorrect: true },
-            { id: 'furing-parasut', label: 'Kain Parasut Panas Kedap Udara', desc: 'Membuat badan berkeringat dan gerah.', points: -10, isCorrect: false },
-          ]
-        },
-        {
-          step: 6,
-          title: 'Penjahitan Ganda (Double Stitching)',
-          task: 'Satukan seluruh panel jaket menggunakan mesin jahit kulit berkecepatan teratur.',
-          options: [
-            { id: 'stitch-nylon', label: 'Benang Nilon No. 30 dengan Jahitan Ganda 3mm', desc: 'Kekuatan tarik maksimal, sambungan rapi dan tahan bertahun-tahun.', points: 15, isCorrect: true },
-            { id: 'stitch-katun', label: 'Benang Jahit Katun Biasa', desc: 'Mudah putus jika tertarik angin saat berkendara.', points: -15, isCorrect: false },
-          ]
-        },
-        {
-          step: 7,
-          title: 'Finishing Semir Alami & Quality Control',
-          task: 'Oleskan pelembab kulit alami dan lakukan uji ketahanan sebelum dikemas.',
-          options: [
-            { id: 'finish-mink', label: 'Mink Oil & Beeswax Alami Sukaregang', desc: 'Kilau satin alami keluar, permukaan tahan percikan air hujan.', points: 10, isCorrect: true },
-            { id: 'finish-vernis', label: 'Cat Vernis Kimia Mengkilap Tebal', desc: 'Menutup pori dan membuat kulit menjadi kaku retak.', points: -15, isCorrect: false },
-          ]
-        }
-      ];
+      // State Game Sepatu
+      const [sepatuDesign, setSepatuDesign] = useState('Boots Pria Tangguh');
+      const [sepatuLeatherType, setSepatuLeatherType] = useState('Pull-Up Leather Sapi');
+      const [sepatuCutParts, setSepatuCutParts] = useState({
+        vamp: false,
+        quarter: false,
+        tongue: false,
+        heelCounter: false
+      });
+      const [sepatuSewSteps, setSepatuSewSteps] = useState({
+        shoeLasting: false,
+        jahitUpper: false,
+        insoleFoam: false,
+        solGoodyearWelt: false
+      });
 
-      // Steps definition for Sepatu Kulit Simulator
-      const SEPATU_STEPS = [
-        {
-          step: 1,
-          title: 'Pemilihan Kulit Sapi Sukaregang',
-          task: 'Pilih kulit sapi bermutu untuk daya tahan gesekan sol dan upper sepatu.',
-          options: [
-            { id: 'sapi-fullgrain', label: 'Kulit Sapi Full-Grain Pull-Up Asli', desc: 'Tebal 1.8mm, kuat lentur, semakin lama dipakai semakin artistik patina-nya.', points: 15, isCorrect: true },
-            { id: 'sintetis-spn', label: 'Kulit Sintetis Spon Ringan', desc: 'Cepat sobek pada lekukan jemari kaki saat melangkah.', points: -15, isCorrect: false }
-          ]
-        },
-        {
-          step: 2,
-          title: 'Shoe Lasting (Cetakan Bentuk Kaki)',
-          task: 'Pasang pola kulit pada cetakan kayu/akrilik sesuai ukuran anatomi kaki.',
-          options: [
-            { id: 'last-ergonomis', label: 'Shoe Last Ergonomis Standar Garut', desc: 'Menjamin kenyamanan telapak kaki dan lengkungan tumit pas tanpa lecet.', points: 15, isCorrect: true },
-            { id: 'tanpa-last', label: 'Membentuk Sepatu Tanpa Cetakan', desc: 'Bentuk sepatu melenceng dan sakit saat dikenakan jalan.', points: -15, isCorrect: false }
-          ]
-        },
-        {
-          step: 3,
-          title: 'Pemotongan Bagian Upper (Vamp, Quarter, Tongue)',
-          task: 'Potong bagian punggung kaki, lidah sepatu, dan penutup tumit.',
-          options: [
-            { id: 'cut-clean', label: 'Pemotongan Presisi dengan Pisau Lengkung', desc: 'Garis potongan mulus, simetris antara sepatu kanan dan kiri.', points: 15, isCorrect: true },
-            { id: 'cut-kasar', label: 'Gunting Tumpul Terburu-buru', desc: 'Tepi bergelombang tidak rapi.', points: -10, isCorrect: false }
-          ]
-        },
-        {
-          step: 4,
-          title: 'Penjahitan Upper & Aksen Lubang Tali',
-          task: 'Jahit rangkai bagian atas sepatu dan pasang mata itik (eyelet) logam.',
-          options: [
-            { id: 'stitch-eyelet', label: 'Jahit Benang Wax Tebal + Eyelet Kuningan', desc: 'Lubang tali tidak mudah robek saat dikencangkan.', points: 15, isCorrect: true },
-            { id: 'lubang-biasa', label: 'Dilubangi Saja Tanpa Ring Penguat', desc: 'Lubang tali cepat robek saat ditarik.', points: -10, isCorrect: false }
-          ]
-        },
-        {
-          step: 5,
-          title: 'Pemasangan Insole Memory Foam Empuk',
-          task: 'Pasang bantalan tapak dalam untuk meredam hentakan langkah.',
-          options: [
-            { id: 'insole-foam', label: 'Insole Kulit + Ortholite Foam Bernapas', desc: 'Empuk menyerap keringat, jalan seharian tidak pegal.', points: 15, isCorrect: true },
-            { id: 'insole-karton', label: 'Karton Keras Tanpa Busa', desc: 'Telapak kaki cepat panas dan sakit.', points: -10, isCorrect: false }
-          ]
-        },
-        {
-          step: 6,
-          title: 'Penyatuan Outsole Karet & Jahit Sol (Goodyear Welt)',
-          task: 'Tempelkan sol bawah anti slip dan jahit tembus keliling.',
-          options: [
-            { id: 'sole-welt', label: 'Sol Karet Grip Garut + Jahitan Keliling Tembus', desc: 'Anti licin di aspal/keramik basah, sol tidak mungkin jebol lepas.', points: 15, isCorrect: true },
-            { id: 'sole-lem-aja', label: 'Hanya Diberi Lem Tanpa Dijahit', desc: 'Sol rawan menganga saat terkena genangan air hujan.', points: -15, isCorrect: false }
-          ]
-        },
-        {
-          step: 7,
-          title: 'Burnishing Tepi & Semir Kilau Alami',
-          task: 'Haluskan pinggiran sol dengan kayu burnisher dan lap kain wol lembut.',
-          options: [
-            { id: 'burnish-wax', label: 'Burnishing Malam Lebah Alami + Poles Wol', desc: 'Pinggiran sol mulus tahan air, kilau mewah alami khas Sukaregang.', points: 10, isCorrect: true },
-            { id: 'tanpa-polish', label: 'Dibiarkan Kasar Kering', desc: 'Tampak kusam dan belum siap pajang di etalase.', points: -10, isCorrect: false }
-          ]
-        }
-      ];
+      // Actions Game Jaket
+      const cutJaketPart = (part) => {
+        setJaketCutParts(prev => ({ ...prev, [part]: true }));
+      };
+      const allJaketCut = Object.values(jaketCutParts).every(Boolean);
 
-      const currentSimSteps = simCraftType === 'jaket' ? JAKET_STEPS : SEPATU_STEPS;
-      const currentStepData = currentSimSteps[simStep - 1];
+      const sewJaketStep = (step) => {
+        setJaketSewSteps(prev => ({ ...prev, [step]: true }));
+      };
+      const allJaketSewn = Object.values(jaketSewSteps).every(Boolean);
 
-      const handleSimChoice = (option) => {
-        setSimChoices({ ...simChoices, [simStep]: option.id });
-        setSimScore((prev) => Math.max(0, Math.min(100, prev + (option.isCorrect ? option.points : option.points))));
+      // Actions Game Sepatu
+      const cutSepatuPart = (part) => {
+        setSepatuCutParts(prev => ({ ...prev, [part]: true }));
+      };
+      const allSepatuCut = Object.values(sepatuCutParts).every(Boolean);
 
-        if (simStep < currentSimSteps.length) {
-          setSimStep(simStep + 1);
+      const sewSepatuStep = (step) => {
+        setSepatuSewSteps(prev => ({ ...prev, [step]: true }));
+      };
+      const allSepatuSewn = Object.values(sepatuSewSteps).every(Boolean);
+
+      const resetGame = (mode) => {
+        setSimMode(mode);
+        setSimStage(1);
+        if (mode === 'jaket') {
+          setJaketCutParts({ dadaDepan: false, punggungBelakang: false, lenganKiri: false, lenganKanan: false, kerahSaku: false });
+          setJaketSewSteps({ panelDada: false, zipperYKK: false, furingDormeuil: false, lenganManset: false });
         } else {
-          setSimCompleted(true);
+          setSepatuCutParts({ vamp: false, quarter: false, tongue: false, heelCounter: false });
+          setSepatuSewSteps({ shoeLasting: false, jahitUpper: false, insoleFoam: false, solGoodyearWelt: false });
         }
       };
 
-      const handleResetSimulator = (type) => {
-        setSimCraftType(type);
-        setSimStep(1);
-        setSimScore(100);
-        setSimChoices({});
-        setSimCompleted(false);
+      // Handler Kirim Kesan & Pesan Baru
+      const handleAddReview = (e) => {
+        e.preventDefault();
+        if (!revName.trim() || !revComment.trim()) {
+          alert('Mohon isi nama dan pesan kesan kunjungan Anda.');
+          return;
+        }
+
+        const newReview = {
+          id: 'rev-' + Date.now(),
+          name: revName.trim(),
+          city: revCity.trim() || 'Wisatawan Nusantara',
+          date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+          rating: parseInt(revRating) || 5,
+          destinationVisited: revVisited,
+          comment: revComment.trim()
+        };
+
+        const updated = [newReview, ...reviews];
+        setReviews(updated);
+        try {
+          localStorage.setItem('sukaregang_visitor_reviews', JSON.stringify(updated));
+        } catch (err) {}
+
+        setRevName('');
+        setRevCity('');
+        setRevComment('');
+        alert('Terima kasih! Kesan dan pesan Anda telah berhasil dipublikasikan di Sukaregang Discovery.');
       };
 
       // Scroll to top on route change
@@ -817,9 +801,7 @@
         });
       }, [currentRoute, destinations]);
 
-      // =======================================================================
-      // REDESIGN LOGIN SUBMIT HANDLER (MENGACU PADA PROMPT TATADANA)
-      // =======================================================================
+      // Login Handler
       const handleLoginSubmit = (e) => {
         e.preventDefault();
         setLoginError('');
@@ -832,17 +814,11 @@
           setLoginError('Mohon masukkan kata sandi Anda.');
           return;
         }
-        if (loginPassword.length < 4) {
-          setLoginError('Kata sandi minimal 4 karakter.');
-          return;
-        }
 
         setLoginLoading(true);
 
-        // Simulasi loading animasi responsif
         setTimeout(() => {
           setLoginLoading(false);
-
           const isRoleAdmin = loginIdentifier.toLowerCase().includes('admin');
           const user = {
             id: 'usr-' + Date.now(),
@@ -865,8 +841,8 @@
           setTimeout(() => {
             setLoginToast('');
             setIsLoginModalOpen(false);
-          }, 1200);
-        }, 600);
+          }, 1000);
+        }, 500);
       };
 
       const handleQuickDemoLogin = (role = 'member') => {
@@ -883,11 +859,11 @@
         try {
           localStorage.setItem('sukaregang_user_session', JSON.stringify(demoUser));
         } catch (err) {}
-        setLoginToast(`Masuk cepat sebagai ${demoUser.name}`);
+        setLoginToast(`Masuk sebagai ${demoUser.name}`);
         setTimeout(() => {
           setLoginToast('');
           setIsLoginModalOpen(false);
-        }, 800);
+        }, 600);
       };
 
       const handleLogout = () => {
@@ -943,7 +919,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
         window.open(waUrl, '_blank');
       };
 
-      // Admin Add Product
+      // Admin Actions
       const handleAdminAddProduct = (e) => {
         e.preventDefault();
         if (!newProdName.trim()) {
@@ -991,17 +967,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
         } catch (err) {}
       };
 
-      const handleAdminResetProducts = () => {
-        if (!confirm('Kembalikan katalog ke 20 produk asli awal Syakira Leather?')) return;
-        setProducts(DEFAULT_PRODUCTS);
-        try {
-          localStorage.removeItem('syakira_products_list_v2');
-          localStorage.removeItem('syakira_custom_product_images');
-        } catch (err) {}
-        setCustomImages({});
-        alert('Katalog telah di-reset ke 20 produk bawaan Syakira Leather.');
-      };
-
       // Filtered Products
       const filteredProducts = useMemo(() => {
         let list = [...products];
@@ -1026,7 +991,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           <header className="sticky top-0 z-40 app-glass text-[#F8F4EC] border-b border-[#E9D8BD]/30 shadow-md">
             <div className="max-w-7xl mx-auto px-4 h-16 sm:h-20 flex items-center justify-between">
               
-              {/* App Brand Logo & Title */}
+              {/* Brand Logo & Title */}
               <button
                 onClick={() => setCurrentRoute('beranda')}
                 className="flex items-center space-x-3 text-left group"
@@ -1035,13 +1000,12 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   <img
                     src="./logo.png"
                     alt="Sukaregang Discovery Logo"
-                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-[#E9D8BD] shadow-md group-hover:scale-105 transition bg-[#173D2B]"
+                    className="w-10 h-10 sm:w-12 sm:h-12 object-contain group-hover:scale-105 transition"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=120&q=80";
                     }}
                   />
-                  <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-[#173D2B] rounded-full"></span>
                 </div>
                 <div>
                   <div className="flex items-center space-x-2">
@@ -1058,16 +1022,16 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 </div>
               </button>
 
-              {/* Desktop App Navigation Tabs */}
+              {/* Navigation Tabs */}
               <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold">
                 {[
                   { id: 'beranda', label: '🏠 Beranda' },
-                  { id: 'simulator', label: '🎮 Simulator (Game)' },
+                  { id: 'simulator', label: '🎮 Game Workshop Kulit' },
                   { id: 'store', label: '🛍️ Syakira Store' },
+                  { id: 'reviews', label: '💬 Kesan & Pesan' },
                   { id: 'tour', label: '🧭 Tour Guide (WA)' },
                   { id: 'maps', label: '📍 Peta & Pabrik' },
-                  { id: 'video', label: '🎥 Video Sejarah & Edukasi' },
-                  { id: 'academy', label: '🎓 Leather Academy' },
+                  { id: 'video', label: '🎥 Video Sejarah' },
                 ].map((tab) => (
                   <button
                     key={tab.id}
@@ -1075,7 +1039,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     className={`px-3 py-2 rounded-xl transition ${
                       currentRoute === tab.id
                         ? 'bg-[#E9D8BD] text-[#173D2B] font-bold shadow'
-                        : 'text-[#F8F4EC]/90 hover:bg-[#112D20] hover:text-[#E9D8BD]'
+                        : 'text-[#F8F4EC]/90 hover:bg-[#102B1E] hover:text-[#E9D8BD]'
                     }`}
                   >
                     {tab.label}
@@ -1087,26 +1051,22 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setIsAdminPortalOpen(true)}
-                  className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#8B4A2B]/30 hover:bg-[#8B4A2B] text-[#E9D8BD] hover:text-white border border-[#E9D8BD]/40 text-xs font-bold transition shadow"
-                  title="Buka Portal Admin"
+                  className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#8B4A2B]/40 hover:bg-[#8B4A2B] text-[#E9D8BD] hover:text-white border border-[#E9D8BD]/40 text-xs font-bold transition shadow"
+                  title="Buka Portal Admin Lengkap"
                 >
                   <Icon name="settings" className="w-3.5 h-3.5" />
-                  <span>Admin</span>
+                  <span>Portal Admin</span>
                 </button>
 
                 {currentUser ? (
                   <button
                     onClick={() => setIsProfileModalOpen(true)}
-                    className="flex items-center space-x-2 p-1.5 pr-3 rounded-full bg-[#112D20] border border-[#E9D8BD]/40 hover:border-[#E9D8BD] transition shadow"
+                    className="flex items-center space-x-2 p-1.5 pr-3 rounded-full bg-[#102B1E] border border-[#E9D8BD]/40 hover:border-[#E9D8BD] transition shadow"
                   >
                     <img
                       src={currentUser.avatarUrl || './logo.png'}
                       alt={currentUser.name}
                       className="w-8 h-8 rounded-full object-cover border border-[#E9D8BD] bg-[#173D2B]"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80";
-                      }}
                     />
                     <div className="text-left text-xs leading-tight hidden sm:block">
                       <span className="font-bold text-[#F8F4EC] block truncate max-w-[110px]">
@@ -1131,99 +1091,144 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           </header>
 
           {/* =================================================================
-              MAIN VIEWPORT ROUTE CONTENT
+              MAIN VIEWPORT CONTENT
           ================================================================= */}
           <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-6">
             
             {/* -------------------------------------------------------------
-                1. APP HOME / BERANDA
+                1. APP HOME (LANDING PAGE SESUAI KATA-KATA RESMI)
             ------------------------------------------------------------- */}
             {currentRoute === 'beranda' && (
-              <div className="space-y-8 animate-fadeIn">
+              <div className="space-y-10 animate-fadeIn">
                 
-                {/* Hero Card with Official Logo Badge */}
-                <div className="relative rounded-3xl overflow-hidden bg-[#173D2B] text-[#F8F4EC] p-6 sm:p-10 border-2 border-[#E9D8BD]/40 shadow-xl">
+                {/* Hero Section Sesuai Panduan Proyek */}
+                <div className="relative rounded-3xl overflow-hidden bg-[#173D2B] text-[#F8F4EC] p-6 sm:p-12 border-2 border-[#E9D8BD]/40 shadow-2xl">
                   <div className="flex flex-col lg:flex-row items-center gap-8">
                     
-                    {/* Official Circular Logo Badge */}
+                    {/* Visual Badge Logo Baru */}
                     <div className="flex-shrink-0 text-center">
                       <div className="relative inline-block group">
-                        <div className="absolute -inset-2 bg-gradient-to-r from-[#E9D8BD] via-[#8B4A2B] to-[#E9D8BD] rounded-full blur-md opacity-70 group-hover:opacity-100 transition duration-500"></div>
                         <img
                           src="./logo.png"
-                          alt="Logo Resmi Sukaregang Discovery"
-                          className="relative w-32 h-32 sm:w-44 sm:h-44 rounded-full object-contain bg-[#173D2B] border-4 border-[#E9D8BD] shadow-2xl p-1 transform group-hover:scale-105 transition duration-300"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=400&q=80";
-                          }}
+                          alt="Logo Sukaregang Discovery"
+                          className="w-36 h-36 sm:w-48 sm:h-48 object-contain drop-shadow-2xl group-hover:scale-105 transition duration-300"
                         />
                       </div>
                       <span className="block mt-2 text-[10px] uppercase font-bold tracking-widest text-[#E9D8BD]">
-                        Sentra Kulit Garut
+                        Kawasan Industri Kulit Garut
                       </span>
                     </div>
 
-                    {/* Hero Texts & CTAs */}
+                    {/* Kata-kata Resmi Hero */}
                     <div className="flex-1 space-y-4 text-center lg:text-left">
                       <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#E9D8BD]/20 text-[#E9D8BD] text-xs font-semibold border border-[#E9D8BD]/30">
-                        <span>✨ Official Tourism & Leather Heritage App</span>
+                        <span>✨ Sentra Kerajinan Kulit Garut</span>
                       </div>
-                      <h1 className="font-serif text-3xl sm:text-5xl font-bold leading-tight">
-                        SUKAREGANG DISCOVERY <br />
-                        <span className="text-[#E9D8BD] italic font-normal text-2xl sm:text-4xl">
-                          Jelajahi Sejarah, Pabrik & Karya Kulit Garut
-                        </span>
+                      <h1 className="font-serif text-3xl sm:text-5xl font-bold leading-tight tracking-wide">
+                        DISCOVER THE HERITAGE <br />
+                        <span className="text-[#E9D8BD] italic font-normal">OF LEATHER</span>
                       </h1>
-                      <p className="text-xs sm:text-sm text-[#F8F4EC]/85 leading-relaxed font-normal max-w-2xl">
-                        Platform digital resmi eksplorasi kawasan industri kerajinan kulit Sukaregang, Garut. Mainkan Simulator Pembuatan Jaket & Sepatu Kulit dari awal hingga akhir, hubungi Tour Guide (Rizal & Rifa) via WhatsApp otomatis, kunjungi pabrik jaket, dan temukan produk asli <strong>Syakira Leather</strong>.
+                      <p className="text-sm sm:text-base text-[#F8F4EC]/90 leading-relaxed font-normal max-w-2xl">
+                        "Jelajahi Sukaregang, mengenal cerita di balik kerajinan kulit, dan temukan karya lokal yang memiliki nilai serta karakter."
                       </p>
 
-                      {/* Quick Action Grid */}
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-3">
-                        <button
-                          onClick={() => setCurrentRoute('simulator')}
-                          className="p-3 bg-[#8B4A2B] hover:bg-[#6E381F] rounded-2xl text-center text-[#F8F4EC] shadow transition flex flex-col items-center space-y-1 ring-2 ring-[#E9D8BD]"
-                        >
-                          <span className="text-xl">🎮</span>
-                          <span className="text-xs font-bold">Simulator Kulit</span>
-                          <span className="text-[9px] text-[#E9D8BD]">Game Buat Jaket & Sepatu</span>
-                        </button>
-
-                        <button
-                          onClick={() => setCurrentRoute('store')}
-                          className="p-3 bg-[#112D20] hover:bg-[#0A1D14] rounded-2xl text-center text-[#F8F4EC] border border-[#E9D8BD]/30 shadow transition flex flex-col items-center space-y-1"
-                        >
-                          <span className="text-xl">🛍️</span>
-                          <span className="text-xs font-bold">Syakira Store</span>
-                          <span className="text-[9px] text-[#E9D8BD]">{products.length} Produk Kulit</span>
-                        </button>
-
-                        <button
-                          onClick={() => setCurrentRoute('tour')}
-                          className="p-3 bg-[#112D20] hover:bg-[#0A1D14] rounded-2xl text-center text-[#F8F4EC] border border-[#E9D8BD]/30 shadow transition flex flex-col items-center space-y-1"
-                        >
-                          <span className="text-xl">🧭</span>
-                          <span className="text-xs font-bold">Tour Guide WA</span>
-                          <span className="text-[9px] text-[#E9D8BD]">Rizal & Rifa</span>
-                        </button>
-
+                      {/* Tombol CTA Utama */}
+                      <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-3">
                         <button
                           onClick={() => setCurrentRoute('maps')}
-                          className="p-3 bg-[#112D20] hover:bg-[#0A1D14] rounded-2xl text-center text-[#F8F4EC] border border-[#E9D8BD]/30 shadow transition flex flex-col items-center space-y-1"
+                          className="px-6 py-3 bg-[#E9D8BD] hover:bg-[#D6B889] text-[#173D2B] font-bold text-xs rounded-xl shadow-lg transition flex items-center space-x-2"
                         >
-                          <span className="text-xl">🏭</span>
-                          <span className="text-xs font-bold">Pabrik & Peta</span>
-                          <span className="text-[9px] text-[#E9D8BD]">{destinations.length} Lokasi Terverifikasi</span>
+                          <span>🗺️ Mulai Eksplorasi</span>
+                        </button>
+                        <button
+                          onClick={() => setCurrentRoute('store')}
+                          className="px-6 py-3 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center space-x-2"
+                        >
+                          <span>🛍️ Lihat Koleksi Produk</span>
+                        </button>
+                        <button
+                          onClick={() => setCurrentRoute('simulator')}
+                          className="px-5 py-3 bg-[#102B1E] hover:bg-black text-[#E9D8BD] font-bold text-xs rounded-xl border border-[#E9D8BD]/40 shadow-lg transition flex items-center space-x-2"
+                        >
+                          <span>🎮 Mainkan Simulator Game</span>
                         </button>
                       </div>
                     </div>
                   </div>
                 </div>
 
+                {/* Section Pengenalan Sukaregang */}
+                <div className="bg-white rounded-3xl p-8 sm:p-10 border-2 border-[#E9D8BD]/50 shadow-md space-y-4">
+                  <div className="max-w-3xl space-y-3">
+                    <span className="text-xs uppercase font-bold tracking-widest text-[#8B4A2B]">
+                      Kawasan Bersejarah Garut
+                    </span>
+                    <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#173D2B]">
+                      Mengenal Sukaregang
+                    </h2>
+                    <p className="text-xs sm:text-sm text-[#35251D]/80 leading-relaxed">
+                      "Sukaregang merupakan kawasan di Garut yang dikenal dengan aktivitas industri dan kerajinan kulit. Kawasan ini menjadi tempat berkembangnya berbagai produk berbahan kulit, mulai dari jaket hingga alas kaki."
+                    </p>
+                    <div className="pt-2">
+                      <button
+                        onClick={() => setCurrentRoute('video')}
+                        className="text-xs font-bold text-[#8B4A2B] hover:underline flex items-center space-x-1"
+                      >
+                        <span>Selengkapnya tentang Sejarah Sukaregang</span>
+                        <span>→</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section Pengalaman Eksplorasi (3 Kartu Utama) */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div
+                    onClick={() => setCurrentRoute('maps')}
+                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/50 shadow-sm hover:shadow-xl transition space-y-3 group"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-[#173D2B] text-[#E9D8BD] flex items-center justify-center text-xl group-hover:scale-105 transition">
+                      🗺️
+                    </div>
+                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">1. Explore the Area</h3>
+                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
+                      Jelajahi kawasan Sukaregang melalui peta dan pengalaman virtual tour di titik-titik pabrik pengolahan dan showroom.
+                    </p>
+                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Buka Peta & Pabrik →</span>
+                  </div>
+
+                  <div
+                    onClick={() => setCurrentRoute('video')}
+                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/50 shadow-sm hover:shadow-xl transition space-y-3 group"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-[#173D2B] text-[#E9D8BD] flex items-center justify-center text-xl group-hover:scale-105 transition">
+                      📜
+                    </div>
+                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">2. Discover the Heritage</h3>
+                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
+                      Pelajari sejarah dan perkembangan industri kerajinan kulit Sukaregang yang telah diwariskan turun-temurun.
+                    </p>
+                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Tonton Dokumenter →</span>
+                  </div>
+
+                  <div
+                    onClick={() => setCurrentRoute('simulator')}
+                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#8B4A2B]/40 shadow-sm hover:shadow-xl transition space-y-3 group"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-[#8B4A2B] text-white flex items-center justify-center text-xl group-hover:scale-105 transition">
+                      ✂️
+                    </div>
+                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">3. Learn the Craft</h3>
+                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
+                      Kenali jenis kulit serta mainkan game simulator membuat jaket dan sepatu kulit dari potong pola hingga menjahit.
+                    </p>
+                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Mainkan Simulator →</span>
+                  </div>
+                </div>
+
                 {/* Banner Direct to Syakira Leather Official Shopee Store */}
-                <div className="bg-gradient-to-r from-[#8B4A2B] to-[#6E381F] rounded-3xl p-5 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-[#E9D8BD]/40">
-                  <div className="flex items-center space-x-3.5">
+                <div className="bg-gradient-to-r from-[#8B4A2B] to-[#6E381F] rounded-3xl p-6 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-[#E9D8BD]/40">
+                  <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-2xl bg-white/10 flex items-center justify-center text-2xl flex-shrink-0">
                       🛒
                     </div>
@@ -1245,223 +1250,814 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   </a>
                 </div>
 
-                {/* 3 Interactive Highlight Pillars */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <div
-                    onClick={() => setCurrentRoute('simulator')}
-                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm hover:shadow-md transition space-y-3 group"
-                  >
-                    <div className="w-12 h-12 rounded-2xl bg-[#8B4A2B] text-[#F8F4EC] flex items-center justify-center text-xl group-hover:scale-105 transition">
-                      🎮
+                {/* Section Produk Unggulan */}
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-bold uppercase text-[#8B4A2B]">Koleksi Asli</span>
+                      <h3 className="font-serif text-2xl font-bold text-[#173D2B]">Produk Unggulan Syakira Leather</h3>
                     </div>
-                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Simulator Pengrajin Kulit</h3>
-                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                      Pengalaman interaktif membuat jaket kulit domba dan sepatu boots dari tahap bahan mentah hingga jadi, uji ketelitian dan dapatkan sertifikat master!
-                    </p>
-                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Mulai Simulator Game →</span>
+                    <button
+                      onClick={() => setCurrentRoute('store')}
+                      className="px-4 py-2 bg-[#173D2B] text-white text-xs font-bold rounded-xl hover:bg-[#102B1E] transition"
+                    >
+                      Lihat Semua Produk ({products.length}) →
+                    </button>
                   </div>
 
-                  <div
-                    onClick={() => setCurrentRoute('maps')}
-                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm hover:shadow-md transition space-y-3 group"
-                  >
-                    <div className="w-12 h-12 rounded-2xl bg-[#173D2B] text-[#E9D8BD] flex items-center justify-center text-xl group-hover:scale-105 transition">
-                      🗺️
-                    </div>
-                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Explore Sentra Sukaregang</h3>
-                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                      Peta interaktif lengkap dengan koordinat titik pabrik jaket, pabrik penyamakan kulit mentah, dan sentra belanja Piazza Firenze.
-                    </p>
-                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Buka Peta & Lokasi →</span>
-                  </div>
-
-                  <div
-                    onClick={() => setCurrentRoute('store')}
-                    className="cursor-pointer bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm hover:shadow-md transition space-y-3 group"
-                  >
-                    <div className="w-12 h-12 rounded-2xl bg-[#173D2B] text-[#E9D8BD] flex items-center justify-center text-xl group-hover:scale-105 transition">
-                      🧥
-                    </div>
-                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Katalog Asli Syakira Leather</h3>
-                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                      Tersedia 20 produk wajib: 13 Jaket Kulit Pria, 3 Sepatu Pria, 4 Sepatu Wanita dengan gambar produk asli dan tautan langsung Shopee.
-                    </p>
-                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Lihat Koleksi Lengkap →</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    {products.slice(0, 4).map((p) => {
+                      const currentImg = customImages[p.id] || p.imageUrl;
+                      return (
+                        <div
+                          key={p.id}
+                          className="bg-white rounded-2xl overflow-hidden border border-[#E9D8BD]/50 shadow-md flex flex-col justify-between"
+                        >
+                          <div className="h-56 bg-[#F8F4EC] overflow-hidden relative">
+                            <img
+                              src={currentImg}
+                              alt={p.name}
+                              referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = p.fallbackUrl || "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80";
+                              }}
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute top-2.5 left-2.5 bg-[#173D2B]/85 text-[#F8F4EC] px-2 py-0.5 rounded-full text-[10px] font-bold">
+                              {p.category}
+                            </span>
+                          </div>
+                          <div className="p-4 space-y-2">
+                            <h4 className="font-serif font-bold text-xs text-[#173D2B] truncate">{p.name}</h4>
+                            <p className="text-[10px] text-[#35251D]/70 line-clamp-2">{p.description}</p>
+                            <a
+                              href={p.shopeeUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full block py-2 bg-[#8B4A2B] text-white text-[11px] font-bold rounded-xl text-center hover:bg-[#6E381F] transition"
+                            >
+                              Beli di Shopee ↗
+                            </a>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
+
+                {/* Cuplikan Kesan & Pesan Wisatawan */}
+                <div className="bg-white rounded-3xl p-8 border-2 border-[#E9D8BD]/50 shadow-sm space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs font-bold uppercase text-[#8B4A2B]">Buku Tamu Pengunjung</span>
+                      <h3 className="font-serif text-2xl font-bold text-[#173D2B]">Kesan & Pesan untuk Sukaregang</h3>
+                    </div>
+                    <button
+                      onClick={() => setCurrentRoute('reviews')}
+                      className="text-xs font-bold text-[#8B4A2B] hover:underline"
+                    >
+                      Tulis Kesan & Pesan Anda ✍️
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {reviews.slice(0, 3).map((r) => (
+                      <div key={r.id} className="p-4 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD]/50 space-y-2 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-[#173D2B]">{r.name}</span>
+                          <span className="text-[10px] text-amber-600 font-bold">{'⭐'.repeat(r.rating)}</span>
+                        </div>
+                        <span className="text-[10px] text-gray-500 block">Kota: {r.city} • {r.date}</span>
+                        <p className="text-[11px] text-[#35251D]/80 italic line-clamp-3">"{r.comment}"</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Section CTA Bawah */}
+                <div className="bg-[#173D2B] rounded-3xl p-8 text-center text-[#F8F4EC] space-y-3 border-2 border-[#E9D8BD]/40">
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold">
+                    Your Journey into Leather Heritage Starts Here
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[#F8F4EC]/85 max-w-xl mx-auto leading-relaxed">
+                    "Kenali lebih dekat Sukaregang dan temukan berbagai produk kulit pilihan."
+                  </p>
+                  <button
+                    onClick={() => setCurrentRoute('tour')}
+                    className="px-6 py-3 bg-[#E9D8BD] hover:bg-[#D6B889] text-[#173D2B] font-bold text-xs rounded-xl shadow-lg transition"
+                  >
+                    Mulai Menjelajahi dengan Tour Guide
+                  </button>
+                </div>
+
               </div>
             )}
 
             {/* -------------------------------------------------------------
-                GAME SIMULATOR MEMBUAT JAKET & SEPATU KULIT DARI AWAL - AKHIR
+                GAME WORKSHOP SIMULATOR (PILIH DESAIN -> POTONG -> JAHIT)
             ------------------------------------------------------------- */}
             {currentRoute === 'simulator' && (
               <div className="space-y-6 animate-fadeIn">
+                
+                {/* Header Simulator */}
                 <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-4">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                       <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">
-                        Simulasi Edukatif Interaktif
+                        Game Workshop Pengrajin Sukaregang
                       </span>
                       <h2 className="font-serif text-3xl sm:text-4xl font-bold">
-                        LEATHERCRAFT MASTER SIMULATOR
+                        LEATHERCRAFT SIMULATOR GAME
                       </h2>
                       <p className="text-xs sm:text-sm text-[#F8F4EC]/80 max-w-2xl leading-relaxed mt-1">
-                        Rasakan pengalaman menjadi pengrajin master Sukaregang: buat jaket kulit domba atau sepatu boots kulit sapi dari bahan mentah hingga finishing siap pakai!
+                        Pilih model desain yang kamu inginkan, potong bagian-bagian pola kulit, dan jahit dengan mesin jahit kulit asli hingga karyamu selesai!
                       </p>
                     </div>
 
-                    <div className="flex bg-[#112D20] p-1.5 rounded-2xl border border-[#E9D8BD]/30 text-xs font-bold">
+                    {/* Mode Switcher: Jaket vs Sepatu */}
+                    <div className="flex bg-[#102B1E] p-1.5 rounded-2xl border border-[#E9D8BD]/30 text-xs font-bold">
                       <button
-                        onClick={() => handleResetSimulator('jaket')}
+                        onClick={() => resetGame('jaket')}
                         className={`px-4 py-2 rounded-xl transition ${
-                          simCraftType === 'jaket'
+                          simMode === 'jaket'
                             ? 'bg-[#E9D8BD] text-[#173D2B] shadow'
                             : 'text-[#F8F4EC]/75 hover:text-white'
                         }`}
                       >
-                        🧥 Buat Jaket Kulit
+                        🧥 Workshop Jaket
                       </button>
                       <button
-                        onClick={() => handleResetSimulator('sepatu')}
+                        onClick={() => resetGame('sepatu')}
                         className={`px-4 py-2 rounded-xl transition ${
-                          simCraftType === 'sepatu'
+                          simMode === 'sepatu'
                             ? 'bg-[#E9D8BD] text-[#173D2B] shadow'
                             : 'text-[#F8F4EC]/75 hover:text-white'
                         }`}
                       >
-                        👞 Buat Sepatu Boots
+                        👞 Workshop Sepatu
                       </button>
                     </div>
                   </div>
 
-                  {/* Progress Indicator */}
-                  <div className="pt-2">
-                    <div className="flex items-center justify-between text-xs font-semibold text-[#E9D8BD] mb-1.5">
-                      <span>Langkah {simStep} dari {currentSimSteps.length}: {currentStepData ? currentStepData.title : 'Selesai'}</span>
-                      <span>Skor Ketelitian Pengrajin: <strong className="text-white">{simScore} / 100</strong></span>
-                    </div>
-                    <div className="w-full h-3 bg-[#112D20] rounded-full overflow-hidden border border-[#E9D8BD]/30">
+                  {/* Progress Stages */}
+                  <div className="grid grid-cols-4 gap-2 pt-2 text-center text-xs font-bold">
+                    {[
+                      { num: 1, title: '1. Desain' },
+                      { num: 2, title: '2. Potong Pola' },
+                      { num: 3, title: '3. Menjahit' },
+                      { num: 4, title: '4. Selesai!' },
+                    ].map((st) => (
                       <div
-                        className="h-full bg-gradient-to-r from-[#8B4A2B] to-[#E9D8BD] transition-all duration-500 rounded-full"
-                        style={{ width: `${(simStep / currentSimSteps.length) * 100}%` }}
-                      ></div>
-                    </div>
+                        key={st.num}
+                        onClick={() => st.num <= simStage && setSimStage(st.num)}
+                        className={`p-2 rounded-xl border transition ${
+                          simStage === st.num
+                            ? 'bg-[#E9D8BD] text-[#173D2B] border-[#E9D8BD]'
+                            : simStage > st.num
+                            ? 'bg-emerald-800/50 text-[#E9D8BD] border-emerald-500/40 cursor-pointer'
+                            : 'bg-[#102B1E] text-gray-400 border-transparent'
+                        }`}
+                      >
+                        {st.title}
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {!simCompleted && currentStepData && (
-                  <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#E9D8BD]/40 shadow-md space-y-6">
-                    <div className="flex items-center space-x-3.5 pb-4 border-b border-[#ECE3D4]">
-                      <div className="w-12 h-12 rounded-2xl bg-[#8B4A2B] text-white flex items-center justify-center text-xl font-bold font-serif flex-shrink-0">
-                        {simStep}
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">
-                          Tahapan Produksi {simCraftType === 'jaket' ? 'Jaket Domba' : 'Sepatu Sapi'}
-                        </span>
-                        <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#173D2B]">
-                          {currentStepData.title}
-                        </h3>
-                        <p className="text-xs text-[#35251D]/75 mt-1">
-                          {currentStepData.task}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Step Options Choice */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {currentStepData.options.map((opt) => (
-                        <div
-                          key={opt.id}
-                          onClick={() => handleSimChoice(opt)}
-                          className="cursor-pointer p-5 rounded-2xl border-2 border-[#E9D8BD]/50 hover:border-[#8B4A2B] hover:shadow-lg transition bg-[#F8F4EC]/40 hover:bg-white flex flex-col justify-between space-y-3 group"
-                        >
-                          <div>
-                            <div className="flex items-center justify-between">
-                              <h4 className="font-serif font-bold text-base text-[#173D2B] group-hover:text-[#8B4A2B] transition">
-                                {opt.label}
-                              </h4>
-                              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-[#173D2B]/10 text-[#173D2B]">
-                                Pilih
-                              </span>
-                            </div>
-                            <p className="text-xs text-[#35251D]/75 leading-relaxed mt-2">
-                              {opt.desc}
-                            </p>
-                          </div>
-                          <span className="text-[11px] font-bold text-[#8B4A2B] flex items-center space-x-1">
-                            <span>Lakukan Langkah Ini</span>
-                            <span>→</span>
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Selesai: Sertifikat Pengrajin Master Sukaregang */}
-                {simCompleted && (
-                  <div className="bg-white rounded-3xl p-6 sm:p-10 border-4 border-[#E9D8BD] shadow-2xl text-center space-y-6 animate-fadeIn relative overflow-hidden">
-                    <div className="w-24 h-24 mx-auto rounded-full bg-[#173D2B] border-4 border-[#E9D8BD] flex items-center justify-center text-4xl shadow-lg">
-                      🏆
-                    </div>
-                    <div className="space-y-2 max-w-xl mx-auto">
-                      <span className="text-xs uppercase font-bold tracking-widest text-[#8B4A2B]">
-                        Sertifikat Kompetensi Pengrajin Sukaregang
-                      </span>
-                      <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#173D2B]">
-                        SELAMAT! KARYA KULIT ANDA SELESAI
-                      </h3>
-                      <p className="text-xs sm:text-sm text-[#35251D]/80 leading-relaxed">
-                        Anda telah berhasil menyelesaikan pembuatan <strong>{simCraftType === 'jaket' ? 'Jaket Kulit Domba Garut' : 'Sepatu Boots Kulit Sapi'}</strong> dari tahap bahan mentah hingga finishing akhir dengan skor ketelitian:
-                      </p>
-                      <div className="inline-block py-2 px-6 rounded-2xl bg-[#E9D8BD]/30 border-2 border-[#8B4A2B] text-2xl font-serif font-bold text-[#173D2B]">
-                        Skor: {simScore} / 100 ({simScore >= 80 ? 'Master Craftsman' : 'Junior Artisan'})
-                      </div>
-                    </div>
-
-                    {/* Syakira Leather Linkage */}
-                    <div className="bg-[#173D2B] text-[#F8F4EC] p-6 rounded-2xl max-w-2xl mx-auto space-y-3 border border-[#E9D8BD]/40 text-left">
-                      <div className="flex items-center space-x-3">
-                        <img src="./logo.png" alt="Logo" className="w-10 h-10 rounded-full border border-[#E9D8BD]" />
+                {/* =========================================================
+                    SIMULATOR: JAKET KULIT
+                ========================================================= */}
+                {simMode === 'jaket' && (
+                  <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#E9D8BD]/50 shadow-md space-y-6">
+                    
+                    {/* STAGE 1: PILIH DESAIN & WARNA JAKET */}
+                    {simStage === 1 && (
+                      <div className="space-y-6 animate-fadeIn">
                         <div>
-                          <h4 className="font-serif font-bold text-base">Ingin Memiliki Produk Asli Nyata Seperti Ini?</h4>
-                          <p className="text-[11px] text-[#E9D8BD]">Dibuat langsung oleh penjahit senior Syakira Leather Sukaregang Garut.</p>
+                          <span className="text-xs font-bold uppercase text-[#8B4A2B]">Langkah 1</span>
+                          <h3 className="font-serif text-2xl font-bold text-[#173D2B]">
+                            Pilih Desain & Warna Jaket Kulit Domba Garut
+                          </h3>
+                          <p className="text-xs text-[#35251D]/70 mt-1">
+                            Pilih model siluet dan warna kulit domba asli yang ingin kamu produksi hari ini.
+                          </p>
                         </div>
-                      </div>
-                      <p className="text-xs text-[#F8F4EC]/85 leading-relaxed">
-                        Setiap produk asli Syakira Leather melewati seluruh 7 tahapan standar mutu tinggi yang baru saja Anda pelajari di simulator ini.
-                      </p>
-                      <div className="pt-2 flex flex-wrap gap-2">
-                        <a
-                          href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-5 py-2.5 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-xl shadow transition"
-                        >
-                          Beli Produk Asli di Shopee Syakira Leather ↗
-                        </a>
+
+                        {/* Model Desain */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                          {[
+                            { name: 'Biker Rockstar', desc: 'Ritsleting miring asimetris, kerah snap button gagah.', img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'Jubah Formal Garut', desc: 'Panjang 3/4 elegan, cocok untuk acara formal berkelas.', img: 'https://images.unsplash.com/photo-1520975954732-35dd22299614?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'Bomber Vintage', desc: 'Rib elastis pinggang & pergelangan tangan, gaya kasual.', img: 'https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'Jangkis Retro', desc: 'Siluet pas badan klasik favorit pelancong Sukaregang.', img: 'https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=400&q=80' },
+                          ].map((d) => (
+                            <div
+                              key={d.name}
+                              onClick={() => setJaketDesign(d.name)}
+                              className={`cursor-pointer rounded-2xl overflow-hidden border-2 p-3 transition flex flex-col justify-between ${
+                                jaketDesign === d.name
+                                  ? 'border-[#8B4A2B] bg-[#F8F4EC] ring-2 ring-[#8B4A2B]/30'
+                                  : 'border-[#E9D8BD]/50 hover:border-[#8B4A2B]'
+                              }`}
+                            >
+                              <img src={d.img} alt={d.name} className="h-36 w-full object-cover rounded-xl mb-2" />
+                              <div>
+                                <h4 className="font-serif font-bold text-sm text-[#173D2B]">{d.name}</h4>
+                                <p className="text-[10px] text-[#35251D]/70 mt-1">{d.desc}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Pilihan Warna Kulit */}
+                        <div>
+                          <label className="text-xs font-bold text-[#173D2B] block mb-2">
+                            Pilih Warna Kulit Domba:
+                          </label>
+                          <div className="flex flex-wrap gap-3">
+                            {[
+                              { label: 'Hitam Obsidian Glossy', bg: 'bg-black text-white' },
+                              { label: 'Cokelat Antik Heritage', bg: 'bg-[#5A3319] text-white' },
+                              { label: 'Tan Karamel Cerah', bg: 'bg-[#C18C5D] text-black' },
+                            ].map((c) => (
+                              <button
+                                key={c.label}
+                                type="button"
+                                onClick={() => setJaketColor(c.label)}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition flex items-center space-x-2 ${
+                                  jaketColor === c.label
+                                    ? 'ring-2 ring-black shadow-md scale-105 ' + c.bg
+                                    : 'opacity-75 ' + c.bg
+                                }`}
+                              >
+                                <span>{jaketColor === c.label ? '✓' : '•'}</span>
+                                <span>{c.label}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
                         <button
-                          onClick={() => handleResetSimulator(simCraftType === 'jaket' ? 'sepatu' : 'jaket')}
-                          className="px-4 py-2.5 bg-white text-[#173D2B] font-bold text-xs rounded-xl shadow transition"
+                          onClick={() => setSimStage(2)}
+                          className="w-full py-3.5 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center space-x-2"
                         >
-                          Coba Simulator {simCraftType === 'jaket' ? 'Sepatu' : 'Jaket'} 🔄
+                          <span>Lanjut ke Meja Pemotongan Pola (Cutting)</span>
+                          <span>→</span>
                         </button>
                       </div>
-                    </div>
+                    )}
+
+                    {/* STAGE 2: MEMOTONG BAGIAN JAKET (CUTTING MINIGAME) */}
+                    {simStage === 2 && (
+                      <div className="space-y-6 animate-fadeIn">
+                        <div>
+                          <span className="text-xs font-bold uppercase text-[#8B4A2B]">Langkah 2</span>
+                          <h3 className="font-serif text-2xl font-bold text-[#173D2B]">
+                            Memotong Bagian-Bagian Pola Jaket: {jaketDesign}
+                          </h3>
+                          <p className="text-xs text-[#35251D]/70 mt-1">
+                            Klik setiap pola potongan kulit domba di bawah ini untuk memotongnya secara presisi!
+                          </p>
+                        </div>
+
+                        {/* Checklist Pola */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {[
+                            { key: 'dadaDepan', label: '1. Panel Dada Depan (Kiri & Kanan)', desc: 'Pola utama penutup dada dengan lubang ritsleting.' },
+                            { key: 'punggungBelakang', label: '2. Panel Punggung Belakang', desc: 'Potongan lembaran lebar kulit domba super tanpa sambungan cacat.' },
+                            { key: 'lenganKiri', label: '3. Lengan Kiri & Siku', desc: 'Pola melengkung ergonomis agar tangan fleksibel menekuk.' },
+                            { key: 'lenganKanan', label: '4. Lengan Kanan & Siku', desc: 'Pola simetris dengan jahitan nilon penguat.' },
+                            { key: 'kerahSaku', label: '5. Kerah & Saku Dalam', desc: 'Potongan detail kecil untuk kerah lipat dan saku fungsional.' },
+                          ].map((p) => {
+                            const isDone = jaketCutParts[p.key];
+                            return (
+                              <div
+                                key={p.key}
+                                onClick={() => cutJaketPart(p.key)}
+                                className={`cursor-pointer p-5 rounded-2xl border-2 transition flex flex-col justify-between space-y-3 ${
+                                  isDone
+                                    ? 'bg-emerald-50 border-emerald-400 text-emerald-900'
+                                    : 'bg-[#F8F4EC]/50 border-[#E9D8BD] hover:border-[#8B4A2B] hover:shadow-md'
+                                }`}
+                              >
+                                <div>
+                                  <div className="flex items-center justify-between">
+                                    <h4 className="font-serif font-bold text-sm">{p.label}</h4>
+                                    <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${isDone ? 'bg-emerald-200 text-emerald-800' : 'bg-gray-200 text-gray-700'}`}>
+                                      {isDone ? '✓ Terpotong' : '✂️ Klik Potong'}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] opacity-80 mt-1">{p.desc}</p>
+                                </div>
+                                <div className="text-[10px] font-bold">
+                                  {isDone ? 'Siap dirakit ke mesin jahit' : 'Ketuk untuk memotong bagian ini'}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-xs font-bold text-[#173D2B]">
+                            Progress Pemotongan: {Object.values(jaketCutParts).filter(Boolean).length} / 5 Bagian
+                          </span>
+                          <button
+                            disabled={!allJaketCut}
+                            onClick={() => setSimStage(3)}
+                            className="px-6 py-3 bg-[#173D2B] disabled:bg-gray-300 hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow transition"
+                          >
+                            {allJaketCut ? 'Lanjut ke Mesin Jahit Kulit →' : 'Potong Semua Pola Terlebih Dahulu'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* STAGE 3: MENJAHIT (SEWING MINIGAME) */}
+                    {simStage === 3 && (
+                      <div className="space-y-6 animate-fadeIn">
+                        <div>
+                          <span className="text-xs font-bold uppercase text-[#8B4A2B]">Langkah 3</span>
+                          <h3 className="font-serif text-2xl font-bold text-[#173D2B]">
+                            Menjahit & Merakit Jaket Kulit Sukaregang
+                          </h3>
+                          <p className="text-xs text-[#35251D]/70 mt-1">
+                            Operasikan mesin jahit jarum tebal khas Sukaregang. Klik tahapan perakitan di bawah ini satu per satu!
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {[
+                            { key: 'panelDada', label: '1. Jahit Sambungan Dada & Punggung', desc: 'Jahitan ganda benang nilon no. 30 berkekuatan tarik tinggi.' },
+                            { key: 'zipperYKK', label: '2. Pasang Ritsleting YKK Logam Kuningan', desc: 'Pemasangan zipper heavy duty tahan karat.' },
+                            { key: 'furingDormeuil', label: '3. Pasang Kain Furing Dormeuil England', desc: 'Lapisan dalam sejuk agar jaket nyaman dan tidak lengket.' },
+                            { key: 'lenganManset', label: '4. Jahit Lengan & Manset Kerah', desc: 'Perakitan akhir lengan kanan & kiri ke bodi jaket.' },
+                          ].map((s) => {
+                            const isDone = jaketSewSteps[s.key];
+                            return (
+                              <div
+                                key={s.key}
+                                onClick={() => sewJaketStep(s.key)}
+                                className={`cursor-pointer p-5 rounded-2xl border-2 transition flex items-center justify-between ${
+                                  isDone
+                                    ? 'bg-emerald-50 border-emerald-400 text-emerald-900'
+                                    : 'bg-[#F8F4EC]/50 border-[#E9D8BD] hover:border-[#8B4A2B] hover:shadow-md'
+                                }`}
+                              >
+                                <div className="space-y-1">
+                                  <h4 className="font-serif font-bold text-sm">{s.label}</h4>
+                                  <p className="text-[11px] opacity-80">{s.desc}</p>
+                                </div>
+                                <span className={`px-3 py-1 rounded-xl text-xs font-bold flex-shrink-0 ml-3 ${isDone ? 'bg-emerald-200 text-emerald-800' : 'bg-[#8B4A2B] text-white'}`}>
+                                  {isDone ? '✓ Terjahit' : '🧵 Klik Jahit'}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-xs font-bold text-[#173D2B]">
+                            Progress Penjahitan: {Object.values(jaketSewSteps).filter(Boolean).length} / 4 Tahap
+                          </span>
+                          <button
+                            disabled={!allJaketSewn}
+                            onClick={() => setSimStage(4)}
+                            className="px-6 py-3 bg-[#173D2B] disabled:bg-gray-300 hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow transition"
+                          >
+                            {allJaketSewn ? 'Selesaikan & Uji Kualitas →' : 'Selesaikan Semua Jahitan'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* STAGE 4: FINISHING & HASIL KARYA */}
+                    {simStage === 4 && (
+                      <div className="text-center space-y-6 animate-fadeIn">
+                        <div className="w-20 h-20 mx-auto rounded-full bg-[#173D2B] text-white flex items-center justify-center text-3xl shadow-xl border-4 border-[#E9D8BD]">
+                          🧥
+                        </div>
+                        <div className="max-w-xl mx-auto space-y-2">
+                          <span className="text-xs font-bold uppercase tracking-widest text-[#8B4A2B]">Karya Selesai Dibuat</span>
+                          <h3 className="font-serif text-3xl font-bold text-[#173D2B]">
+                            Jaket {jaketDesign} ({jaketColor}) Berhasil Diciptakan!
+                          </h3>
+                          <p className="text-xs text-[#35251D]/80 leading-relaxed">
+                            Selamat! Anda telah menyelesaikan seluruh proses pembuatan jaket kulit domba asli Sukaregang dari memotong 5 bagian pola hingga menjahit dan menyemir furing.
+                          </p>
+                        </div>
+
+                        <div className="p-6 bg-[#F8F4EC] rounded-2xl max-w-md mx-auto border border-[#E9D8BD] space-y-2 text-xs">
+                          <div className="flex justify-between"><span>Model Jaket:</span><strong>{jaketDesign}</strong></div>
+                          <div className="flex justify-between"><span>Warna Kulit:</span><strong>{jaketColor}</strong></div>
+                          <div className="flex justify-between"><span>Standar Bahan:</span><strong>100% Kulit Domba Asli Garut</strong></div>
+                          <div className="flex justify-between"><span>Sertifikasi:</span><strong className="text-emerald-700">✓ Master Craftsman Sukaregang</strong></div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-center gap-3">
+                          <a
+                            href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-6 py-3 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-xl shadow-lg transition"
+                          >
+                            Beli Jaket Kulit Serupa di Shopee Syakira Leather ↗
+                          </a>
+                          <button
+                            onClick={() => resetGame('jaket')}
+                            className="px-5 py-3 bg-[#173D2B] text-white font-bold text-xs rounded-xl shadow transition"
+                          >
+                            Buat Model Jaket Lain 🔄
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
                   </div>
                 )}
+
+                {/* =========================================================
+                    SIMULATOR: SEPATU KULIT
+                ========================================================= */}
+                {simMode === 'sepatu' && (
+                  <div className="bg-white rounded-3xl p-6 sm:p-8 border-2 border-[#E9D8BD]/50 shadow-md space-y-6">
+                    
+                    {/* STAGE 1: PILIH DESAIN & KULIT SEPATU */}
+                    {simStage === 1 && (
+                      <div className="space-y-6 animate-fadeIn">
+                        <div>
+                          <span className="text-xs font-bold uppercase text-[#8B4A2B]">Langkah 1</span>
+                          <h3 className="font-serif text-2xl font-bold text-[#173D2B]">
+                            Pilih Desain & Bahan Kulit Sapi untuk Sepatu
+                          </h3>
+                          <p className="text-xs text-[#35251D]/70 mt-1">
+                            Pilih siluet alas kaki dan karakter kulit sapi olahan Sukaregang yang ingin kamu buat.
+                          </p>
+                        </div>
+
+                        {/* Model Desain Sepatu */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                          {[
+                            { name: 'Boots Pria Tangguh', desc: 'Sol tebal anti slip, jahitan keliling tembus kuat.', img: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'Pantofel Oxford Formal', desc: 'Kilau satin rapi, cocok untuk kantor dan pesta.', img: 'https://images.unsplash.com/photo-1614252235316-8c857d38b5f4?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'Sandal Mules Wanita', desc: 'Chic, feminin, dan empuk dipakai jalan santai.', img: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=400&q=80' },
+                            { name: 'Ankle Boots Wanita', desc: 'Desain modis berhak ergonomis khas pengrajin Garut.', img: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=400&q=80' },
+                          ].map((d) => (
+                            <div
+                              key={d.name}
+                              onClick={() => setSepatuDesign(d.name)}
+                              className={`cursor-pointer rounded-2xl overflow-hidden border-2 p-3 transition flex flex-col justify-between ${
+                                sepatuDesign === d.name
+                                  ? 'border-[#8B4A2B] bg-[#F8F4EC] ring-2 ring-[#8B4A2B]/30'
+                                  : 'border-[#E9D8BD]/50 hover:border-[#8B4A2B]'
+                              }`}
+                            >
+                              <img src={d.img} alt={d.name} className="h-36 w-full object-cover rounded-xl mb-2" />
+                              <div>
+                                <h4 className="font-serif font-bold text-sm text-[#173D2B]">{d.name}</h4>
+                                <p className="text-[10px] text-[#35251D]/70 mt-1">{d.desc}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Pilihan Kulit Sapi */}
+                        <div>
+                          <label className="text-xs font-bold text-[#173D2B] block mb-2">
+                            Pilih Karakter Kulit Sapi Sukaregang:
+                          </label>
+                          <div className="flex flex-wrap gap-3">
+                            {[
+                              'Pull-Up Leather Sapi',
+                              'Crazy Horse Vintage',
+                              'Full-Grain Glossy',
+                              'Nabati Natural Tan'
+                            ].map((k) => (
+                              <button
+                                key={k}
+                                type="button"
+                                onClick={() => setSepatuLeatherType(k)}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold transition ${
+                                  sepatuLeatherType === k
+                                    ? 'bg-[#173D2B] text-white shadow'
+                                    : 'bg-[#F8F4EC] text-[#35251D] border border-[#E9D8BD]'
+                                }`}
+                              >
+                                {sepatuLeatherType === k ? '✓ ' : ''}{k}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        <button
+                          onClick={() => setSimStage(2)}
+                          className="w-full py-3.5 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center space-x-2"
+                        >
+                          <span>Lanjut ke Pemotongan Pola Sepatu (Cutting)</span>
+                          <span>→</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* STAGE 2: MEMOTONG POLA SEPATU */}
+                    {simStage === 2 && (
+                      <div className="space-y-6 animate-fadeIn">
+                        <div>
+                          <span className="text-xs font-bold uppercase text-[#8B4A2B]">Langkah 2</span>
+                          <h3 className="font-serif text-2xl font-bold text-[#173D2B]">
+                            Memotong 4 Bagian Pola Sepatu: {sepatuDesign}
+                          </h3>
+                          <p className="text-xs text-[#35251D]/70 mt-1">
+                            Klik setiap pola potongan kulit sapi tebal di bawah ini untuk memotongnya!
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {[
+                            { key: 'vamp', label: '1. Vamp (Punggung Kaki Depan)', desc: 'Bagian atas penutup jemari dan punggung kaki yang melengkung lentur.' },
+                            { key: 'quarter', label: '2. Quarter (Dinding Samping Kaki)', desc: 'Panel samping kanan dan kiri penopang pergelangan kaki.' },
+                            { key: 'tongue', label: '3. Tongue (Lidah Sepatu)', desc: 'Peredam tekanan tali sepatu agar nyaman tidak menjepit kaki.' },
+                            { key: 'heelCounter', label: '4. Heel Counter (Penguat Tumit)', desc: 'Lapisan kokoh pelindung tumit agar sepatu tidak cepat gepeng.' },
+                          ].map((p) => {
+                            const isDone = sepatuCutParts[p.key];
+                            return (
+                              <div
+                                key={p.key}
+                                onClick={() => cutSepatuPart(p.key)}
+                                className={`cursor-pointer p-5 rounded-2xl border-2 transition flex items-center justify-between ${
+                                  isDone
+                                    ? 'bg-emerald-50 border-emerald-400 text-emerald-900'
+                                    : 'bg-[#F8F4EC]/50 border-[#E9D8BD] hover:border-[#8B4A2B] hover:shadow-md'
+                                }`}
+                              >
+                                <div className="space-y-1">
+                                  <h4 className="font-serif font-bold text-sm">{p.label}</h4>
+                                  <p className="text-[11px] opacity-80">{p.desc}</p>
+                                </div>
+                                <span className={`px-3 py-1 rounded-xl text-xs font-bold flex-shrink-0 ml-3 ${isDone ? 'bg-emerald-200 text-emerald-800' : 'bg-gray-200 text-gray-700'}`}>
+                                  {isDone ? '✓ Terpotong' : '✂️ Potong'}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-xs font-bold text-[#173D2B]">
+                            Progress: {Object.values(sepatuCutParts).filter(Boolean).length} / 4 Pola Terpotong
+                          </span>
+                          <button
+                            disabled={!allSepatuCut}
+                            onClick={() => setSimStage(3)}
+                            className="px-6 py-3 bg-[#173D2B] disabled:bg-gray-300 hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow transition"
+                          >
+                            {allSepatuCut ? 'Lanjut ke Shoe Lasting & Jahit Sol →' : 'Potong Semua Pola Terlebih Dahulu'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* STAGE 3: SHOE LASTING & MENJAHIT SOL */}
+                    {simStage === 3 && (
+                      <div className="space-y-6 animate-fadeIn">
+                        <div>
+                          <span className="text-xs font-bold uppercase text-[#8B4A2B]">Langkah 3</span>
+                          <h3 className="font-serif text-2xl font-bold text-[#173D2B]">
+                            Perakitan & Penjahitan Sol Sepatu (Goodyear Welt)
+                          </h3>
+                          <p className="text-xs text-[#35251D]/70 mt-1">
+                            Lakukan tahapan cetak anatomi kaki (Shoe Last) dan jahit sol keliling agar sol anti jebol.
+                          </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {[
+                            { key: 'shoeLasting', label: '1. Pasang Cetakan Kayu Kaki (Shoe Last)', desc: 'Membentuk siluet anatomis kaki yang presisi dan nyaman.' },
+                            { key: 'jahitUpper', label: '2. Jahit Upper Benang Wax Tebal', desc: 'Menyatukan vamp, quarter dan lidah sepatu dengan benang lilin tahan air.' },
+                            { key: 'insoleFoam', label: '3. Pasang Insole Memory Foam Empuk', desc: 'Bantalan tapak dalam agar kaki tidak pegal melangkah seharian.' },
+                            { key: 'solGoodyearWelt', label: '4. Jahit Sol Karet Tembus (Goodyear Welt)', desc: 'Konstruksi jahitan tembus keliling sol bawah Sukaregang yang teruji kuat.' },
+                          ].map((s) => {
+                            const isDone = sepatuSewSteps[s.key];
+                            return (
+                              <div
+                                key={s.key}
+                                onClick={() => sewSepatuStep(s.key)}
+                                className={`cursor-pointer p-5 rounded-2xl border-2 transition flex items-center justify-between ${
+                                  isDone
+                                    ? 'bg-emerald-50 border-emerald-400 text-emerald-900'
+                                    : 'bg-[#F8F4EC]/50 border-[#E9D8BD] hover:border-[#8B4A2B] hover:shadow-md'
+                                }`}
+                              >
+                                <div className="space-y-1">
+                                  <h4 className="font-serif font-bold text-sm">{s.label}</h4>
+                                  <p className="text-[11px] opacity-80">{s.desc}</p>
+                                </div>
+                                <span className={`px-3 py-1 rounded-xl text-xs font-bold flex-shrink-0 ml-3 ${isDone ? 'bg-emerald-200 text-emerald-800' : 'bg-[#8B4A2B] text-white'}`}>
+                                  {isDone ? '✓ Selesai' : '🪡 Klik Rakit'}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+
+                        <div className="flex items-center justify-between pt-2">
+                          <span className="text-xs font-bold text-[#173D2B]">
+                            Progress: {Object.values(sepatuSewSteps).filter(Boolean).length} / 4 Tahap
+                          </span>
+                          <button
+                            disabled={!allSepatuSewn}
+                            onClick={() => setSimStage(4)}
+                            className="px-6 py-3 bg-[#173D2B] disabled:bg-gray-300 hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow transition"
+                          >
+                            {allSepatuSewn ? 'Finishing & Kilau Sepatu →' : 'Selesaikan Semua Tahapan'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* STAGE 4: FINISHING SEPATU */}
+                    {simStage === 4 && (
+                      <div className="text-center space-y-6 animate-fadeIn">
+                        <div className="w-20 h-20 mx-auto rounded-full bg-[#8B4A2B] text-white flex items-center justify-center text-3xl shadow-xl border-4 border-[#E9D8BD]">
+                          👞
+                        </div>
+                        <div className="max-w-xl mx-auto space-y-2">
+                          <span className="text-xs font-bold uppercase tracking-widest text-[#8B4A2B]">Sepatu Selesai Dibuat</span>
+                          <h3 className="font-serif text-3xl font-bold text-[#173D2B]">
+                            {sepatuDesign} Berhasil Dibuat!
+                          </h3>
+                          <p className="text-xs text-[#35251D]/80 leading-relaxed">
+                            Bahan: <strong>{sepatuLeatherType}</strong> dengan konstruksi jahitan sol Goodyear Welt khas sentra pengrajin alas kaki Sukaregang, Garut.
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-center gap-3">
+                          <a
+                            href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-6 py-3 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-xl shadow-lg transition"
+                          >
+                            Beli Sepatu Kulit Asli di Shopee Syakira Leather ↗
+                          </a>
+                          <button
+                            onClick={() => resetGame('sepatu')}
+                            className="px-5 py-3 bg-[#173D2B] text-white font-bold text-xs rounded-xl shadow transition"
+                          >
+                            Buat Model Sepatu Lain 🔄
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                  </div>
+                )}
+
               </div>
             )}
 
             {/* -------------------------------------------------------------
-                2. SYAKIRA LEATHER STORE (GAMBAR ASLI PRODUK)
+                FITUR KESAN & PESAN UNTUK SUKAREGANG (BUKU TAMU WISATAWAN)
+            ------------------------------------------------------------- */}
+            {currentRoute === 'reviews' && (
+              <div className="space-y-8 animate-fadeIn">
+                <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-3">
+                  <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">
+                    Buku Tamu & Suara Pengunjung
+                  </span>
+                  <h2 className="font-serif text-3xl sm:text-4xl font-bold">
+                    KESAN & PESAN UNTUK SUKAREGANG
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#F8F4EC]/85 max-w-2xl leading-relaxed">
+                    Sudah pernah berkunjung ke sentra kulit Sukaregang, Garut? Bagikan cerita, ulasan toko Syakira Leather, dan kesan kunjungan Anda kepada wisatawan lainnya!
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Form Kirim Kesan Pesan */}
+                  <div className="bg-white rounded-3xl p-6 sm:p-7 border-2 border-[#E9D8BD]/50 shadow-md space-y-4">
+                    <div>
+                      <h3 className="font-serif text-xl font-bold text-[#173D2B]">Tulis Kesan & Pesan</h3>
+                      <p className="text-xs text-[#35251D]/70 mt-1">Ulasan Anda akan langsung tampil di website.</p>
+                    </div>
+
+                    <form onSubmit={handleAddReview} className="space-y-3.5 text-xs">
+                      <div>
+                        <label className="font-bold text-[#173D2B] block mb-1">Nama Lengkap:</label>
+                        <input
+                          type="text"
+                          required
+                          value={revName}
+                          onChange={(e) => setRevName(e.target.value)}
+                          placeholder="Contoh: Alya Alifia"
+                          className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-[#173D2B] block mb-1">Kota Asal:</label>
+                        <input
+                          type="text"
+                          value={revCity}
+                          onChange={(e) => setRevCity(e.target.value)}
+                          placeholder="Contoh: Bandung / Jakarta"
+                          className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-[#173D2B] block mb-1">Tempat / Toko yang Dikunjungi:</label>
+                        <select
+                          value={revVisited}
+                          onChange={(e) => setRevVisited(e.target.value)}
+                          className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40"
+                        >
+                          <option>Showroom Syakira Leather Sukaregang</option>
+                          <option>Pabrik Jaket Kulit Sukaregang</option>
+                          <option>Pusat Belanja Piazza Firenze Garut</option>
+                          <option>Pabrik CV. Surya Wahana Leather</option>
+                          <option>Sentra Penyamakan Kulit Sukaregang</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-[#173D2B] block mb-1">Rating Pengalaman:</label>
+                        <select
+                          value={revRating}
+                          onChange={(e) => setRevRating(e.target.value)}
+                          className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 font-bold"
+                        >
+                          <option value="5">⭐⭐⭐⭐⭐ (5/5) Sangat Puas</option>
+                          <option value="4">⭐⭐⭐⭐ (4/5) Puas</option>
+                          <option value="3">⭐⭐⭐ (3/5) Cukup</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="font-bold text-[#173D2B] block mb-1">Kesan & Pesan Anda:</label>
+                        <textarea
+                          rows="3"
+                          required
+                          value={revComment}
+                          onChange={(e) => setRevComment(e.target.value)}
+                          placeholder="Tuliskan cerita pengalaman Anda saat berbelanja atau berkunjung ke Sukaregang..."
+                          className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40"
+                        ></textarea>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="w-full py-3 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold rounded-xl shadow transition"
+                      >
+                        ✍️ Kirim Kesan & Pesan
+                      </button>
+                    </form>
+                  </div>
+
+                  {/* Daftar Kesan Pesan yang Sudah Masuk */}
+                  <div className="lg:col-span-2 space-y-4">
+                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">
+                      Kesan & Pesan Pengunjung ({reviews.length})
+                    </h3>
+
+                    <div className="space-y-4 max-h-[600px] overflow-y-auto custom-scroll pr-1">
+                      {reviews.map((r) => (
+                        <div
+                          key={r.id}
+                          className="p-5 bg-white rounded-2xl border-2 border-[#E9D8BD]/50 shadow-sm space-y-2.5"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                            <div>
+                              <h4 className="font-serif font-bold text-sm text-[#173D2B]">{r.name}</h4>
+                              <span className="text-[10px] text-gray-500">
+                                Asal: <strong>{r.city}</strong> • Kunjungan: {r.date}
+                              </span>
+                            </div>
+                            <div className="text-amber-500 text-sm font-bold">
+                              {'⭐'.repeat(r.rating)}
+                            </div>
+                          </div>
+
+                          <div className="text-[11px] text-[#8B4A2B] font-semibold bg-[#F8F4EC] px-2.5 py-1 rounded-lg inline-block">
+                            📍 {r.destinationVisited}
+                          </div>
+
+                          <p className="text-xs text-[#35251D]/85 leading-relaxed italic bg-white p-2 rounded-xl border border-dashed border-[#E9D8BD]">
+                            "{r.comment}"
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* -------------------------------------------------------------
+                SYAKIRA LEATHER STORE (20 PRODUK)
             ------------------------------------------------------------- */}
             {currentRoute === 'store' && (
               <div className="space-y-6 animate-fadeIn">
-                
-                {/* Store Header Banner */}
                 <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-4">
                   <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                     <div className="space-y-2">
@@ -1494,7 +2090,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         setAdminTab('products');
                         setIsAdminPortalOpen(true);
                       }}
-                      className="px-3.5 py-2 bg-[#112D20] hover:bg-[#0A1D14] text-[#E9D8BD] text-xs font-bold rounded-xl border border-[#E9D8BD]/40 transition shadow flex items-center space-x-1.5"
+                      className="px-3.5 py-2 bg-[#102B1E] hover:bg-black text-[#E9D8BD] text-xs font-bold rounded-xl border border-[#E9D8BD]/40 transition shadow flex items-center space-x-1.5"
                     >
                       <Icon name="plus-circle" className="w-3.5 h-3.5" />
                       <span>Kelola & Tambah Produk (Portal Admin)</span>
@@ -1510,7 +2106,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   </div>
                 </div>
 
-                {/* Filter and Search Bar */}
+                {/* Filter & Search */}
                 <div className="bg-white rounded-3xl p-5 border-2 border-[#E9D8BD]/40 shadow-sm space-y-3">
                   <div className="flex flex-wrap gap-2">
                     {[
@@ -1543,7 +2139,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   />
                 </div>
 
-                {/* 20 Products Grid dengan Gambar Asli & Fallback Khusus */}
+                {/* 20 Products Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   {filteredProducts.map((p) => {
                     const currentImg = customImages[p.id] || p.imageUrl;
@@ -1558,7 +2154,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             alt={p.name}
                             referrerPolicy="no-referrer"
                             onError={(e) => {
-                              // Jika URL Shopee terhalang hotlink di browser, gunakan gambar realistis asli
                               e.target.onerror = null;
                               e.target.src = p.fallbackUrl || (
                                 p.category.includes('Jaket')
@@ -1623,7 +2218,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             )}
 
             {/* -------------------------------------------------------------
-                3. TOUR GUIDE BOOKING (RIZAL & RIFA)
+                TOUR GUIDE BOOKING (RIZAL & RIFA)
             ------------------------------------------------------------- */}
             {currentRoute === 'tour' && (
               <div className="space-y-6 animate-fadeIn">
@@ -1639,7 +2234,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   </p>
                 </div>
 
-                {/* 2 Tour Guide Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {guides.map((g) => {
                     const isSelected = selectedGuide.id === g.id;
@@ -1749,7 +2343,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   </div>
 
-                  {/* Destination Checkbox List */}
                   <div>
                     <label className="text-xs font-bold text-[#173D2B] block mb-2">
                       Pilih Titik Kunjungan Pabrik & Toko:
@@ -1783,17 +2376,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   </div>
 
-                  <div>
-                    <label className="text-xs font-bold text-[#173D2B] block mb-1">Catatan Tambahan (Opsional):</label>
-                    <textarea
-                      rows="2"
-                      value={bookingNote}
-                      onChange={(e) => setBookingNote(e.target.value)}
-                      placeholder="Contoh: Kami rombongan 5 orang ingin melihat proses jahit jaket jubah dan belanja di Syakira Leather..."
-                      className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B]"
-                    ></textarea>
-                  </div>
-
                   <button
                     onClick={handleSendWhatsAppOrder}
                     className="w-full py-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm rounded-2xl shadow-lg transition flex items-center justify-center space-x-2"
@@ -1806,7 +2388,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             )}
 
             {/* -------------------------------------------------------------
-                4. PETA & DESTINASI PABRIK SUKAREGANG
+                PETA & DESTINASI PABRIK SUKAREGANG
             ------------------------------------------------------------- */}
             {currentRoute === 'maps' && (
               <div className="space-y-6 animate-fadeIn">
@@ -1823,11 +2405,8 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  {/* Left: Destination List */}
                   <div className="space-y-3">
-                    <h3 className="font-serif font-bold text-base text-[#173D2B]">
-                      Titik Kunjungan Terverifikasi:
-                    </h3>
+                    <h3 className="font-serif font-bold text-base text-[#173D2B]">Titik Kunjungan Terverifikasi:</h3>
                     <div className="space-y-3 max-h-[500px] overflow-y-auto custom-scroll pr-1">
                       {destinations.map((loc) => {
                         const isSelected = selectedMapLoc.id === loc.id;
@@ -1836,25 +2415,19 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             key={loc.id}
                             onClick={() => setSelectedMapLoc(loc)}
                             className={`cursor-pointer p-4 rounded-2xl border-2 transition ${
-                              isSelected
-                                ? 'bg-white border-[#8B4A2B] shadow-md'
-                                : 'bg-white/80 border-[#E9D8BD]/40 hover:bg-white'
+                              isSelected ? 'bg-white border-[#8B4A2B] shadow-md' : 'bg-white/80 border-[#E9D8BD]/40 hover:bg-white'
                             }`}
                           >
-                            <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wide">
-                              {loc.category}
-                            </span>
+                            <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wide">{loc.category}</span>
                             <h4 className="font-serif font-bold text-sm text-[#173D2B] mt-0.5">{loc.name}</h4>
                             <p className="text-[11px] text-[#35251D]/70 mt-1 line-clamp-2">{loc.address}</p>
                             <div className="mt-2.5 flex items-center justify-between">
-                              <span className="text-[10px] text-[#173D2B] font-semibold">
-                                📍 Sukaregang, Garut
-                              </span>
+                              <span className="text-[10px] text-[#173D2B] font-semibold">📍 Garut</span>
                               <a
                                 href={loc.googleMapsUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="px-2.5 py-1 bg-[#173D2B] text-[#F8F4EC] text-[10px] font-bold rounded-lg hover:bg-[#112D20] transition"
+                                className="px-2.5 py-1 bg-[#173D2B] text-[#F8F4EC] text-[10px] font-bold rounded-lg hover:bg-[#102B1E] transition"
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 Buka Maps ↗
@@ -1866,19 +2439,15 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   </div>
 
-                  {/* Right: Interactive Map Canvas */}
                   <div className="lg:col-span-2 space-y-4">
                     <div className="rounded-3xl overflow-hidden border-2 border-[#E9D8BD]/40 shadow-lg h-[400px] sm:h-[450px] relative z-10">
                       <div ref={mapContainerRef} className="w-full h-full"></div>
                     </div>
 
-                    {/* Active Destination Card */}
                     {selectedMapLoc && (
                       <div className="bg-white rounded-2xl p-4 border border-[#E9D8BD]/40 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div>
-                          <span className="text-[10px] text-[#8B4A2B] font-bold uppercase">
-                            {selectedMapLoc.category}
-                          </span>
+                          <span className="text-[10px] text-[#8B4A2B] font-bold uppercase">{selectedMapLoc.category}</span>
                           <h4 className="font-serif font-bold text-base text-[#173D2B]">{selectedMapLoc.name}</h4>
                           <p className="text-xs text-[#35251D]/75 mt-0.5">{selectedMapLoc.description}</p>
                         </div>
@@ -1889,8 +2458,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                           className="px-4 py-2.5 bg-[#8B4A2B] hover:bg-[#6E381F] text-white text-xs font-bold rounded-xl transition shadow flex-shrink-0 flex items-center space-x-1.5"
                         >
                           <Icon name="navigation" className="w-3.5 h-3.5" />
-                          <span>Navigasi Google Maps</span>
-                          <span>↗</span>
+                          <span>Navigasi Google Maps ↗</span>
                         </a>
                       </div>
                     )}
@@ -1900,7 +2468,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             )}
 
             {/* -------------------------------------------------------------
-                5. VIDEO SEJARAH & TEKNIK EDUKASI KULIT
+                VIDEO SEJARAH & TEKNIK EDUKASI KULIT
             ------------------------------------------------------------- */}
             {currentRoute === 'video' && (
               <div className="space-y-6 animate-fadeIn">
@@ -1955,8 +2523,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             rel="noopener noreferrer"
                             className="text-xs font-bold text-[#8B4A2B] hover:underline flex items-center space-x-1"
                           >
-                            <span>Tonton di YouTube</span>
-                            <span>↗</span>
+                            <span>Tonton di YouTube ↗</span>
                           </a>
                         </div>
                       </div>
@@ -1966,50 +2533,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               </div>
             )}
 
-            {/* -------------------------------------------------------------
-                6. LEATHER ACADEMY
-            ------------------------------------------------------------- */}
-            {currentRoute === 'academy' && (
-              <div className="space-y-6 animate-fadeIn">
-                <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-3">
-                  <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">
-                    Pusat Pengetahuan & Literasi Kulit
-                  </span>
-                  <h2 className="font-serif text-3xl sm:text-4xl font-bold">
-                    LEATHER ACADEMY SUKAREGANG
-                  </h2>
-                  <p className="text-xs sm:text-sm text-[#F8F4EC]/80 max-w-2xl leading-relaxed">
-                    Pelajari anatomi jenis kulit, cara membedakan kulit asli vs sintetis, hingga tips perawatan jaket dan sepatu kulit agar awet puluhan tahun.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  <div className="bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm space-y-3">
-                    <span className="text-2xl">🐑</span>
-                    <h3 className="font-serif font-bold text-base text-[#173D2B]">Kulit Domba Garut</h3>
-                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                      Memiliki karakteristik paling lentur, ringan, dan pori-pori sangat rapat. Menjadi standar utama jaket kulit mewah Syakira Leather karena nyaman dipakai iklim tropis.
-                    </p>
-                  </div>
-
-                  <div className="bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm space-y-3">
-                    <span className="text-2xl">🐂</span>
-                    <h3 className="font-serif font-bold text-base text-[#173D2B]">Kulit Sapi Sukaregang</h3>
-                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                      Bertekstur padat, tebal, dan sangat tangguh. Cocok untuk material sepatu boots, pantofel kantor, sabuk, dan tas travel yang membutuhkan daya tahan tinggi.
-                    </p>
-                  </div>
-
-                  <div className="bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/40 shadow-sm space-y-3">
-                    <span className="text-2xl">🧪</span>
-                    <h3 className="font-serif font-bold text-base text-[#173D2B]">Uji Keaslian Kulit</h3>
-                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                      Kulit asli memiliki aroma khas hewani alami, tidak meleleh saat didekatkan api sekejap, menyerap tetesan air secara perlahan, dan memiliki pola tekstur tidak identik.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
           </main>
 
           {/* =================================================================
@@ -2019,10 +2542,10 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             <div className="flex items-center justify-around text-[#F8F4EC]">
               {[
                 { id: 'beranda', icon: 'home', label: 'Beranda' },
-                { id: 'simulator', icon: 'gamepad-2', label: 'Simulator' },
+                { id: 'simulator', icon: 'gamepad-2', label: 'Game' },
                 { id: 'store', icon: 'shopping-bag', label: 'Store' },
+                { id: 'reviews', icon: 'message-square', label: 'Kesan' },
                 { id: 'tour', icon: 'compass', label: 'Guide WA' },
-                { id: 'maps', icon: 'map-pin', label: 'Pabrik' },
               ].map((item) => (
                 <button
                   key={item.id}
@@ -2043,10 +2566,10 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           {/* =================================================================
               FOOTER
           ================================================================= */}
-          <footer className="bg-[#112D20] text-[#F8F4EC] py-8 border-t border-[#E9D8BD]/30 mt-12">
+          <footer className="bg-[#102B1E] text-[#F8F4EC] py-8 border-t border-[#E9D8BD]/30 mt-12">
             <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left text-xs text-[#F8F4EC]/70">
               <div className="flex items-center space-x-3">
-                <img src="./logo.png" alt="Logo" className="w-8 h-8 rounded-full border border-[#E9D8BD]" />
+                <img src="./logo.png" alt="Logo" className="w-8 h-8 object-contain" />
                 <div>
                   <p className="font-serif font-bold text-sm text-[#F8F4EC]">SUKAREGANG DISCOVERY</p>
                   <p className="text-[10px] text-[#E9D8BD]">Garut Sentra Kerajinan Kulit Indonesia</p>
@@ -2078,8 +2601,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           </footer>
 
           {/* =================================================================
-              PROMPT REDESIGN LOGIN – SUKAREGANG DISCOVERY (SPLIT SCREEN DUA KOLOM)
-              Referensi: Tatadana-Queen & Tatadana-Resmii
+              MODAL LOGIN (SPLIT SCREEN DUA KOLOM – TATADANA REFERENCE)
           ================================================================= */}
           {isLoginModalOpen && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-[#35251D]/85 backdrop-blur-md animate-fadeIn">
@@ -2096,7 +2618,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
 
                 {/* SISI KIRI (VISUAL BRANDING) */}
                 <div className="md:w-1/2 relative bg-[#173D2B] text-[#F8F4EC] p-8 sm:p-10 flex flex-col justify-between overflow-hidden">
-                  {/* Background Image Pengrajin Kulit dengan Overlay */}
                   <div
                     className="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-overlay"
                     style={{
@@ -2105,14 +2626,12 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   ></div>
                   <div className="absolute inset-0 bg-gradient-to-b from-[#173D2B]/90 via-[#173D2B]/75 to-[#35251D]/90"></div>
 
-                  {/* Konten Branding */}
                   <div className="relative z-10 space-y-6">
-                    {/* Logo Aplikasi Sukaregang Discovery */}
                     <div className="flex items-center space-x-3">
                       <img
                         src="./logo.png"
                         alt="Sukaregang Discovery Logo"
-                        className="w-14 h-14 rounded-full border-2 border-[#E9D8BD] shadow-xl bg-[#173D2B] p-0.5 object-contain"
+                        className="w-14 h-14 object-contain drop-shadow-lg"
                       />
                       <div>
                         <h4 className="font-serif font-bold text-lg tracking-wider text-[#F8F4EC]">
@@ -2124,7 +2643,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       </div>
                     </div>
 
-                    {/* Headline & Deskripsi Resmi */}
                     <div className="space-y-3 pt-4">
                       <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#E9D8BD]/20 border border-[#E9D8BD]/30 text-[10px] font-bold text-[#E9D8BD]">
                         <span>🛡️ Sentra Kerajinan Kulit Indonesia</span>
@@ -2138,7 +2656,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       </p>
                     </div>
 
-                    {/* Ornamen Jahitan Kulit Visual */}
                     <div className="pt-2 hidden sm:flex items-center space-x-3 text-[11px] text-[#E9D8BD]">
                       <span className="px-2.5 py-1 rounded-lg bg-black/25 border border-[#E9D8BD]/30">
                         🧵 Jahitan Presisi
@@ -2149,7 +2666,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   </div>
 
-                  {/* Bawah Sisi Kiri */}
                   <div className="relative z-10 pt-6 mt-6 border-t border-[#E9D8BD]/20 text-[11px] text-[#E9D8BD]/80">
                     Mitra Resmi: <strong>Syakira Leather Sukaregang</strong>
                   </div>
@@ -2158,7 +2674,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 {/* SISI KANAN (FORM LOGIN) */}
                 <div className="md:w-1/2 p-8 sm:p-10 flex flex-col justify-between bg-white overflow-y-auto custom-scroll">
                   <div className="space-y-6">
-                    {/* Header Form */}
                     <div className="space-y-1.5">
                       <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#173D2B]">
                         Selamat Datang Kembali!
@@ -2168,7 +2683,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       </p>
                     </div>
 
-                    {/* Toast Notification */}
                     {loginToast && (
                       <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold animate-fadeIn flex items-center space-x-2">
                         <span>✓</span>
@@ -2176,16 +2690,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       </div>
                     )}
 
-                    {/* Error Feedback */}
                     {loginError && (
                       <div className="p-3 rounded-xl bg-red-50 border border-red-300 text-red-700 text-xs font-bold animate-fadeIn">
                         ⚠️ {loginError}
                       </div>
                     )}
 
-                    {/* Form Login */}
                     <form onSubmit={handleLoginSubmit} className="space-y-4">
-                      {/* 1. Input Email atau Username */}
                       <div>
                         <label className="text-xs font-bold text-[#173D2B] block mb-1.5">
                           Email atau Username:
@@ -2197,7 +2708,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             value={loginIdentifier}
                             onChange={(e) => setLoginIdentifier(e.target.value)}
                             placeholder="nama@email.com atau username"
-                            className="w-full pl-3.5 pr-10 py-3 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs text-[#35251D] focus:outline-none focus:border-[#173D2B] focus:ring-1 focus:ring-[#173D2B] transition"
+                            className="w-full pl-3.5 pr-10 py-3 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs text-[#35251D] focus:outline-none focus:border-[#173D2B] transition"
                           />
                           <div className="absolute right-3.5 top-3.5 text-gray-400">
                             <Icon name="mail" className="w-4 h-4" />
@@ -2205,7 +2716,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         </div>
                       </div>
 
-                      {/* 2. Input Password & 3. Password Visibility Toggle */}
                       <div>
                         <label className="text-xs font-bold text-[#173D2B] block mb-1.5">
                           Kata Sandi (Password):
@@ -2217,27 +2727,26 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             value={loginPassword}
                             onChange={(e) => setLoginPassword(e.target.value)}
                             placeholder="Masukkan kata sandi..."
-                            className="w-full pl-3.5 pr-10 py-3 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs text-[#35251D] focus:outline-none focus:border-[#173D2B] focus:ring-1 focus:ring-[#173D2B] transition"
+                            className="w-full pl-3.5 pr-10 py-3 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs text-[#35251D] focus:outline-none focus:border-[#173D2B] transition"
                           />
                           <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3.5 top-3.5 text-gray-400 hover:text-[#173D2B] transition"
-                            title={showPassword ? 'Sembunyikan Kata Sandi' : 'Lihat Kata Sandi'}
+                            title={showPassword ? 'Sembunyikan' : 'Lihat'}
                           >
                             <Icon name={showPassword ? 'eye-off' : 'eye'} className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
 
-                      {/* 4. Checkbox Ingat Saya & 5. Link Lupa Password */}
                       <div className="flex items-center justify-between text-xs pt-1">
                         <label className="flex items-center space-x-2 cursor-pointer text-[#35251D]/80">
                           <input
                             type="checkbox"
                             checked={rememberMe}
                             onChange={(e) => setRememberMe(e.target.checked)}
-                            className="rounded text-[#173D2B] focus:ring-[#173D2B]"
+                            className="rounded text-[#173D2B]"
                           />
                           <span>Ingat Saya</span>
                         </label>
@@ -2251,11 +2760,10 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         </button>
                       </div>
 
-                      {/* 6. Tombol Masuk dengan warna Forest Green (#173D2B) */}
                       <button
                         type="submit"
                         disabled={loginLoading}
-                        className="w-full py-3.5 bg-[#173D2B] hover:bg-[#112D20] text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center space-x-2 disabled:opacity-75"
+                        className="w-full py-3.5 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center space-x-2 disabled:opacity-75"
                       >
                         {loginLoading ? (
                           <>
@@ -2271,14 +2779,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       </button>
                     </form>
 
-                    {/* 7. Link Belum punya akun? Daftar Sekarang */}
                     <div className="text-center text-xs text-[#35251D]/75 pt-1">
                       Belum punya akun?{' '}
                       <button
                         onClick={() => {
                           setLoginIdentifier('wisatawan.baru@gmail.com');
                           setLoginPassword('123456');
-                          alert('Form telah diisi untuk registrasi akun baru Anda. Klik tombol Masuk Sekarang!');
+                          alert('Form telah diisi contoh pendaftaran baru. Silakan klik Masuk Sekarang!');
                         }}
                         className="text-[#8B4A2B] font-bold hover:underline"
                       >
@@ -2286,10 +2793,9 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       </button>
                     </div>
 
-                    {/* Quick Demo Mode 1-Click */}
                     <div className="pt-3 border-t border-[#ECE3D4] text-center space-y-2">
                       <span className="text-[10px] text-gray-500 block uppercase tracking-wider font-bold">
-                        Akses Cepat Pengujian (1-Klik):
+                        Akses Cepat Pengujian:
                       </span>
                       <div className="grid grid-cols-2 gap-2">
                         <button
@@ -2309,7 +2815,6 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       </div>
                     </div>
 
-                    {/* Portal Admin Link di Bawah Login */}
                     <div className="pt-3 border-t border-[#ECE3D4] text-center">
                       <button
                         type="button"
@@ -2340,7 +2845,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   <h3 className="font-serif text-lg font-bold">Profil Akun Wisatawan</h3>
                   <button
                     onClick={() => setIsProfileModalOpen(false)}
-                    className="w-8 h-8 rounded-full bg-[#112D20] hover:bg-[#8B4A2B] flex items-center justify-center text-white"
+                    className="w-8 h-8 rounded-full bg-[#102B1E] hover:bg-[#8B4A2B] flex items-center justify-center text-white"
                   >
                     ✕
                   </button>
@@ -2351,29 +2856,12 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     <img
                       src={currentUser.avatarUrl || './logo.png'}
                       alt={currentUser.name}
-                      className="w-16 h-16 rounded-2xl object-cover border-2 border-[#E9D8BD] bg-[#173D2B]"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80";
-                      }}
+                      className="w-16 h-16 rounded-2xl object-contain border-2 border-[#E9D8BD] bg-[#173D2B] p-1"
                     />
                     <div>
                       <h4 className="font-serif text-lg font-bold text-[#173D2B]">{currentUser.name}</h4>
                       <p className="text-xs text-[#35251D]/70">{currentUser.email}</p>
                       <p className="text-xs text-emerald-700 font-bold mt-0.5">📱 WA: {currentUser.phone}</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 text-xs">
-                    <div className="flex justify-between py-2 px-3 bg-[#F8F4EC] rounded-xl">
-                      <span className="text-[#35251D]/70">Peran:</span>
-                      <span className="font-bold text-[#173D2B]">
-                        {currentUser.role === 'admin' ? '👑 Admin Pengelola Toko & Konten' : '👤 Wisatawan / Member'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between py-2 px-3 bg-[#F8F4EC] rounded-xl">
-                      <span className="text-[#35251D]/70">Status Akun:</span>
-                      <span className="text-emerald-700 font-bold">✓ Terverifikasi Email & WhatsApp</span>
                     </div>
                   </div>
 
@@ -2413,7 +2901,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   </div>
                   <button
                     onClick={() => setSelectedProduct(null)}
-                    className="w-8 h-8 rounded-full bg-[#112D20] hover:bg-[#8B4A2B] flex items-center justify-center text-white"
+                    className="w-8 h-8 rounded-full bg-[#102B1E] hover:bg-[#8B4A2B] flex items-center justify-center text-white"
                   >
                     ✕
                   </button>
@@ -2446,17 +2934,15 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       rel="noopener noreferrer"
                       className="py-3.5 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-xl text-center shadow-lg transition flex items-center justify-center space-x-2"
                     >
-                      <span>Beli Produk Ini di Shopee</span>
-                      <span>↗</span>
+                      <span>Beli Produk Ini di Shopee ↗</span>
                     </a>
                     <a
                       href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-3.5 bg-[#173D2B] hover:bg-[#112D20] text-white font-bold text-xs rounded-xl text-center shadow-lg transition flex items-center justify-center space-x-2"
+                      className="py-3.5 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl text-center shadow-lg transition flex items-center justify-center space-x-2"
                     >
-                      <span>Kunjungi Official Store Syakira</span>
-                      <span>↗</span>
+                      <span>Kunjungi Official Store Syakira ↗</span>
                     </a>
                   </div>
                 </div>
@@ -2465,44 +2951,45 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
           )}
 
           {/* =================================================================
-              PORTAL ADMIN LENGKAP
+              PORTAL ADMIN LENGKAP & TELAH DIPERBAIKI (KELOLA SEMUA FITUR)
           ================================================================= */}
           {isAdminPortalOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#35251D]/85 backdrop-blur-md animate-fadeIn">
-              <div className="bg-white rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl border-2 border-[#E9D8BD]/40 relative max-h-[94vh] flex flex-col">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-[#35251D]/90 backdrop-blur-md animate-fadeIn">
+              <div className="bg-white rounded-3xl max-w-5xl w-full overflow-hidden shadow-2xl border-2 border-[#E9D8BD]/40 relative max-h-[94vh] flex flex-col">
                 
                 {/* Header Portal Admin */}
                 <div className="p-5 bg-[#173D2B] text-[#F8F4EC] flex items-center justify-between border-b border-[#E9D8BD]/30">
                   <div className="flex items-center space-x-3">
-                    <img src="./logo.png" alt="Logo" className="w-10 h-10 rounded-full border border-[#E9D8BD]" />
+                    <img src="./logo.png" alt="Logo" className="w-10 h-10 object-contain drop-shadow" />
                     <div>
                       <h3 className="font-serif text-lg font-bold flex items-center space-x-2">
-                        <span>PORTAL ADMIN PENGELOLA APLIKASI</span>
+                        <span>PORTAL ADMIN KONTEN & TOKO</span>
                         <span className="px-2 py-0.5 rounded-full bg-[#8B4A2B] text-white text-[9px] font-bold">
                           SYAKIRA LEATHER
                         </span>
                       </h3>
                       <p className="text-[11px] text-[#E9D8BD]">
-                        Edit & Tambah Produk Kulit, Titik Peta, Video YouTube & Kontak WhatsApp
+                        Kelola Produk, Kesan Pesan Wisatawan, Titik Peta, Video YouTube & Kontak Tour Guide
                       </p>
                     </div>
                   </div>
                   <button
                     onClick={() => setIsAdminPortalOpen(false)}
-                    className="w-8 h-8 rounded-full bg-[#112D20] hover:bg-[#8B4A2B] flex items-center justify-center text-white"
+                    className="w-8 h-8 rounded-full bg-[#102B1E] hover:bg-[#8B4A2B] flex items-center justify-center text-white"
                   >
                     ✕
                   </button>
                 </div>
 
-                {/* Tab Navigation Admin */}
-                <div className="flex overflow-x-auto bg-[#112D20] text-[#F8F4EC] p-1.5 border-b border-[#E9D8BD]/30 text-xs font-semibold custom-scroll">
+                {/* Tab Navigation Admin Rapi & Lengkap */}
+                <div className="flex overflow-x-auto bg-[#102B1E] text-[#F8F4EC] p-2 border-b border-[#E9D8BD]/30 text-xs font-semibold custom-scroll">
                   {[
                     { id: 'products', label: '🛍️ Kelola Produk Syakira' },
-                    { id: 'destinations', label: '📍 Kelola Destinasi / Peta' },
-                    { id: 'videos', label: '🎥 Kelola Video YouTube' },
-                    { id: 'guides', label: '🧭 Kelola Tour Guide (WA)' },
-                    { id: 'backup', label: '💾 Backup & Reset' },
+                    { id: 'reviews', label: `💬 Kesan & Pesan (${reviews.length})` },
+                    { id: 'destinations', label: '📍 Titik Peta & Pabrik' },
+                    { id: 'videos', label: '🎥 Video YouTube' },
+                    { id: 'guides', label: '🧭 Kontak Tour Guide' },
+                    { id: 'backup', label: '💾 Cadangan & Reset' },
                   ].map((tab) => (
                     <button
                       key={tab.id}
@@ -2527,7 +3014,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       <div className="bg-[#F8F4EC] rounded-2xl p-5 border border-[#E9D8BD]/40 space-y-4">
                         <h4 className="font-serif font-bold text-base text-[#173D2B] flex items-center space-x-2">
                           <span>➕</span>
-                          <span>Tambah Produk Baru ke Syakira Leather Store</span>
+                          <span>Tambah Produk Baru ke Syakira Leather</span>
                         </h4>
 
                         <form onSubmit={handleAdminAddProduct} className="space-y-3.5 text-xs">
@@ -2539,8 +3026,8 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                                 required
                                 value={newProdName}
                                 onChange={(e) => setNewProdName(e.target.value)}
-                                placeholder="Contoh: Jaket Kulit Domba Biker Garut"
-                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
+                                placeholder="Contoh: Jaket Kulit Biker Rockstar Domba"
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white"
                               />
                             </div>
 
@@ -2549,7 +3036,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                               <select
                                 value={newProdCategory}
                                 onChange={(e) => setNewProdCategory(e.target.value)}
-                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white"
                               >
                                 <option>Jaket Kulit Pria</option>
                                 <option>Sepatu Pria</option>
@@ -2568,7 +3055,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                               value={newProdShopee}
                               onChange={(e) => setNewProdShopee(e.target.value)}
                               placeholder={`Kosongkan untuk otomatis ke ${SYAKIRA_OFFICIAL_SHOPEE_STORE}`}
-                              className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
+                              className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white"
                             />
                           </div>
 
@@ -2601,13 +3088,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                                 value={newProdImage.startsWith('data:') ? '' : newProdImage}
                                 onChange={(e) => setNewProdImage(e.target.value)}
                                 placeholder="https://..."
-                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white"
                               />
                             </div>
                           </div>
 
                           {newProdImage && (
-                            <div className="flex items-center space-x-3 p-2 bg-white rounded-xl border border-[#E9D8BD]/40">
+                            <div className="flex items-center space-x-3 p-2 bg-white rounded-xl border border-[#E9D8BD]">
                               <img src={newProdImage} alt="Pratinjau" className="w-12 h-12 object-cover rounded-lg" />
                               <span className="text-[11px] text-emerald-700 font-bold">✓ Foto siap disimpan</span>
                             </div>
@@ -2621,7 +3108,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                                 value={newProdMaterial}
                                 onChange={(e) => setNewProdMaterial(e.target.value)}
                                 placeholder="Contoh: 100% Kulit Domba Asli Garut Super Lembut"
-                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white"
                               />
                             </div>
 
@@ -2632,14 +3119,14 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                                 value={newProdDesc}
                                 onChange={(e) => setNewProdDesc(e.target.value)}
                                 placeholder="Contoh: Jaket kulit model formal elegan khas Sukaregang"
-                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD]/40 bg-white"
+                                className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white"
                               />
                             </div>
                           </div>
 
                           <button
                             type="submit"
-                            className="py-2.5 px-5 bg-[#173D2B] hover:bg-[#112D20] text-white font-bold rounded-xl shadow transition"
+                            className="py-2.5 px-5 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold rounded-xl shadow transition"
                           >
                             ➕ Simpan & Tambahkan ke Katalog Syakira
                           </button>
@@ -2653,7 +3140,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             Daftar Produk yang Sedang Tayang ({products.length}):
                           </h4>
                           <button
-                            onClick={handleAdminResetProducts}
+                            onClick={() => {
+                              if (!confirm('Kembalikan ke 20 produk asli awal?')) return;
+                              setProducts(DEFAULT_PRODUCTS);
+                              setCustomImages({});
+                              localStorage.removeItem('syakira_products_list_v2');
+                              alert('Katalog di-reset ke default.');
+                            }}
                             className="text-xs text-red-600 hover:underline font-bold"
                           >
                             🔄 Reset ke 20 Produk Default
@@ -2664,7 +3157,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                           {products.map((p) => (
                             <div
                               key={p.id}
-                              className="p-3 bg-white rounded-xl border border-[#E9D8BD]/40 shadow-sm flex items-center justify-between gap-3"
+                              className="p-3 bg-white rounded-xl border border-[#E9D8BD] shadow-sm flex items-center justify-between gap-3"
                             >
                               <div className="flex items-center space-x-3 overflow-hidden">
                                 <img
@@ -2678,17 +3171,10 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                                   }}
                                 />
                                 <div className="truncate text-xs">
-                                  <span className="text-[10px] font-bold text-[#8B4A2B] block uppercase">
-                                    {p.category}
-                                  </span>
+                                  <span className="text-[10px] font-bold text-[#8B4A2B] block uppercase">{p.category}</span>
                                   <h5 className="font-bold text-[#173D2B] truncate">{p.name}</h5>
-                                  <a
-                                    href={p.shopeeUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-[10px] text-blue-600 hover:underline block truncate"
-                                  >
-                                    Tautan Shopee ↗
+                                  <a href={p.shopeeUrl} target="_blank" className="text-[10px] text-blue-600 hover:underline block truncate">
+                                    Link Shopee ↗
                                   </a>
                                 </div>
                               </div>
@@ -2706,19 +3192,67 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   )}
 
-                  {/* TAB 2: DESTINASI */}
+                  {/* TAB 2: KELOLA KESAN & PESAN */}
+                  {adminTab === 'reviews' && (
+                    <div className="space-y-4 text-xs">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-serif font-bold text-base text-[#173D2B]">
+                          Moderasi Kesan & Pesan Wisatawan ({reviews.length})
+                        </h4>
+                        <button
+                          onClick={() => {
+                            if (!confirm('Kembalikan ulasan ke bawaan awal?')) return;
+                            setReviews(DEFAULT_REVIEWS);
+                            localStorage.removeItem('sukaregang_visitor_reviews');
+                            alert('Kesan pesan di-reset.');
+                          }}
+                          className="text-red-600 hover:underline font-bold"
+                        >
+                          Reset Kesan Pesan
+                        </button>
+                      </div>
+
+                      <div className="space-y-3">
+                        {reviews.map((r) => (
+                          <div key={r.id} className="p-4 bg-white rounded-xl border border-[#E9D8BD] flex items-start justify-between gap-3">
+                            <div className="space-y-1">
+                              <div className="flex items-center space-x-2">
+                                <span className="font-bold text-sm text-[#173D2B]">{r.name}</span>
+                                <span className="text-gray-500">({r.city})</span>
+                                <span className="text-amber-500 font-bold">{'⭐'.repeat(r.rating)}</span>
+                              </div>
+                              <span className="text-[10px] text-[#8B4A2B] font-semibold block">{r.destinationVisited} • {r.date}</span>
+                              <p className="text-xs text-[#35251D]/80 italic">"{r.comment}"</p>
+                            </div>
+                            <button
+                              onClick={() => {
+                                const updated = reviews.filter(rev => rev.id !== r.id);
+                                setReviews(updated);
+                                localStorage.setItem('sukaregang_visitor_reviews', JSON.stringify(updated));
+                              }}
+                              className="px-2.5 py-1 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg font-bold flex-shrink-0"
+                            >
+                              Hapus
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* TAB 3: DESTINASI */}
                   {adminTab === 'destinations' && (
                     <div className="space-y-4 text-xs">
-                      <p className="text-[#35251D]/75">Kelola titik lokasi peta interaktif.</p>
+                      <h4 className="font-serif font-bold text-base text-[#173D2B]">Titik Lokasi Peta ({destinations.length}):</h4>
                       <div className="space-y-2">
                         {destinations.map((d) => (
-                          <div key={d.id} className="p-3 bg-[#F8F4EC] rounded-xl flex items-center justify-between">
+                          <div key={d.id} className="p-3 bg-white rounded-xl border border-[#E9D8BD] flex items-center justify-between">
                             <div>
                               <span className="font-bold text-[#173D2B]">{d.name}</span>
                               <p className="text-[10px] text-gray-500">{d.address}</p>
                             </div>
                             <a href={d.googleMapsUrl} target="_blank" className="text-blue-600 hover:underline">
-                              Maps ↗
+                              Buka Maps ↗
                             </a>
                           </div>
                         ))}
@@ -2726,12 +3260,13 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   )}
 
-                  {/* TAB 3: VIDEOS */}
+                  {/* TAB 4: VIDEOS */}
                   {adminTab === 'videos' && (
                     <div className="space-y-4 text-xs">
+                      <h4 className="font-serif font-bold text-base text-[#173D2B]">Video Edukasi YouTube ({videos.length}):</h4>
                       <div className="space-y-2">
                         {videos.map((v) => (
-                          <div key={v.id} className="p-3 bg-[#F8F4EC] rounded-xl flex items-center justify-between">
+                          <div key={v.id} className="p-3 bg-white rounded-xl border border-[#E9D8BD] flex items-center justify-between">
                             <div>
                               <span className="font-bold text-[#173D2B]">{v.title}</span>
                               <p className="text-[10px] text-gray-500">ID: {v.youtubeId}</p>
@@ -2745,23 +3280,23 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   )}
 
-                  {/* TAB 4: GUIDES */}
+                  {/* TAB 5: GUIDES */}
                   {adminTab === 'guides' && (
                     <div className="space-y-4 text-xs">
-                      <div className="p-4 bg-[#F8F4EC] rounded-2xl space-y-3">
-                        <label className="font-bold block">No. WhatsApp Rizal:</label>
+                      <div className="p-4 bg-white rounded-2xl border border-[#E9D8BD] space-y-3">
+                        <label className="font-bold block">No. WhatsApp Guide Rizal:</label>
                         <input
                           type="text"
                           value={editGuideRizalWA}
                           onChange={(e) => setEditGuideRizalWA(e.target.value)}
-                          className="w-full p-2 bg-white rounded-lg border border-[#E9D8BD]"
+                          className="w-full p-2 bg-[#F8F4EC] rounded-lg border border-[#E9D8BD]"
                         />
-                        <label className="font-bold block">No. WhatsApp Rifa:</label>
+                        <label className="font-bold block">No. WhatsApp Guide Rifa:</label>
                         <input
                           type="text"
                           value={editGuideRifaWA}
                           onChange={(e) => setEditGuideRifaWA(e.target.value)}
-                          className="w-full p-2 bg-white rounded-lg border border-[#E9D8BD]"
+                          className="w-full p-2 bg-[#F8F4EC] rounded-lg border border-[#E9D8BD]"
                         />
                         <button
                           onClick={() => alert('Kontak WhatsApp berhasil disimpan!')}
@@ -2773,22 +3308,22 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   )}
 
-                  {/* TAB 5: BACKUP & RESET */}
+                  {/* TAB 6: BACKUP & RESET */}
                   {adminTab === 'backup' && (
                     <div className="space-y-4 text-xs">
-                      <div className="p-5 bg-[#F8F4EC] rounded-2xl space-y-2">
-                        <h4 className="font-bold text-[#173D2B]">Unduh Cadangan Data</h4>
+                      <div className="p-5 bg-white rounded-2xl border border-[#E9D8BD] space-y-2">
+                        <h4 className="font-bold text-[#173D2B]">Unduh Cadangan Seluruh Data (JSON)</h4>
                         <button
                           onClick={() => {
-                            const data = { products, destinations, videos, guides };
+                            const data = { products, destinations, videos, guides, reviews };
                             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
                             const url = URL.createObjectURL(blob);
                             const a = document.createElement('a');
                             a.href = url;
-                            a.download = 'sukaregang_data.json';
+                            a.download = 'sukaregang_discovery_data.json';
                             a.click();
                           }}
-                          className="px-4 py-2 bg-[#173D2B] text-white rounded-lg font-bold"
+                          className="px-4 py-2 bg-[#173D2B] text-white rounded-lg font-bold shadow"
                         >
                           📥 Unduh Backup JSON
                         </button>
