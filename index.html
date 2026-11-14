@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -569,553 +569,332 @@
     }
 
     // =========================================================================
-    // 2. THREE.JS 3D CANVAS COMPONENT (REAL TIME HIGH-FIDELITY 3D LEATHER VIEWER)
+    // 2A. LANDING PAGE RESMI (TANPA NAVIGASI, KATA-KATA + FOTO ORANG PAKAI JAKET & SEPATU KULIT + IKLAN)
     // =========================================================================
-    function ThreeLeatherViewer({ craftType = 'jaket', color = '#1a1a1a', modelType = 'Biker' }) {
-      const mountRef = useRef(null);
-      const [isAutoSpin, setIsAutoSpin] = useState(true);
-      const [currentColor, setCurrentColor] = useState(color);
-      const [cameraDist, setCameraDist] = useState(5.2);
-      const [hasWebGLError, setHasWebGLError] = useState(false);
-      const [fallbackAngle, setFallbackAngle] = useState(25);
-
-      // Keep internal color in sync with prop
-      useEffect(() => {
-        setCurrentColor(color);
-      }, [color]);
-
-      useEffect(() => {
-        if (!mountRef.current) return;
-        if (typeof THREE === 'undefined') {
-          setHasWebGLError(true);
-          return;
-        }
-
-        let container = mountRef.current;
-        let width = container.clientWidth || 360;
-        let height = container.clientHeight || 300;
-
-        // Scene, Camera, WebGLRenderer
-        let scene, camera, renderer;
-        try {
-          scene = new THREE.Scene();
-          scene.background = new THREE.Color(0xF8F4EC);
-
-          camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
-          camera.position.set(0, 0.4, cameraDist);
-
-          renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-          renderer.setSize(width, height);
-          renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-          renderer.shadowMap.enabled = true;
-          renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-          container.innerHTML = '';
-          container.appendChild(renderer.domElement);
-        } catch (e) {
-          setHasWebGLError(true);
-          return;
-        }
-
-        // 3-Point Studio Lighting for authentic leather specular highlights
-        const ambientLight = new THREE.AmbientLight(0xfff8ee, 0.85);
-        scene.add(ambientLight);
-
-        // Key Light (Warm Sun / Studio Spot)
-        const keyLight = new THREE.DirectionalLight(0xfffaed, 1.1);
-        keyLight.position.set(4, 5, 5);
-        keyLight.castShadow = true;
-        scene.add(keyLight);
-
-        // Fill Light (Soft cool fill)
-        const fillLight = new THREE.DirectionalLight(0xdbe7e4, 0.6);
-        fillLight.position.set(-4, 2, 3);
-        scene.add(fillLight);
-
-        // Back Rim Light (Gives rich edge sheen on leather shoulders & curves)
-        const rimLight = new THREE.DirectionalLight(0xe9d8bd, 0.85);
-        rimLight.position.set(0, 4, -4);
-        scene.add(rimLight);
-
-        // Leather Color Parsing
-        let hexColor = 0x181818; // Default Black
-        const colStr = String(currentColor).toLowerCase();
-        if (colStr.includes('cokelat') || colStr.includes('brown')) hexColor = 0x4a240c;
-        else if (colStr.includes('tan') || colStr.includes('cognac')) hexColor = 0x945428;
-        else if (colStr.includes('marun') || colStr.includes('red') || colStr.includes('maroon')) hexColor = 0x4a1212;
-        else if (colStr.startsWith('#')) hexColor = parseInt(colStr.replace('#', '0x'), 16);
-
-        // PBR Materials
-        const leatherMat = new THREE.MeshStandardMaterial({
-          color: hexColor,
-          roughness: 0.32,
-          metalness: 0.16,
-          bumpScale: 0.04
-        });
-
-        const accentLeatherMat = new THREE.MeshStandardMaterial({
-          color: hexColor,
-          roughness: 0.25,
-          metalness: 0.2
-        });
-
-        const brassMetalMat = new THREE.MeshStandardMaterial({
-          color: 0xd4af37, // Golden brass YKK hardware
-          metalness: 0.9,
-          roughness: 0.22
-        });
-
-        const chromeMetalMat = new THREE.MeshStandardMaterial({
-          color: 0xcccccc,
-          metalness: 0.92,
-          roughness: 0.18
-        });
-
-        const soleRubberMat = new THREE.MeshStandardMaterial({
-          color: 0x151515,
-          roughness: 0.85,
-          metalness: 0.05
-        });
-
-        const woodPedestalMat = new THREE.MeshStandardMaterial({
-          color: 0xd6c2a5,
-          roughness: 0.6
-        });
-
-        // Main 3D Model Root Group
-        const rootGroup = new THREE.Group();
-
-        // Studio Showroom Turntable Pedestal
-        const pedestalGeo = new THREE.CylinderGeometry(2.1, 2.2, 0.12, 36);
-        const pedestalMesh = new THREE.Mesh(pedestalGeo, woodPedestalMat);
-        pedestalMesh.position.set(0, -1.35, 0);
-        pedestalMesh.receiveShadow = true;
-        rootGroup.add(pedestalMesh);
-
-        // Subtle Pedestal Rim Ring
-        const ringGeo = new THREE.TorusGeometry(2.12, 0.03, 8, 36);
-        const ringMesh = new THREE.Mesh(ringGeo, brassMetalMat);
-        ringMesh.rotation.x = Math.PI / 2;
-        ringMesh.position.set(0, -1.29, 0);
-        rootGroup.add(ringMesh);
-
-        if (craftType === 'jaket') {
-          // =================================================================
-          // HIGH-FIDELITY 3D LEATHER JACKET MODEL
-          // =================================================================
-          const jacketGroup = new THREE.Group();
-
-          // 1. Torso Body (Tapered Chest to Waist)
-          const torsoGeo = new THREE.CylinderGeometry(0.88, 0.76, 1.85, 24);
-          const torsoMesh = new THREE.Mesh(torsoGeo, leatherMat);
-          torsoMesh.castShadow = true;
-          jacketGroup.add(torsoMesh);
-
-          // 2. Waistband Hem (Ribbed leather waist rim)
-          const waistGeo = new THREE.CylinderGeometry(0.78, 0.8, 0.22, 24);
-          const waistMesh = new THREE.Mesh(waistGeo, accentLeatherMat);
-          waistMesh.position.set(0, -0.95, 0);
-          jacketGroup.add(waistMesh);
-
-          // 3. Wide Biker Lapels (Folded chest collar)
-          const lapelLGeo = new THREE.BoxGeometry(0.44, 0.72, 0.06);
-          const lapelL = new THREE.Mesh(lapelLGeo, accentLeatherMat);
-          lapelL.position.set(-0.34, 0.52, 0.82);
-          lapelL.rotation.set(0.1, 0.15, -0.22);
-          jacketGroup.add(lapelL);
-
-          const lapelRGeo = new THREE.BoxGeometry(0.44, 0.72, 0.06);
-          const lapelR = new THREE.Mesh(lapelRGeo, accentLeatherMat);
-          lapelR.position.set(0.34, 0.52, 0.82);
-          lapelR.rotation.set(0.1, -0.15, 0.22);
-          jacketGroup.add(lapelR);
-
-          // 4. Lapel Corner Metal Snaps (Brass Studs)
-          [-0.46, -0.24, 0.24, 0.46].forEach((x, i) => {
-            const snapGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.04, 12);
-            const snapMesh = new THREE.Mesh(snapGeo, brassMetalMat);
-            snapMesh.rotation.x = Math.PI / 2;
-            snapMesh.position.set(x, 0.72 - (i % 2) * 0.35, 0.88);
-            jacketGroup.add(snapMesh);
-          });
-
-          // 5. Asymmetrical Heavy Duty Zipper Rail
-          const zipRailGeo = new THREE.BoxGeometry(0.06, 1.8, 0.08);
-          const zipRail = new THREE.Mesh(zipRailGeo, brassMetalMat);
-          zipRail.position.set(0.12, 0, 0.84);
-          zipRail.rotation.z = -0.05;
-          jacketGroup.add(zipRail);
-
-          // Zipper Slider & Pull-Tab
-          const zipPullGeo = new THREE.BoxGeometry(0.06, 0.18, 0.02);
-          const zipPull = new THREE.Mesh(zipPullGeo, brassMetalMat);
-          zipPull.position.set(0.12, 0.35, 0.9);
-          jacketGroup.add(zipPull);
-
-          // 6. Chest Welt Pockets with Zipper Tracks
-          const pocket1Geo = new THREE.BoxGeometry(0.38, 0.05, 0.04);
-          const pocket1 = new THREE.Mesh(pocket1Geo, brassMetalMat);
-          pocket1.position.set(-0.42, 0.18, 0.82);
-          pocket1.rotation.z = 0.25;
-          jacketGroup.add(pocket1);
-
-          const pocket2Geo = new THREE.BoxGeometry(0.38, 0.05, 0.04);
-          const pocket2 = new THREE.Mesh(pocket2Geo, brassMetalMat);
-          pocket2.position.set(0.42, -0.32, 0.78);
-          pocket2.rotation.z = -0.1;
-          jacketGroup.add(pocket2);
-
-          // 7. Shoulder Epaulettes (Lidah Bahu Berpaku)
-          [-0.65, 0.65].forEach((x, i) => {
-            const epauGeo = new THREE.BoxGeometry(0.36, 0.04, 0.14);
-            const epauMesh = new THREE.Mesh(epauGeo, accentLeatherMat);
-            epauMesh.position.set(x, 0.92, 0);
-            epauMesh.rotation.z = (i === 0 ? 1 : -1) * 0.18;
-            jacketGroup.add(epauMesh);
-
-            const studGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.03, 10);
-            const studMesh = new THREE.Mesh(studGeo, brassMetalMat);
-            studMesh.position.set(x * 0.85, 0.95, 0);
-            jacketGroup.add(studMesh);
-          });
-
-          // 8. Articulated Left Sleeve (Upper Arm & Forearm)
-          const sleeveLGroup = new THREE.Group();
-          const upperArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.24, 0.95, 16), leatherMat);
-          upperArmL.position.set(0, -0.4, 0);
-          sleeveLGroup.add(upperArmL);
-
-          const foreArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.2, 0.95, 16), leatherMat);
-          foreArmL.position.set(0.08, -1.2, 0.12);
-          foreArmL.rotation.z = 0.15;
-          sleeveLGroup.add(foreArmL);
-
-          // Wrist Cuff Zipper Left
-          const cuffZipL = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.25, 0.03), brassMetalMat);
-          cuffZipL.position.set(0.12, -1.6, 0.22);
-          sleeveLGroup.add(cuffZipL);
-
-          sleeveLGroup.position.set(-1.12, 0.75, 0);
-          sleeveLGroup.rotation.z = 0.26;
-          jacketGroup.add(sleeveLGroup);
-
-          // 9. Articulated Right Sleeve
-          const sleeveRGroup = new THREE.Group();
-          const upperArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.24, 0.95, 16), leatherMat);
-          upperArmR.position.set(0, -0.4, 0);
-          sleeveRGroup.add(upperArmR);
-
-          const foreArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.2, 0.95, 16), leatherMat);
-          foreArmR.position.set(-0.08, -1.2, 0.12);
-          foreArmR.rotation.z = -0.15;
-          sleeveRGroup.add(foreArmR);
-
-          // Wrist Cuff Zipper Right
-          const cuffZipR = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.25, 0.03), brassMetalMat);
-          cuffZipR.position.set(-0.12, -1.6, 0.22);
-          sleeveRGroup.add(cuffZipR);
-
-          sleeveRGroup.position.set(1.12, 0.75, 0);
-          sleeveRGroup.rotation.z = -0.26;
-          jacketGroup.add(sleeveRGroup);
-
-          // 10. Waist Leather Belt with Metal Buckle
-          const beltGeo = new THREE.TorusGeometry(0.82, 0.045, 8, 32);
-          const beltMesh = new THREE.Mesh(beltGeo, accentLeatherMat);
-          beltMesh.rotation.x = Math.PI / 2;
-          beltMesh.position.set(0, -0.88, 0);
-          jacketGroup.add(beltMesh);
-
-          // Belt Buckle
-          const buckleGeo = new THREE.TorusGeometry(0.11, 0.025, 4, 4);
-          const buckleMesh = new THREE.Mesh(buckleGeo, chromeMetalMat);
-          buckleMesh.position.set(0, -0.88, 0.88);
-          jacketGroup.add(buckleMesh);
-
-          jacketGroup.position.set(0, 0.1, 0);
-          rootGroup.add(jacketGroup);
-
-        } else {
-          // =================================================================
-          // HIGH-FIDELITY 3D LEATHER SHOE MODEL (GARUT CRAFTED)
-          // =================================================================
-          const shoeGroup = new THREE.Group();
-
-          // 1. Lug Outsole with Tread Cleats
-          const soleGeo = new THREE.BoxGeometry(1.3, 0.22, 2.7);
-          const soleMesh = new THREE.Mesh(soleGeo, soleRubberMat);
-          soleMesh.position.set(0, -0.9, 0.1);
-          soleMesh.castShadow = true;
-          shoeGroup.add(soleMesh);
-
-          // Stacked Leather Heel
-          const heelGeo = new THREE.BoxGeometry(1.24, 0.25, 0.95);
-          const heelMesh = new THREE.Mesh(heelGeo, soleRubberMat);
-          heelMesh.position.set(0, -0.72, -0.75);
-          shoeGroup.add(heelMesh);
-
-          // 2. Goodyear Welt Perimeter Rim (Contrasting leather stitch line)
-          const weltGeo = new THREE.BoxGeometry(1.36, 0.06, 2.76);
-          const weltMesh = new THREE.Mesh(weltGeo, accentLeatherMat);
-          weltMesh.position.set(0, -0.77, 0.1);
-          shoeGroup.add(weltMesh);
-
-          // 3. Front Vamp & Cap Toe (Anatomically shaped foot)
-          const vampGeo = new THREE.CylinderGeometry(0.56, 0.65, 0.65, 20);
-          const vampMesh = new THREE.Mesh(vampGeo, leatherMat);
-          vampMesh.position.set(0, -0.42, 0.65);
-          vampMesh.scale.set(1.05, 0.85, 1.45);
-          shoeGroup.add(vampMesh);
-
-          // Cap Toe Stitch Line
-          const capToeGeo = new THREE.TorusGeometry(0.58, 0.025, 8, 20, Math.PI);
-          const capToeMesh = new THREE.Mesh(capToeGeo, brassMetalMat);
-          capToeMesh.rotation.x = Math.PI / 2;
-          capToeMesh.position.set(0, -0.38, 1.15);
-          shoeGroup.add(capToeMesh);
-
-          // 4. Ankle Collar & Quarter Panels
-          const ankleGeo = new THREE.CylinderGeometry(0.52, 0.58, 1.15, 20);
-          const ankleMesh = new THREE.Mesh(ankleGeo, leatherMat);
-          ankleMesh.position.set(0, -0.15, -0.35);
-          shoeGroup.add(ankleMesh);
-
-          // Padded Top Rim Collar
-          const topRimGeo = new THREE.TorusGeometry(0.54, 0.07, 8, 24);
-          const topRimMesh = new THREE.Mesh(topRimGeo, accentLeatherMat);
-          topRimMesh.rotation.x = Math.PI / 2;
-          topRimMesh.position.set(0, 0.42, -0.35);
-          shoeGroup.add(topRimMesh);
-
-          // 5. Padded Leather Tongue
-          const tongueGeo = new THREE.BoxGeometry(0.48, 0.85, 0.08);
-          const tongueMesh = new THREE.Mesh(tongueGeo, accentLeatherMat);
-          tongueMesh.position.set(0, 0.08, 0.15);
-          tongueMesh.rotation.x = -0.42;
-          shoeGroup.add(tongueMesh);
-
-          // 6. Shiny Brass Eyelets (6 pairs along the throat)
-          [-0.24, 0.24].forEach((x) => {
-            [0.35, 0.18, 0.01, -0.16].forEach((y, i) => {
-              const eyeletGeo = new THREE.TorusGeometry(0.035, 0.015, 6, 12);
-              const eyeletMesh = new THREE.Mesh(eyeletGeo, brassMetalMat);
-              eyeletMesh.position.set(x, y, 0.25 + i * 0.12);
-              eyeletMesh.rotation.y = Math.PI / 2;
-              shoeGroup.add(eyeletMesh);
-            });
-          });
-
-          // 7. 3D Shoelaces (Cross-laced cords)
-          [0.32, 0.15, -0.02].forEach((y, i) => {
-            const laceGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.46, 8);
-            const laceMesh = new THREE.Mesh(laceGeo, chromeMetalMat);
-            laceMesh.rotation.z = Math.PI / 2;
-            laceMesh.position.set(0, y, 0.28 + i * 0.12);
-            shoeGroup.add(laceMesh);
-          });
-
-          // Shoelace Knot Bow on Top
-          const knotGeo = new THREE.TorusGeometry(0.09, 0.025, 6, 12);
-          const knotMesh = new THREE.Mesh(knotGeo, chromeMetalMat);
-          knotMesh.position.set(0, 0.42, 0.22);
-          shoeGroup.add(knotMesh);
-
-          shoeGroup.position.set(0, -0.1, 0);
-          rootGroup.add(shoeGroup);
-        }
-
-        scene.add(rootGroup);
-
-        // Smooth Mouse/Touch Drag Controls with Inertia Damping
-        let isDragging = false;
-        let previousMousePosition = { x: 0, y: 0 };
-        let rotationVelocity = { x: 0, y: 0 };
-
-        const onPointerDown = (e) => {
-          isDragging = true;
-          const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-          const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-          previousMousePosition = { x: clientX, y: clientY };
-          rotationVelocity = { x: 0, y: 0 };
-        };
-
-        const onPointerMove = (e) => {
-          if (!isDragging) return;
-          const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
-          const clientY = e.clientY || (e.touches && e.touches[0].clientY) || 0;
-
-          const deltaX = clientX - previousMousePosition.x;
-          const deltaY = clientY - previousMousePosition.y;
-
-          rootGroup.rotation.y += deltaX * 0.012;
-          rootGroup.rotation.x = Math.max(-0.6, Math.min(0.6, rootGroup.rotation.x + deltaY * 0.008));
-
-          rotationVelocity = { x: deltaX * 0.01, y: deltaY * 0.006 };
-          previousMousePosition = { x: clientX, y: clientY };
-        };
-
-        const onPointerUp = () => {
-          isDragging = false;
-        };
-
-        const domElem = renderer.domElement;
-        domElem.addEventListener('mousedown', onPointerDown);
-        window.addEventListener('mousemove', onPointerMove);
-        window.addEventListener('mouseup', onPointerUp);
-
-        domElem.addEventListener('touchstart', onPointerDown, { passive: true });
-        window.addEventListener('touchmove', onPointerMove, { passive: true });
-        window.addEventListener('touchend', onPointerUp);
-
-        // Animation Loop
-        let animationFrameId;
-        const animate = () => {
-          animationFrameId = requestAnimationFrame(animate);
-
-          if (!isDragging) {
-            // Apply gentle inertia
-            rootGroup.rotation.y += rotationVelocity.x;
-            rootGroup.rotation.x += rotationVelocity.y;
-            rotationVelocity.x *= 0.92;
-            rotationVelocity.y *= 0.92;
-
-            if (isAutoSpin && Math.abs(rotationVelocity.x) < 0.002) {
-              rootGroup.rotation.y += 0.008; // Continuous smooth rotation
-            }
-          }
-
-          renderer.render(scene, camera);
-        };
-        animate();
-
-        // Responsive Resize
-        const handleResize = () => {
-          if (!container) return;
-          const w = container.clientWidth || 360;
-          const h = container.clientHeight || 300;
-          camera.aspect = w / h;
-          camera.updateProjectionMatrix();
-          renderer.setSize(w, h);
-        };
-        window.addEventListener('resize', handleResize);
-
-        // Cleanup
-        return () => {
-          cancelAnimationFrame(animationFrameId);
-          window.removeEventListener('resize', handleResize);
-          domElem.removeEventListener('mousedown', onPointerDown);
-          window.removeEventListener('mousemove', onPointerMove);
-          window.removeEventListener('mouseup', onPointerUp);
-          domElem.removeEventListener('touchstart', onPointerDown);
-          window.removeEventListener('touchmove', onPointerMove);
-          window.removeEventListener('touchend', onPointerUp);
-          if (container) container.innerHTML = '';
-        };
-      }, [craftType, currentColor, modelType, isAutoSpin, cameraDist]);
-
+    function LandingPage({ onLogin, onGoToAdmin, onOpenPromo }) {
       return (
-        <div className="relative w-full h-full min-h-[300px] flex items-center justify-center bg-gradient-to-b from-[#F8F4EC] to-[#E9D8BD]/50 rounded-3xl overflow-hidden border-2 border-[#E9D8BD] shadow-inner select-none group">
-          {/* Main 3D Canvas Mount Point */}
-          {!hasWebGLError ? (
-            <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing"></div>
-          ) : (
-            /* Fallback 360 Turntable Vector Studio */
-            <div
-              className="w-full h-full flex flex-col items-center justify-center p-6 text-center cursor-grab"
-              onMouseDown={(e) => {
-                const startX = e.clientX;
-                const onMove = (ev) => {
-                  setFallbackAngle((prev) => (prev + (ev.clientX - startX) * 0.2) % 360);
-                };
-                const onUp = () => {
-                  window.removeEventListener('mousemove', onMove);
-                  window.removeEventListener('mouseup', onUp);
-                };
-                window.addEventListener('mousemove', onMove);
-                window.addEventListener('mouseup', onUp);
-              }}
+        <div className="min-h-screen bg-[#F8F4EC] text-[#35251D] flex flex-col justify-between font-sans antialiased selection:bg-[#E9D8BD]">
+          
+          {/* Top Bar Minimalis (Hanya Logo & Tombol Masuk - Tanpa Navigasi) */}
+          <header className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-5 flex items-center justify-between border-b border-[#E9D8BD]/50">
+            <div className="flex items-center space-x-3">
+              <img 
+                src="./logo.png" 
+                alt="Logo Sukaregang Discovery" 
+                className="w-12 h-12 sm:w-16 sm:h-16 object-contain drop-shadow" 
+              />
+              <div>
+                <span className="font-serif text-lg sm:text-xl font-bold tracking-tight text-[#173D2B] block">
+                  SUKAREGANG <span className="text-[#8B4A2B] font-light italic">DISCOVERY</span>
+                </span>
+                <span className="text-[10px] tracking-widest uppercase text-[#8B4A2B] font-semibold">
+                  Sentra Industri Kerajinan Kulit Garut
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={onLogin}
+              className="px-6 py-2.5 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition flex items-center space-x-2"
             >
-              <div
-                className="w-48 h-48 rounded-full border-4 border-[#8B4A2B] bg-[#173D2B] text-white flex items-center justify-center shadow-2xl transition transform duration-75"
-                style={{ transform: `rotateY(${fallbackAngle}deg)` }}
-              >
-                <div className="text-center space-y-1">
-                  <span className="text-6xl block">{craftType === 'jaket' ? '🧥' : '👞'}</span>
-                  <span className="font-serif font-bold text-xs text-[#E9D8BD] block">
-                    {craftType === 'jaket' ? 'Jaket Kulit 3D' : 'Sepatu Kulit 3D'}
+              <Icon name="log-in" className="w-4 h-4" />
+              <span>Log In</span>
+            </button>
+          </header>
+
+          {/* Hero Section: Kata-kata Resmi + Foto Orang Pakai Jaket Kulit & Sepatu Kulit */}
+          <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 flex-1 flex flex-col justify-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border-2 border-[#E9D8BD]/70 shadow-2xl">
+              
+              {/* Kolom Kiri: Kata-kata Sesuai Permintaan */}
+              <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
+                <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#173D2B]/10 border border-[#173D2B]/20 text-xs font-bold text-[#173D2B]">
+                  <span>Sentra Kerajinan Kulit Unggulan Garut Sejak 1920</span>
+                </div>
+
+                <div className="space-y-3">
+                  <span className="text-xs uppercase tracking-widest text-[#8B4A2B] font-bold block">
+                    Selamat Datang di Sukaregang
                   </span>
-                  <span className="text-[10px] text-gray-300">Warna: {currentColor}</span>
+                  
+                  <p className="text-sm sm:text-base text-[#173D2B] font-serif font-bold italic leading-relaxed">
+                    "Mengenal lebih dekat kawasan sentra industri kulit yang menjadi salah satu identitas kerajinan unggulan Garut."
+                  </p>
+
+                  <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl font-bold text-[#173D2B] leading-tight tracking-tight">
+                    Discover the Heritage of Leather
+                  </h1>
+
+                  <p className="text-xs sm:text-sm text-gray-700 leading-relaxed max-w-xl">
+                    "Jelajahi cerita, budaya, dan kreativitas para pengrajin kulit Sukaregang. Temukan pengalaman menarik mengenal proses pembuatan produk kulit dari awal hingga menjadi karya berkualitas."
+                  </p>
+                </div>
+
+                {/* Tombol Utama: HANYA LOG IN (TIDAK ADA MULAI EKSPLORASI) */}
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
+                  <button
+                    onClick={onLogin}
+                    className="w-full sm:w-auto px-9 py-4 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-sm sm:text-base rounded-2xl shadow-xl hover:shadow-2xl transition flex items-center justify-center space-x-2.5 group"
+                  >
+                    <span>Masuk ke Aplikasi</span>
+                    <Icon name="arrow-right" className="w-5 h-5 group-hover:translate-x-1 transition" />
+                  </button>
+
+                  <button
+                    onClick={onOpenPromo}
+                    className="w-full sm:w-auto px-6 py-4 bg-[#8B4A2B]/10 hover:bg-[#8B4A2B]/20 text-[#8B4A2B] font-bold text-xs sm:text-sm rounded-2xl border border-[#8B4A2B]/30 transition flex items-center justify-center space-x-2"
+                  >
+                    <Icon name="tag" className="w-4 h-4" />
+                    <span>Lihat Promo Sukaregang</span>
+                  </button>
+                </div>
+
+                {/* 3 Keunggulan Kulit Sukaregang */}
+                <div className="grid grid-cols-3 gap-3 pt-4 border-t border-gray-100 text-left">
+                  <div className="p-3 bg-[#F8F4EC] rounded-xl border border-[#E9D8BD]/60">
+                    <span className="font-bold text-[#173D2B] text-xs block">100% Kulit Asli</span>
+                    <span className="text-[10px] text-gray-600">Domba Garut & Sapi</span>
+                  </div>
+                  <div className="p-3 bg-[#F8F4EC] rounded-xl border border-[#E9D8BD]/60">
+                    <span className="font-bold text-[#173D2B] text-xs block">Warisan Budaya</span>
+                    <span className="text-[10px] text-gray-600">Pengrajin Sejak 1920</span>
+                  </div>
+                  <div className="p-3 bg-[#F8F4EC] rounded-xl border border-[#E9D8BD]/60">
+                    <span className="font-bold text-[#173D2B] text-xs block">Wisata & Edukasi</span>
+                    <span className="text-[10px] text-gray-600">Pabrik & Tour Guide</span>
+                  </div>
                 </div>
               </div>
-              <p className="text-[11px] text-[#35251D]/75 font-semibold mt-3">
-                Geser ke kiri / kanan untuk memutar 360°
+
+              {/* Kolom Kanan: Foto Orang Sedang Pakai Jaket Kulit dan Sepatu Kulit */}
+              <div className="lg:col-span-5 relative">
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-[#173D2B] group">
+                  <img
+                    src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1000&q=80"
+                    alt="Orang Sedang Memakai Jaket Kulit dan Sepatu Kulit Asli Garut"
+                    className="w-full h-[400px] sm:h-[480px] object-cover object-center group-hover:scale-105 transition duration-700"
+                  />
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span className="px-3 py-1 bg-[#8B4A2B] text-white text-[10px] font-bold uppercase tracking-wider rounded-full w-max mb-2">
+                      Karya Pengrajin Sukaregang
+                    </span>
+                    <h3 className="font-serif text-xl sm:text-2xl font-bold">
+                      Jaket & Sepatu Kulit Asli Garut
+                    </h3>
+                    <p className="text-xs text-white/80 mt-1">
+                      Kombinasi jaket kulit domba super lembut dan sepatu boots kulit sapi tangguh khas sentra Sukaregang.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Inset Badge Foto Sepatu Kulit Sukaregang */}
+                <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 bg-white p-3 rounded-2xl shadow-2xl border-2 border-[#E9D8BD] flex items-center space-x-3 max-w-[240px]">
+                  <img
+                    src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=150&q=80"
+                    alt="Sepatu Kulit Sukaregang"
+                    className="w-12 h-12 rounded-xl object-cover border border-[#E9D8BD]"
+                  />
+                  <div>
+                    <span className="text-[10px] uppercase font-bold text-[#8B4A2B] block">Sepatu Kulit Asli</span>
+                    <span className="text-xs font-bold text-[#173D2B] block">Handcrafted Garut</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Banner Iklan Sukaregang Menarik di Bawah Hero */}
+            <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div 
+                onClick={onOpenPromo}
+                className="cursor-pointer bg-gradient-to-r from-[#173D2B] to-[#102B1E] text-[#F8F4EC] p-5 rounded-2xl border border-[#E9D8BD]/40 shadow-lg hover:shadow-xl transition flex items-center space-x-4 group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-xl group-hover:scale-110 transition flex-shrink-0">
+                  <Icon name="tag" className="w-6 h-6 text-amber-300" />
+                </div>
+                <div>
+                  <span className="text-[10px] text-amber-300 font-bold uppercase tracking-wider block">Promo Khusus</span>
+                  <h4 className="font-serif font-bold text-sm">Diskon s/d 35% Syakira Leather</h4>
+                  <p className="text-[11px] text-white/80">Klaim voucher belanja jaket & sepatu di Shopee resmi.</p>
+                </div>
+              </div>
+
+              <div 
+                onClick={onLogin}
+                className="cursor-pointer bg-gradient-to-r from-[#8B4A2B] to-[#6E381F] text-white p-5 rounded-2xl border border-[#E9D8BD]/40 shadow-lg hover:shadow-xl transition flex items-center space-x-4 group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-xl group-hover:scale-110 transition flex-shrink-0">
+                  <Icon name="compass" className="w-6 h-6 text-amber-200" />
+                </div>
+                <div>
+                  <span className="text-[10px] text-amber-200 font-bold uppercase tracking-wider block">Wisata Pabrik</span>
+                  <h4 className="font-serif font-bold text-sm">Tour Guide Rizal & Rifa</h4>
+                  <p className="text-[11px] text-white/80">Jelajahi pabrik kulit & pesan tour guide via WhatsApp.</p>
+                </div>
+              </div>
+
+              <div 
+                onClick={onLogin}
+                className="cursor-pointer bg-gradient-to-r from-[#2B352E] to-[#1D2520] text-[#F8F4EC] p-5 rounded-2xl border border-[#E9D8BD]/40 shadow-lg hover:shadow-xl transition flex items-center space-x-4 group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center text-xl group-hover:scale-110 transition flex-shrink-0">
+                  <Icon name="video" className="w-6 h-6 text-emerald-400" />
+                </div>
+                <div>
+                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider block">Edukasi Video</span>
+                  <h4 className="font-serif font-bold text-sm">5 Video Dokumenter Garut</h4>
+                  <p className="text-[11px] text-white/80">Pelajari cara buat sepatu, jaket & sejarah Sukaregang.</p>
+                </div>
+              </div>
+            </div>
+          </main>
+
+          {/* Footer Landing Page Bersih dengan Tulisan Kecil Portal Admin */}
+          <footer className="max-w-7xl mx-auto w-full px-4 sm:px-6 py-6 border-t border-[#E9D8BD]/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500">
+            <div>
+              © 2026 Sukaregang Discovery • Sentra Industri Kerajinan Kulit Garut, Jawa Barat
+            </div>
+            <div>
+              <button
+                type="button"
+                onClick={onGoToAdmin}
+                className="text-[11px] text-gray-400 hover:text-[#8B4A2B] hover:underline transition"
+              >
+                portal admin
+              </button>
+            </div>
+          </footer>
+
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // 2B. POP-UP IKLAN MENARIK SUKAREGANG (FLASH SALE & VOUCHER SYAKIRA LEATHER)
+    // =========================================================================
+    function AdPromoModal({ isOpen, onClose }) {
+      if (!isOpen) return null;
+
+      const [copied, setCopied] = useState(false);
+
+      const handleCopyCode = () => {
+        try {
+          navigator.clipboard.writeText('SUKAREGANG2026');
+          setCopied(true);
+          setTimeout(() => setCopied(false), 2000);
+        } catch (e) {
+          setCopied(true);
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-[#F8F4EC] rounded-3xl max-w-lg w-full overflow-hidden border-2 border-[#E9D8BD] shadow-2xl relative">
+            
+            {/* Tombol Close Silang */}
+            <button
+              onClick={onClose}
+              className="absolute top-3.5 right-3.5 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center text-sm font-bold transition shadow"
+            >
+              ✕
+            </button>
+
+            {/* Header Visual Banner */}
+            <div className="relative bg-[#173D2B] text-[#F8F4EC] p-6 text-center overflow-hidden">
+              <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#E9D8BD]/20 border border-[#E9D8BD]/40 text-amber-300 text-[10px] font-bold uppercase tracking-wider mb-2">
+                <span>PROMO SPESIAL WISATAWAN</span>
+              </div>
+              
+              <h3 className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white">
+                Festival Kulit Sukaregang
+              </h3>
+              <p className="text-xs text-[#E9D8BD] mt-1 font-medium">
+                Sentra Kerajinan Kulit Domba & Sapi Asli Garut
               </p>
             </div>
-          )}
 
-          {/* Interactive Floating 3D Controls Bar */}
-          <div className="absolute top-3 left-3 flex items-center space-x-1.5 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-full text-[#F8F4EC] text-[10px] font-bold border border-white/20 shadow-lg">
-            <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>3D Studio • {craftType === 'jaket' ? 'Jaket Garut' : 'Sepatu Garut'}</span>
-          </div>
+            {/* Body Promo */}
+            <div className="p-6 sm:p-8 space-y-5 text-center">
+              
+              {/* Gambar Produk Kolase */}
+              <div className="grid grid-cols-2 gap-3 rounded-2xl overflow-hidden border border-[#E9D8BD]/80">
+                <div className="relative h-28 group">
+                  <img
+                    src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=400&q=80"
+                    alt="Jaket Kulit Sukaregang"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <span className="text-[11px] font-bold text-white uppercase tracking-wider">Jaket Domba Garut</span>
+                  </div>
+                </div>
+                <div className="relative h-28 group">
+                  <img
+                    src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=400&q=80"
+                    alt="Sepatu Kulit Sukaregang"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                    <span className="text-[11px] font-bold text-white uppercase tracking-wider">Sepatu Kulit Asli</span>
+                  </div>
+                </div>
+              </div>
 
-          {/* Floating Controls at Top Right */}
-          <div className="absolute top-3 right-3 flex items-center space-x-1">
-            <button
-              type="button"
-              onClick={() => setIsAutoSpin(!isAutoSpin)}
-              className={`p-2 rounded-xl backdrop-blur-md border text-xs transition shadow ${
-                isAutoSpin ? 'bg-[#173D2B] text-[#E9D8BD] border-[#E9D8BD]' : 'bg-black/60 text-white border-white/20'
-              }`}
-              title={isAutoSpin ? 'Jeda Putaran Otomatis' : 'Mulai Putar Otomatis'}
-            >
-              {isAutoSpin ? '⏸️' : '▶️'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setCameraDist((prev) => Math.max(3.8, prev - 0.4))}
-              className="p-2 rounded-xl bg-black/60 hover:bg-black/80 text-white border border-white/20 text-xs backdrop-blur-md shadow"
-              title="Perbesar (Zoom In)"
-            >
-              🔍+
-            </button>
-            <button
-              type="button"
-              onClick={() => setCameraDist((prev) => Math.min(6.8, prev + 0.4))}
-              className="p-2 rounded-xl bg-black/60 hover:bg-black/80 text-white border border-white/20 text-xs backdrop-blur-md shadow"
-              title="Perkecil (Zoom Out)"
-            >
-              🔍-
-            </button>
-          </div>
+              {/* Teks Diskon Utama */}
+              <div className="space-y-1">
+                <div className="text-3xl sm:text-4xl font-extrabold text-[#8B4A2B] tracking-tight">
+                  DISKON HINGGA 35%
+                </div>
+                <p className="text-xs text-gray-700">
+                  Untuk 20 produk pilihan di Toko Resmi <strong>Syakira Leather Sukaregang</strong>. Garansi 100% kulit asli bukan imitasi!
+                </p>
+              </div>
 
-          {/* Bottom Floating Interactive Bar */}
-          <div className="absolute bottom-3 left-3 right-3 flex flex-wrap items-center justify-between gap-2 pointer-events-none">
-            {/* Direct Color Selector Pills */}
-            <div className="flex items-center space-x-1.5 bg-black/70 backdrop-blur-md px-2.5 py-1.5 rounded-full pointer-events-auto border border-white/20 shadow-lg">
-              <span className="text-[9px] text-[#E9D8BD] font-bold mr-1">Warna:</span>
-              {[
-                { name: 'Hitam', hex: '#181818', bg: 'bg-black' },
-                { name: 'Cokelat', hex: '#4a240c', bg: 'bg-[#4a240c]' },
-                { name: 'Tan', hex: '#945428', bg: 'bg-[#945428]' },
-                { name: 'Maroon', hex: '#4a1212', bg: 'bg-[#4a1212]' },
-              ].map((c) => (
+              {/* Kode Voucher Box */}
+              <div className="bg-white p-3 rounded-2xl border-2 border-dashed border-[#8B4A2B]/60 flex items-center justify-between gap-3">
+                <div className="text-left">
+                  <span className="text-[9px] uppercase font-bold text-gray-400 block">Kode Voucher Shopee:</span>
+                  <span className="font-mono font-bold text-sm text-[#173D2B]">SUKAREGANG2026</span>
+                </div>
                 <button
-                  key={c.name}
                   type="button"
-                  onClick={() => setCurrentColor(c.name)}
-                  className={`w-5 h-5 rounded-full ${c.bg} border-2 transition transform hover:scale-110 ${
-                    currentColor.toLowerCase().includes(c.name.toLowerCase()) ? 'border-white scale-110 ring-2 ring-[#E9D8BD]' : 'border-gray-500'
-                  }`}
-                  title={`Ubah warna 3D ke ${c.name}`}
-                ></button>
-              ))}
-            </div>
+                  onClick={handleCopyCode}
+                  className="px-3.5 py-1.5 bg-[#8B4A2B] hover:bg-[#6E381F] text-white text-[11px] font-bold rounded-xl shadow transition flex-shrink-0"
+                >
+                  {copied ? '✓ Tersalin' : 'Salin Kode'}
+                </button>
+              </div>
 
-            {/* Hint Badge */}
-            <div className="bg-black/70 backdrop-blur-md text-[#F8F4EC] text-[9px] px-3 py-1.5 rounded-full font-bold border border-white/20 shadow flex items-center space-x-1.5">
-              <span>🔄</span>
-              <span>Geser untuk memutar 360°</span>
+              {/* Countdown Flash Sale */}
+              <div className="flex items-center justify-center space-x-2 text-[11px] text-gray-600">
+                <span className="text-red-500 font-bold">⏱️ Berakhir dalam:</span>
+                <span className="font-mono font-bold text-[#173D2B] bg-white px-2 py-0.5 rounded border border-gray-200">
+                  02 : 45 : 18
+                </span>
+              </div>
+
+              {/* Tombol Aksi */}
+              <div className="space-y-2 pt-2">
+                <a
+                  href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3.5 bg-[#EE4D2D] hover:bg-[#D43F21] text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg hover:shadow-xl transition flex items-center justify-center space-x-2"
+                >
+                  <span>🛒 Klaim Diskon di Shopee Syakira Leather</span>
+                  <span>↗</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="w-full py-2.5 text-xs text-gray-500 hover:text-gray-800 font-semibold transition"
+                >
+                  Nanti Saja
+                </button>
+              </div>
+
             </div>
           </div>
         </div>
@@ -1123,10 +902,9 @@
     }
 
     // =========================================================================
-    // 2B. HALAMAN LOGIN SEDERHANA (HANYA LOGIN, SUDAH/BELUM PUNYA AKUN, PORTAL ADMIN)
+    // 2C. HALAMAN LOGIN SEDERHANA (LOGO BESAR TANPA TULISAN DI SAMPING, TANPA DEMO, TANPA NAVBAR)
     // =========================================================================
     function LoginPage({
-      currentUser,
       onBack,
       onGoToAdmin,
       loginIdentifier,
@@ -1135,49 +913,36 @@
       setLoginPassword,
       showPassword,
       setShowPassword,
-      rememberMe,
-      setRememberMe,
       loginLoading,
       loginError,
       loginToast,
       handleLoginSubmit,
-      handleQuickDemoLogin,
     }) {
       const [isRegisterMode, setIsRegisterMode] = useState(false);
 
       return (
         <div className="min-h-screen bg-[#F8F4EC] flex flex-col justify-center items-center p-4 sm:p-6 antialiased font-sans">
-          {/* Tombol Kembali ke Beranda di Atas */}
-          <div className="w-full max-w-md flex items-center justify-between mb-5">
-            <button
-              type="button"
-              onClick={onBack}
-              className="flex items-center space-x-2 text-xs font-bold text-[#173D2B] hover:text-[#8B4A2B] transition group"
-            >
-              <span className="w-8 h-8 rounded-full bg-white border border-[#E9D8BD] flex items-center justify-center shadow-sm group-hover:scale-105 transition">
-                ←
-              </span>
-              <span>Kembali ke Beranda</span>
-            </button>
-            <div className="flex items-center space-x-2">
-              <img src="./logo.png" alt="Logo" className="w-7 h-7 object-contain" />
-              <span className="text-xs font-serif font-bold text-[#173D2B]">Sukaregang Discovery</span>
-            </div>
+          
+          {/* Logo Aplikasi Besar & Gagah (Tanpa Tulisan di Dekat Logo) */}
+          <div className="mb-6 text-center animate-fadeIn">
+            <img 
+              src="./logo.png" 
+              alt="Logo Sukaregang Discovery" 
+              className="w-28 h-28 sm:w-36 sm:h-36 mx-auto object-contain drop-shadow-xl hover:scale-105 transition duration-300" 
+            />
           </div>
 
-          {/* Card Form Login Sederhana */}
-          <div className="bg-white rounded-3xl max-w-md w-full p-8 sm:p-10 border-2 border-[#E9D8BD]/80 shadow-2xl space-y-6">
+          {/* Card Form Login Bersih & Elegan */}
+          <div className="bg-white rounded-3xl max-w-md w-full p-8 sm:p-10 border-2 border-[#E9D8BD]/80 shadow-2xl space-y-6 animate-fadeIn">
+            
             {/* Header Form */}
-            <div className="text-center space-y-2">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-[#173D2B] flex items-center justify-center p-2.5 shadow-md border border-[#E9D8BD]/40">
-                <img src="./logo.png" alt="Logo" className="w-full h-full object-contain" />
-              </div>
+            <div className="text-center space-y-1.5">
               <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#173D2B]">
-                {isRegisterMode ? 'Daftar Akun' : 'Log In'}
+                {isRegisterMode ? 'Daftar Akun Baru' : 'Log In'}
               </h2>
               <p className="text-xs text-[#35251D]/70">
                 {isRegisterMode
-                  ? 'Buat akun untuk mulai eksplorasi sentra kulit Garut'
+                  ? 'Daftar untuk menjelajahi sentra kerajinan kulit Sukaregang'
                   : 'Masuk dan mulai perjalanan eksplorasimu bersama Sukaregang Discovery'}
               </p>
             </div>
@@ -1194,7 +959,7 @@
               </div>
             )}
 
-            {/* Form Input Sederhana */}
+            {/* Form Input */}
             <form onSubmit={handleLoginSubmit} className="space-y-4 text-xs">
               <div>
                 <label className="font-bold text-[#173D2B] block mb-1.5">
@@ -1206,7 +971,7 @@
                   value={loginIdentifier}
                   onChange={(e) => setLoginIdentifier(e.target.value)}
                   placeholder="nama@email.com atau username"
-                  className="w-full p-3 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B] focus:ring-2 focus:ring-[#173D2B]/20"
+                  className="w-full p-3.5 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B] focus:ring-2 focus:ring-[#173D2B]/20 transition"
                 />
               </div>
 
@@ -1221,12 +986,12 @@
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="Masukkan kata sandi..."
-                    className="w-full p-3 pr-10 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B] focus:ring-2 focus:ring-[#173D2B]/20"
+                    className="w-full p-3.5 pr-10 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B] focus:ring-2 focus:ring-[#173D2B]/20 transition"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-3 text-gray-400 hover:text-[#173D2B]"
+                    className="absolute right-3.5 top-3.5 text-gray-400 hover:text-[#173D2B] transition"
                   >
                     <Icon name={showPassword ? 'eye-off' : 'eye'} className="w-4 h-4" />
                   </button>
@@ -1236,7 +1001,7 @@
               <button
                 type="submit"
                 disabled={loginLoading}
-                className="w-full py-3.5 bg-[#173D2B] hover:bg-[#102B1E] disabled:bg-gray-400 text-white font-bold text-xs rounded-xl shadow-lg transition"
+                className="w-full py-4 bg-[#173D2B] hover:bg-[#102B1E] disabled:bg-gray-400 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg transition tracking-wide hover:shadow-xl"
               >
                 {loginLoading
                   ? 'Memproses...'
@@ -1254,7 +1019,7 @@
                   <button
                     type="button"
                     onClick={() => setIsRegisterMode(false)}
-                    className="text-[#8B4A2B] font-bold hover:underline"
+                    className="text-[#8B4A2B] font-bold hover:underline ml-1"
                   >
                     Log In
                   </button>
@@ -1265,7 +1030,7 @@
                   <button
                     type="button"
                     onClick={() => setIsRegisterMode(true)}
-                    className="text-[#8B4A2B] font-bold hover:underline"
+                    className="text-[#8B4A2B] font-bold hover:underline ml-1"
                   >
                     Daftar Akun
                   </button>
@@ -1273,29 +1038,19 @@
               )}
             </div>
 
-            {/* Akses Demo Cepat */}
+            {/* Tombol Kembali ke Halaman Utama */}
             <div className="pt-2 text-center">
-              <span className="text-[10px] text-gray-400 block mb-1.5">Akses Demo Cepat:</span>
-              <div className="flex justify-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemoLogin('member')}
-                  className="px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-[#173D2B] text-[10px] font-bold"
-                >
-                  Masuk Wisatawan
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleQuickDemoLogin('admin')}
-                  className="px-3 py-1 rounded-lg bg-[#173D2B] hover:bg-[#102B1E] text-white text-[10px] font-bold"
-                >
-                  Masuk Admin
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={onBack}
+                className="text-xs text-gray-500 hover:text-[#173D2B] font-semibold transition flex items-center justify-center space-x-1 mx-auto"
+              >
+                <span>← Kembali ke Halaman Utama</span>
+              </button>
             </div>
 
             {/* Tulisan Kecil Portal Admin di Bagian Paling Bawah */}
-            <div className="pt-3 border-t border-gray-100 text-center">
+            <div className="pt-2 border-t border-gray-100 text-center">
               <button
                 type="button"
                 onClick={onGoToAdmin}
@@ -1313,8 +1068,10 @@
     // 3. MAIN APPLICATION COMPONENT
     // =========================================================================
     function App() {
-      // Navigation Routes: 'beranda', 'explore', 'sejarah', 'galeri', 'simulator', 'reviews', 'admin_dashboard'
-      const [currentRoute, setCurrentRoute] = useState('beranda');
+      // Navigation Routes: 'landing', 'login', 'beranda', 'explore', 'sejarah', 'videos', 'galeri', 'reviews', 'admin_dashboard'
+      const [currentRoute, setCurrentRoute] = useState('landing');
+      const [isAdPromoOpen, setIsAdPromoOpen] = useState(false);
+      const [playingVideoId, setPlayingVideoId] = useState(null);
 
       // Mobile Hamburger Navigation Drawer
       const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -1477,65 +1234,6 @@
         if (!url) return '';
         const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
         return match ? match[1] : url.trim();
-      };
-
-      // =======================================================================
-      // GAME SIMULATOR 3D (LEATHER CRAFT ADVENTURE - 7 LEVEL GAMEPLAY)
-      // =======================================================================
-      const [simGameMode, setSimGameMode] = useState('menu'); // 'menu', 'jaket', 'sepatu'
-      const [simLevel, setSimLevel] = useState(1); // Level 1 to 7
-      const [simScore, setSimScore] = useState(100);
-      const [simCoins, setSimCoins] = useState(50);
-      const [simAudioFeedback, setSimAudioFeedback] = useState('');
-
-      // Jaket Choices
-      const [jaketDesign, setJaketDesign] = useState('Jaket Biker');
-      const [jaketColor, setJaketColor] = useState('Hitam Obsidian');
-      const [jaketMaterial, setJaketMaterial] = useState('Kulit Domba Garut Grade A');
-      const [jaketCollar, setJaketCollar] = useState('Kerah Snap Button');
-      const [jaketZipper, setJaketZipper] = useState('Ritsleting Logam Kuningan YKK');
-
-      // Jaket Interactive Mini-Actions
-      const [jaketCutParts, setJaketCutParts] = useState({
-        depan: false,
-        belakang: false,
-        lengan: false,
-        kerah: false
-      });
-      const [isSewingActive, setIsSewingActive] = useState(false);
-      const [sewingProgress, setSewingProgress] = useState(0);
-      const [assembledParts, setAssembledParts] = useState({
-        depan: false,
-        belakang: false,
-        lengan: false,
-        kerah: false,
-        zipper: false,
-        furing: false
-      });
-      const [cleanPassed, setCleanPassed] = useState(false);
-      const [minkOilApplied, setMinkOilApplied] = useState(false);
-
-      // Sepatu Choices
-      const [sepatuDesign, setSepatuDesign] = useState('Sepatu Boots');
-      const [sepatuColor, setSepatuColor] = useState('Cokelat Antik Heritage');
-      const [sepatuLeather, setSepatuLeather] = useState('Kulit Sapi Pull-Up Asli');
-      const [sepatuSole, setSepatuSole] = useState('Sol Karet Komando Anti Slip');
-
-      // Sepatu Interactive Mini-Actions
-      const [sepatuCutParts, setSepatuCutParts] = useState({
-        vamp: false,
-        quarter: false,
-        tongue: false,
-        heel: false
-      });
-      const [sepatuSewProgress, setSepatuSewProgress] = useState(0);
-      const [soleAttached, setSoleAttached] = useState(false);
-      const [shoePolished, setShoePolished] = useState(false);
-
-      // Audio feedback cue helper
-      const triggerEffect = (text) => {
-        setSimAudioFeedback(text);
-        setTimeout(() => setSimAudioFeedback(''), 1500);
       };
 
       // =======================================================================
@@ -1771,13 +1469,28 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
       }, [products, storeCategory, searchQuery]);
 
       // =======================================================================
-      // RENDER: HALAMAN LOGIN TERPISAH (STANDALONE SPLIT-SCREEN FULL PAGE)
+      // 1. RENDER: LANDING PAGE STANDALONE (TANPA NAVIGASI)
+      // =======================================================================
+      if (currentRoute === 'landing') {
+        return (
+          <>
+            <LandingPage
+              onLogin={() => setCurrentRoute('login')}
+              onGoToAdmin={() => setCurrentRoute('admin_dashboard')}
+              onOpenPromo={() => setIsAdPromoOpen(true)}
+            />
+            <AdPromoModal isOpen={isAdPromoOpen} onClose={() => setIsAdPromoOpen(false)} />
+          </>
+        );
+      }
+
+      // =======================================================================
+      // 2. RENDER: HALAMAN LOGIN TERPISAH (STANDALONE TANPA NAVIGASI)
       // =======================================================================
       if (currentRoute === 'login') {
         return (
           <LoginPage
-            currentUser={currentUser}
-            onBack={() => setCurrentRoute('beranda')}
+            onBack={() => setCurrentRoute('landing')}
             onGoToAdmin={() => setCurrentRoute('admin_dashboard')}
             loginIdentifier={loginIdentifier}
             setLoginIdentifier={setLoginIdentifier}
@@ -1785,13 +1498,10 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             setLoginPassword={setLoginPassword}
             showPassword={showPassword}
             setShowPassword={setShowPassword}
-            rememberMe={rememberMe}
-            setRememberMe={setRememberMe}
             loginLoading={loginLoading}
             loginError={loginError}
             loginToast={loginToast}
             handleLoginSubmit={handleLoginSubmit}
-            handleQuickDemoLogin={handleQuickDemoLogin}
           />
         );
       }
@@ -1933,10 +1643,10 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         <p className="text-xs text-[#35251D]/70">Laporan real-time statistik pariwisata digital, produk kulit & ulasan Sukaregang.</p>
                       </div>
                       <button
-                        onClick={() => setCurrentRoute('simulator')}
-                        className="px-4 py-2 bg-[#8B4A2B] text-white rounded-xl text-xs font-bold hover:bg-[#6E381F] transition shadow"
+                        onClick={() => setCurrentRoute('videos')}
+                        className="px-4 py-2 bg-[#173D2B] text-white rounded-xl text-xs font-bold hover:bg-[#102B1E] transition shadow"
                       >
-                        🎮 Buka Game Simulator
+                        Video Edukasi YouTube
                       </button>
                     </div>
 
@@ -2640,27 +2350,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     </div>
                   </div>
                 )}
-                {adminActiveTab === 'game' && (
-                  <div className="bg-white p-6 rounded-2xl border border-[#E9D8BD] shadow-sm space-y-4 animate-fadeIn">
-                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Pengaturan Game Simulator 3D (Leather Craft Adventure)</h3>
-                    <div className="p-4 bg-[#F8F4EC] rounded-xl space-y-3 text-xs">
-                      <div>
-                        <label className="font-bold block">Reward Koin Dasar per Level Selesai:</label>
-                        <input type="number" defaultValue={25} className="p-2 border rounded-lg bg-white" />
-                      </div>
-                      <div>
-                        <label className="font-bold block">Bahan Kulit Domba Sukaregang Terverifikasi:</label>
-                        <span className="text-emerald-700 font-bold">✓ Grade A Export Quality (Aktif)</span>
-                      </div>
-                      <button
-                        onClick={() => alert('Pengaturan game berhasil diperbarui!')}
-                        className="px-4 py-2 bg-[#173D2B] text-white font-bold rounded-xl"
-                      >
-                        Simpan Pengaturan Game
-                      </button>
-                    </div>
-                  </div>
-                )}
+
 
                 {/* 11 & 12: LAPORAN & PENGATURAN */}
                 {(adminActiveTab === 'reports' || adminActiveTab === 'settings') && (
@@ -2754,10 +2444,10 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               <nav className="hidden lg:flex items-center space-x-1 text-xs font-semibold">
                 {[
                   { id: 'beranda', label: 'Beranda' },
-                  { id: 'explore', label: 'Explore' },
-                  { id: 'sejarah', label: 'Sejarah' },
-                  { id: 'galeri', label: 'Galeri' },
-                  { id: 'simulator', label: '🎮 Game Simulator' },
+                  { id: 'explore', label: 'Jelajah Kawasan' },
+                  { id: 'sejarah', label: 'Sejarah & Material' },
+                  { id: 'videos', label: 'Video Edukasi' },
+                  { id: 'galeri', label: 'Galeri Produk' },
                   { id: 'reviews', label: 'Kesan & Pesan' },
                 ].map((tab) => (
                   <button
@@ -2828,12 +2518,12 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             {isMobileMenuOpen && (
               <div className="lg:hidden bg-[#102B1E] border-t border-[#E9D8BD]/30 p-4 space-y-2 text-xs font-bold animate-fadeIn">
                 {[
-                  { id: 'beranda', label: '🏠 Beranda' },
-                  { id: 'explore', label: '🗺️ Explore Peta & Pabrik' },
-                  { id: 'sejarah', label: '📜 Sejarah Garut' },
-                  { id: 'galeri', label: '🛍️ Galeri Syakira Store' },
-                  { id: 'simulator', label: '🎮 Game Simulator 3D' },
-                  { id: 'reviews', label: '💬 Kesan & Pesan' },
+                  { id: 'beranda', label: 'Beranda' },
+                  { id: 'explore', label: 'Jelajah Kawasan' },
+                  { id: 'sejarah', label: 'Sejarah & Material' },
+                  { id: 'videos', label: 'Video Edukasi YouTube' },
+                  { id: 'galeri', label: 'Galeri Produk Syakira' },
+                  { id: 'reviews', label: 'Kesan & Pesan' },
                 ].map((item) => (
                   <button
                     key={item.id}
@@ -2898,9 +2588,9 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                           className="w-40 h-40 sm:w-52 sm:h-52 object-contain drop-shadow-2xl transform group-hover:scale-105 transition duration-500"
                         />
                       </div>
-                      <div className="mt-3 px-3 py-1 bg-[#102B1E] rounded-full border border-[#E9D8BD]/30 inline-flex items-center space-x-1.5 text-[11px] text-[#E9D8BD]">
-                        <span>🧑‍🎨</span>
-                        <span>Pengrajin Asli Sukaregang Garut</span>
+                      <div className="mt-3 px-3.5 py-1 bg-[#102B1E] rounded-full border border-[#E9D8BD]/30 inline-flex items-center space-x-1.5 text-[11px] text-[#E9D8BD]">
+                        <Icon name="award" className="w-3.5 h-3.5 text-amber-300" />
+                        <span>Sentra Kerajinan Kulit Asli Garut</span>
                       </div>
                     </div>
 
@@ -2922,28 +2612,28 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         "Jelajahi cerita, budaya, dan kreativitas para pengrajin kulit Sukaregang. Temukan pengalaman menarik mengenal proses pembuatan produk kulit dari awal hingga menjadi karya berkualitas."
                       </p>
 
-                      {/* Tombol Sesuai Instruksi: Mulai Eksplorasi & Login */}
+                      {/* Tombol Aksi Beranda */}
                       <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-3">
                         <button
                           onClick={() => setCurrentRoute('explore')}
-                          className="px-7 py-3.5 bg-[#E9D8BD] hover:bg-[#D6B889] text-[#173D2B] font-bold text-xs rounded-2xl shadow-xl transition flex items-center space-x-2"
+                          className="px-6 py-3.5 bg-[#E9D8BD] hover:bg-[#D6B889] text-[#173D2B] font-bold text-xs rounded-2xl shadow-xl transition flex items-center space-x-2"
                         >
                           <Icon name="compass" className="w-4 h-4" />
-                          <span>Mulai Eksplorasi</span>
+                          <span>Jelajah Kawasan Pabrik</span>
                         </button>
                         <button
-                          onClick={() => setCurrentRoute('login')}
-                          className="px-7 py-3.5 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-2xl shadow-xl transition flex items-center space-x-2"
+                          onClick={() => setCurrentRoute('videos')}
+                          className="px-6 py-3.5 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-2xl shadow-xl transition flex items-center space-x-2"
                         >
-                          <Icon name="log-in" className="w-4 h-4" />
-                          <span>Login Akun</span>
+                          <Icon name="video" className="w-4 h-4" />
+                          <span>Video Dokumenter YouTube</span>
                         </button>
                         <button
-                          onClick={() => setCurrentRoute('simulator')}
-                          className="px-6 py-3.5 bg-[#102B1E] hover:bg-black text-[#E9D8BD] font-bold text-xs rounded-2xl border border-[#E9D8BD]/40 shadow-xl transition flex items-center space-x-2"
+                          onClick={() => setIsAdPromoOpen(true)}
+                          className="px-5 py-3.5 bg-[#102B1E] hover:bg-black text-[#E9D8BD] font-bold text-xs rounded-2xl border border-[#E9D8BD]/40 shadow-xl transition flex items-center space-x-2"
                         >
-                          <Icon name="gamepad-2" className="w-4 h-4" />
-                          <span>🎮 Game Simulator 3D</span>
+                          <Icon name="tag" className="w-4 h-4 text-amber-300" />
+                          <span>Klaim Promo 35%</span>
                         </button>
                       </div>
                     </div>
@@ -2951,48 +2641,144 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   </div>
                 </div>
 
-                {/* 3 Kartu Teaser Eksplorasi Bersih & Tidak Terlalu Penuh Tulisan */}
+                {/* 3 Spanduk Iklan Terkait Sukaregang Menarik */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div
+                    onClick={() => setIsAdPromoOpen(true)}
+                    className="cursor-pointer bg-gradient-to-br from-[#173D2B] to-[#102B1E] text-[#F8F4EC] rounded-3xl p-6 border-2 border-[#E9D8BD]/60 shadow-lg hover:shadow-2xl transition space-y-3 group"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 text-amber-300 flex items-center justify-center group-hover:scale-110 transition">
+                      <Icon name="tag" className="w-6 h-6" />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-300 block">Promo Spesial</span>
+                    <h3 className="font-serif font-bold text-lg">Diskon hingga 35% Syakira Leather</h3>
+                    <p className="text-xs text-[#F8F4EC]/80 leading-relaxed">
+                      Dapatkan voucher diskon belanja jaket domba asli dan sepatu kulit di toko resmi Shopee.
+                    </p>
+                    <span className="text-xs font-bold text-amber-300 inline-block">Buka Kupon Promo →</span>
+                  </div>
+
+                  <div
                     onClick={() => setCurrentRoute('explore')}
-                    className="cursor-pointer bg-white rounded-3xl p-7 border-2 border-[#E9D8BD]/50 shadow-sm hover:shadow-xl transition space-y-3 group"
+                    className="cursor-pointer bg-gradient-to-br from-[#8B4A2B] to-[#6E381F] text-white rounded-3xl p-6 border-2 border-[#E9D8BD]/60 shadow-lg hover:shadow-2xl transition space-y-3 group"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-[#173D2B] text-[#E9D8BD] flex items-center justify-center text-xl group-hover:scale-110 transition">
-                      🗺️
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 text-amber-200 flex items-center justify-center group-hover:scale-110 transition">
+                      <Icon name="map-pin" className="w-6 h-6" />
                     </div>
-                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Explore Kawasan Pabrik</h3>
-                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                      Peta interaktif titik industri penyamakan, pabrik jaket, dan pusat belanja Piazza Firenze.
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-amber-200 block">Wisata Edukasi</span>
+                    <h3 className="font-serif font-bold text-lg">Tour Guide Rizal & Rifa</h3>
+                    <p className="text-xs text-white/80 leading-relaxed">
+                      Panduan langsung kunjungan pabrik penyamakan kulit, sentra jaket, dan belanja Piazza Firenze.
                     </p>
-                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Jelajahi Peta →</span>
+                    <span className="text-xs font-bold text-amber-200 inline-block">Booking WhatsApp →</span>
                   </div>
 
                   <div
-                    onClick={() => setCurrentRoute('sejarah')}
-                    className="cursor-pointer bg-white rounded-3xl p-7 border-2 border-[#E9D8BD]/50 shadow-sm hover:shadow-xl transition space-y-3 group"
+                    onClick={() => setCurrentRoute('videos')}
+                    className="cursor-pointer bg-gradient-to-br from-[#2B352E] to-[#1D2520] text-[#F8F4EC] rounded-3xl p-6 border-2 border-[#E9D8BD]/60 shadow-lg hover:shadow-2xl transition space-y-3 group"
                   >
-                    <div className="w-12 h-12 rounded-2xl bg-[#173D2B] text-[#E9D8BD] flex items-center justify-center text-xl group-hover:scale-110 transition">
-                      📜
+                    <div className="w-12 h-12 rounded-2xl bg-white/10 text-emerald-400 flex items-center justify-center group-hover:scale-110 transition">
+                      <Icon name="video" className="w-6 h-6" />
                     </div>
-                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Sejarah & Edukasi Kulit</h3>
-                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                      Video dokumenter Garut dan teknik pengolahan kulit domba dari masa ke masa.
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400 block">Dokumenter Resmi</span>
+                    <h3 className="font-serif font-bold text-lg">5 Video Edukasi YouTube</h3>
+                    <p className="text-xs text-[#F8F4EC]/80 leading-relaxed">
+                      Tonton tahapan proses pembuatan jaket, teknik sepatu kulit, dan sejarah Garut Swiss van Java.
                     </p>
-                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Pelajari Ceritanya →</span>
+                    <span className="text-xs font-bold text-emerald-400 inline-block">Tonton Sekarang →</span>
+                  </div>
+                </div>
+
+                {/* KOLEKSI VIDEO YOUTUBE UNGGULAN DI BERANDA */}
+                <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-[#E9D8BD]/70 shadow-xl space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-gray-100">
+                    <div>
+                      <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#173D2B]/10 text-[#173D2B] text-[10px] font-bold uppercase tracking-wider mb-1">
+                        <span>Video Edukasi YouTube Terintegrasi</span>
+                      </div>
+                      <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#173D2B]">
+                        Dokumenter & Video Edukasi Sentra Kulit Sukaregang
+                      </h3>
+                      <p className="text-xs text-gray-600">
+                        Klik kartu video untuk memutar langsung tanpa kendala atau buka langsung di aplikasi YouTube.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setCurrentRoute('videos')}
+                      className="px-4 py-2 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow transition flex items-center space-x-1.5 self-start sm:self-auto"
+                    >
+                      <Icon name="video" className="w-4 h-4" />
+                      <span>Lihat Semua ({videos.length} Video)</span>
+                    </button>
                   </div>
 
-                  <div
-                    onClick={() => setCurrentRoute('simulator')}
-                    className="cursor-pointer bg-white rounded-3xl p-7 border-2 border-[#8B4A2B]/40 shadow-sm hover:shadow-xl transition space-y-3 group"
-                  >
-                    <div className="w-12 h-12 rounded-2xl bg-[#8B4A2B] text-white flex items-center justify-center text-xl group-hover:scale-110 transition">
-                      🎮
-                    </div>
-                    <h3 className="font-serif font-bold text-lg text-[#173D2B]">Leather Craft Adventure</h3>
-                    <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                      Game 3D membuat jaket & sepatu kulit interaktif! Pilih desain, potong pola, dan jahit.
-                    </p>
-                    <span className="text-xs font-bold text-[#8B4A2B] inline-block">Mulai Petualangan 3D →</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {videos.slice(0, 3).map((vid) => {
+                      const isPlaying = playingVideoId === vid.id;
+                      return (
+                        <div
+                          key={vid.id}
+                          className="bg-[#F8F4EC] rounded-2xl overflow-hidden border border-[#E9D8BD] shadow-sm hover:shadow-md transition flex flex-col justify-between"
+                        >
+                          <div className="relative aspect-video bg-black overflow-hidden group">
+                            {isPlaying ? (
+                              <iframe
+                                src={`https://www.youtube-nocookie.com/embed/${vid.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                                title={vid.title}
+                                className="w-full h-full border-0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                              ></iframe>
+                            ) : (
+                              <div
+                                onClick={() => setPlayingVideoId(vid.id)}
+                                className="w-full h-full cursor-pointer relative"
+                              >
+                                <img
+                                  src={`https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`}
+                                  alt={vid.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                />
+                                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition flex items-center justify-center">
+                                  <div className="w-12 h-12 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition">
+                                    <svg className="w-5 h-5 fill-current ml-0.5" viewBox="0 0 24 24">
+                                      <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
+                            <div>
+                              <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider block">
+                                {vid.category}
+                              </span>
+                              <h4 className="font-serif font-bold text-sm text-[#173D2B] line-clamp-2">
+                                {vid.title}
+                              </h4>
+                            </div>
+                            <div className="pt-2 flex items-center justify-between text-[11px] font-bold border-t border-gray-200">
+                              <button
+                                onClick={() => setPlayingVideoId(isPlaying ? null : vid.id)}
+                                className="text-[#173D2B] hover:text-[#8B4A2B]"
+                              >
+                                {isPlaying ? 'Tutup Pemutar' : 'Putar Langsung ▶'}
+                              </button>
+                              <a
+                                href={vid.youtubeUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-gray-500 hover:text-red-600"
+                              >
+                                YouTube ↗
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -3031,622 +2817,102 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               </div>
             )}
 
-            {/* -------------------------------------------------------------
-                D & E. GAME SIMULATOR 3D (LEATHER CRAFT ADVENTURE)
+                        {/* -------------------------------------------------------------
+                D. VIDEO EDUKASI & DOKUMENTER RESMI YOUTUBE SUKAREGANG
             ------------------------------------------------------------- */}
-            {currentRoute === 'simulator' && (
-              <div className="space-y-6 animate-fadeIn">
-                
-                {/* Visual Feedback Banner */}
-                {simAudioFeedback && (
-                  <div className="p-3 bg-emerald-600 text-white text-xs font-bold rounded-2xl text-center shadow-lg animate-fadeIn flex items-center justify-center space-x-2">
-                    <span>✨</span>
-                    <span>{simAudioFeedback}</span>
+            {currentRoute === 'videos' && (
+              <div className="space-y-8 animate-fadeIn">
+                <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-3">
+                  <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#E9D8BD]/20 border border-[#E9D8BD]/40 text-amber-300 text-xs font-bold">
+                    <span>🎥 KOLEKSI VIDEO DOKUMENTER YOUTUBE</span>
                   </div>
-                )}
+                  <h2 className="font-serif text-2xl sm:text-4xl font-bold tracking-tight text-white">
+                    Video Edukasi & Dokumenter Sentra Kulit Sukaregang
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#F8F4EC]/85 leading-relaxed max-w-3xl">
+                    Tonton rekaman dokumenter resmi sejarah Garut, proses penyamakan kulit sapi & domba, serta teknik pembuatan sepatu dan jaket kulit berkualitas ekspor langsung dari pabrik Sukaregang.
+                  </p>
+                </div>
 
-                {/* MENU AWAL GAME */}
-                {simGameMode === 'menu' && (
-                  <div className="bg-white rounded-3xl p-8 sm:p-12 border-2 border-[#E9D8BD]/50 shadow-xl space-y-8 text-center max-w-4xl mx-auto">
-                    <div className="space-y-3 max-w-2xl mx-auto">
-                      <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#E9D8BD]/30 border border-[#8B4A2B]/40 text-xs font-bold text-[#8B4A2B]">
-                        <span>🎮 Game Edukasi 3D Pengrajin Garut</span>
-                      </div>
-                      <h2 className="font-serif text-3xl sm:text-4xl font-bold text-[#173D2B]">
-                        Leather Craft Adventure
-                      </h2>
-                      <p className="text-xs sm:text-sm text-[#35251D]/80 leading-relaxed">
-                        "Yuk, belajar menjadi pengrajin kulit Sukaregang! Buat jaket dan sepatu sendiri dari bahan mentah hingga menjadi produk siap digunakan."
-                      </p>
-                    </div>
-
-                    {/* Dua Pilihan Game dengan Gambar 3D & Tombol Mainkan */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                      {/* 1. Membuat Jaket Kulit */}
-                      <div className="p-6 rounded-3xl bg-[#F8F4EC] border-2 border-[#E9D8BD] hover:border-[#8B4A2B] hover:shadow-xl transition space-y-4 flex flex-col justify-between group">
-                        <div className="space-y-3">
-                          <div className="h-64 sm:h-72 rounded-3xl overflow-hidden bg-white border-2 border-[#E9D8BD] shadow-inner">
-                            <ThreeLeatherViewer craftType="jaket" color="#1a1a1a" modelType="Biker" />
-                          </div>
-                          <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider block">Workshop 1</span>
-                          <h3 className="font-serif text-xl font-bold text-[#173D2B]">🧥 Membuat Jaket Kulit Domba</h3>
-                          <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                            Pilih model Biker, Bomber, Jangkis, atau Jubah. Potong pola dengan pisau khusus, jahit dengan mesin jarum tebal, dan pasang ritsleting kuningan YKK.
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => {
-                            setSimGameMode('jaket');
-                            setSimLevel(1);
-                            setSimScore(100);
-                          }}
-                          className="w-full py-3 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow transition text-center"
-                        >
-                          Mainkan Jaket Kulit 3D →
-                        </button>
-                      </div>
-
-                      {/* 2. Membuat Sepatu Kulit */}
-                      <div className="p-6 rounded-3xl bg-[#F8F4EC] border-2 border-[#E9D8BD] hover:border-[#8B4A2B] hover:shadow-xl transition space-y-4 flex flex-col justify-between group">
-                        <div className="space-y-3">
-                          <div className="h-64 sm:h-72 rounded-3xl overflow-hidden bg-white border-2 border-[#E9D8BD] shadow-inner">
-                            <ThreeLeatherViewer craftType="sepatu" color="#5a3319" modelType="Boots" />
-                          </div>
-                          <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider block">Workshop 2</span>
-                          <h3 className="font-serif text-xl font-bold text-[#173D2B]">👞 Membuat Sepatu Kulit Sapi</h3>
-                          <p className="text-xs text-[#35251D]/75 leading-relaxed">
-                            Pilih model Boots, Oxford, Pantofel, atau Ankle Boots. Potong Vamp & Tongue, lakukan shoe lasting, pasang insole empuk, dan jahit sol tembus.
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => {
-                            setSimGameMode('sepatu');
-                            setSimLevel(1);
-                            setSimScore(100);
-                          }}
-                          className="w-full py-3 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-xl shadow transition text-center"
-                        >
-                          Mainkan Sepatu Kulit 3D →
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* GAME WORKSHOP JAKET 3D (7 LEVEL LENGKAP) */}
-                {simGameMode === 'jaket' && (
-                  <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-[#E9D8BD]/50 shadow-xl space-y-6">
-                    {/* Header Level & Progress Bar */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#ECE3D4]">
-                      <div>
-                        <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Level {simLevel} dari 7</span>
-                        <h3 className="font-serif text-2xl font-bold text-[#173D2B]">
-                          Workshop Jaket Kulit: {
-                            simLevel === 1 ? 'Memilih Desain & Model 3D' :
-                            simLevel === 2 ? 'Memilih Bahan Kulit Mentah' :
-                            simLevel === 3 ? 'Memotong Pola (Cutting Mini-game)' :
-                            simLevel === 4 ? 'Menjahit di Mesin Jahit 3D' :
-                            simLevel === 5 ? 'Merakit Jaket (Drag & Drop)' :
-                            simLevel === 6 ? 'Finishing & Semir Alami' : 'Hasil Akhir Jaket 3D & Sertifikat'
-                          }
-                        </h3>
-                      </div>
-                      <div className="flex items-center space-x-3 text-xs font-bold">
-                        <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full">🪙 {simCoins} Koin</span>
-                        <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full">⭐ Skor: {simScore}/100</span>
-                        <button
-                          onClick={() => setSimGameMode('menu')}
-                          className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700"
-                        >
-                          Menu Game
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* LEVEL 1 – MEMILIH DESAIN & INTERACTIVE 3D ROTATE */}
-                    {simLevel === 1 && (
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-                          <div className="h-80 sm:h-96 w-full rounded-3xl overflow-hidden shadow-xl border-2 border-[#E9D8BD]">
-                            <ThreeLeatherViewer craftType="jaket" color={jaketColor} modelType={jaketDesign} />
-                          </div>
-                          <div className="space-y-4 text-xs">
-                            <div>
-                              <label className="font-bold block mb-1 text-[#173D2B]">Model Siluet Jaket:</label>
-                              <div className="grid grid-cols-2 gap-2">
-                                {['Jaket Biker', 'Jaket Bomber', 'Jaket Jangkis', 'Jaket Jubah'].map((d) => (
-                                  <button
-                                    key={d}
-                                    type="button"
-                                    onClick={() => { setJaketDesign(d); triggerEffect(`Model diubah ke ${d}`); }}
-                                    className={`p-2.5 rounded-xl border text-left font-bold transition ${
-                                      jaketDesign === d ? 'bg-[#173D2B] text-white border-[#173D2B]' : 'bg-[#F8F4EC] border-[#E9D8BD]'
-                                    }`}
-                                  >
-                                    {d}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div>
-                              <label className="font-bold block mb-1 text-[#173D2B]">Warna Kulit Domba Asli:</label>
-                              <div className="flex flex-wrap gap-2">
-                                {['Hitam Obsidian', 'Cokelat Heritage', 'Tan Cognac'].map((c) => (
-                                  <button
-                                    key={c}
-                                    type="button"
-                                    onClick={() => { setJaketColor(c); triggerEffect(`Warna diubah ke ${c}`); }}
-                                    className={`px-3 py-1.5 rounded-xl border font-bold text-xs ${
-                                      jaketColor === c ? 'bg-[#8B4A2B] text-white border-[#8B4A2B]' : 'bg-white border-gray-300'
-                                    }`}
-                                  >
-                                    {c}
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-
-                            <div>
-                              <label className="font-bold block mb-1 text-[#173D2B]">Model Kerah & Resleting:</label>
-                              <div className="flex gap-2">
-                                <span className="px-2.5 py-1 bg-[#E9D8BD]/50 rounded-lg font-semibold">{jaketCollar}</span>
-                                <span className="px-2.5 py-1 bg-[#E9D8BD]/50 rounded-lg font-semibold">{jaketZipper}</span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        <button
-                          onClick={() => setSimLevel(2)}
-                          className="w-full py-3 bg-[#173D2B] text-white font-bold text-xs rounded-xl shadow-lg hover:bg-[#102B1E] transition"
-                        >
-                          Lanjut Level 2: Memilih Lembaran Bahan Kulit →
-                        </button>
-                      </div>
-                    )}
-
-                    {/* LEVEL 2 – MEMILIH BAHAN KULIT */}
-                    {simLevel === 2 && (
-                      <div className="space-y-6">
-                        <div className="p-4 bg-[#F8F4EC] rounded-2xl border border-[#E9D8BD] text-xs">
-                          <h4 className="font-bold text-[#173D2B] mb-1">Meja Workshop Pengrajin:</h4>
-                          <p className="text-gray-700">Pilih jenis bahan yang paling tepat untuk pembuatan jaket kasual fleksibel:</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-                          {[
-                            { name: 'Kulit Domba Garut Grade A', desc: 'Pori rapat, lembut, elastis, dan sejuk di badan.', isCorrect: true },
-                            { name: 'Kulit Sapi Keras Kering', desc: 'Tebal dan kaku, kurang nyaman untuk jaket harian.', isCorrect: false },
-                            { name: 'Kulit Sintetis Imitasi', desc: 'Mudah sobek, panas di badan, bukan kulit asli.', isCorrect: false },
-                          ].map((b) => (
+                {/* Grid 5 Video Dokumenter YouTube */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {videos.map((vid) => {
+                    const isPlaying = playingVideoId === vid.id;
+                    return (
+                      <div
+                        key={vid.id}
+                        className="bg-white rounded-3xl overflow-hidden border-2 border-[#E9D8BD]/70 shadow-lg hover:shadow-xl transition flex flex-col justify-between"
+                      >
+                        {/* Video Frame / Preview Thumbnail */}
+                        <div className="relative aspect-video bg-black overflow-hidden group">
+                          {isPlaying ? (
+                            <iframe
+                              src={`https://www.youtube-nocookie.com/embed/${vid.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                              title={vid.title}
+                              className="w-full h-full border-0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            ></iframe>
+                          ) : (
                             <div
-                              key={b.name}
-                              onClick={() => {
-                                if (b.isCorrect) {
-                                  triggerEffect('Hebat! Kulit Domba Garut adalah pilihan terbaik!');
-                                  setSimCoins(simCoins + 25);
-                                  setTimeout(() => setSimLevel(3), 800);
-                                } else {
-                                  alert('Kurang tepat! Jaket kulit kualitas Garut memakai Kulit Domba Asli yang lentur.');
-                                  setSimScore(Math.max(70, simScore - 10));
-                                }
-                              }}
-                              className="cursor-pointer p-5 rounded-2xl border-2 border-[#E9D8BD] hover:border-[#8B4A2B] hover:shadow-lg transition bg-white space-y-2"
+                              onClick={() => setPlayingVideoId(vid.id)}
+                              className="w-full h-full cursor-pointer relative"
                             >
-                              <span className="text-2xl block">{b.isCorrect ? '🐑' : '❌'}</span>
-                              <h4 className="font-serif font-bold text-sm text-[#173D2B]">{b.name}</h4>
-                              <p className="text-gray-600">{b.desc}</p>
-                              <span className="text-[10px] font-bold text-[#8B4A2B] block">Pilih Bahan Ini →</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* LEVEL 3 – MEMOTONG POLA (CUTTING MINI-GAME) */}
-                    {simLevel === 3 && (
-                      <div className="space-y-6">
-                        <div className="p-4 bg-[#F8F4EC] rounded-2xl border border-[#E9D8BD] text-xs">
-                          <h4 className="font-bold text-[#173D2B] mb-1">Aktivitas Memotong Pola Kulit (Pattern Cutting):</h4>
-                          <p className="text-gray-700">Klik / geser pisau potong pada setiap bagian pola di bawah ini untuk memotongnya secara presisi!</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-center">
-                          {[
-                            { key: 'depan', label: '1. Pola Badan Depan', icon: '✂️' },
-                            { key: 'belakang', label: '2. Pola Punggung Belakang', icon: '✂️' },
-                            { key: 'lengan', label: '3. Pola Lengan & Siku', icon: '✂️' },
-                            { key: 'kerah', label: '4. Pola Kerah & Saku', icon: '✂️' },
-                          ].map((p) => {
-                            const isDone = jaketCutParts[p.key];
-                            return (
-                              <div
-                                key={p.key}
-                                onClick={() => {
-                                  setJaketCutParts(prev => ({ ...prev, [p.key]: true }));
-                                  triggerEffect(`Pola ${p.label} terpotong sempurna!`);
-                                }}
-                                className={`cursor-pointer p-6 rounded-2xl border-2 transition space-y-2 ${
-                                  isDone ? 'bg-emerald-50 border-emerald-500 text-emerald-900' : 'bg-white border-[#E9D8BD] hover:border-[#8B4A2B]'
-                                }`}
-                              >
-                                <span className="text-3xl block">{isDone ? '✓' : p.icon}</span>
-                                <h4 className="font-serif font-bold text-xs">{p.label}</h4>
-                                <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${isDone ? 'bg-emerald-200 text-emerald-800' : 'bg-gray-200'}`}>
-                                  {isDone ? 'Terpotong Presisi' : 'Sentuh untuk Potong'}
-                                </span>
+                              <img
+                                src={`https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`}
+                                alt={vid.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                              />
+                              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition flex items-center justify-center">
+                                <div className="w-16 h-16 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition">
+                                  <svg className="w-7 h-7 fill-current ml-1" viewBox="0 0 24 24">
+                                    <path d="M8 5v14l11-7z" />
+                                  </svg>
+                                </div>
                               </div>
-                            );
-                          })}
-                        </div>
-
-                        <div className="flex items-center justify-between pt-2">
-                          <span className="text-xs font-bold text-[#173D2B]">
-                            Progress: {Object.values(jaketCutParts).filter(Boolean).length} / 4 Pola
-                          </span>
-                          <button
-                            disabled={!Object.values(jaketCutParts).every(Boolean)}
-                            onClick={() => setSimLevel(4)}
-                            className="px-6 py-3 bg-[#173D2B] disabled:bg-gray-300 text-white font-bold text-xs rounded-xl shadow"
-                          >
-                            Lanjut Level 4: Menjahit di Mesin Jahit 3D →
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* LEVEL 4 – MENJAHIT (MESIN JAHIT 3D) */}
-                    {simLevel === 4 && (
-                      <div className="space-y-6 text-center">
-                        <div className="p-4 bg-[#F8F4EC] rounded-2xl border border-[#E9D8BD] text-xs text-left">
-                          <h4 className="font-bold text-[#173D2B] mb-1">Mesin Jahit Kulit Sukaregang:</h4>
-                          <p className="text-gray-700">Tahan pedal jahit di bawah ini untuk menggerakkan jarum jahit kulit benang nilon no. 30!</p>
-                        </div>
-
-                        <div className="p-8 bg-gradient-to-b from-gray-100 to-gray-200 rounded-3xl border-2 border-gray-300 max-w-md mx-auto space-y-4">
-                          <div className={`text-5xl ${isSewingActive ? 'sewing-pulse' : ''}`}>
-                            🪡
-                          </div>
-                          <div className="w-full h-4 bg-gray-300 rounded-full overflow-hidden border">
-                            <div className="h-full bg-emerald-600 transition-all duration-200" style={{ width: `${sewingProgress}%` }}></div>
-                          </div>
-                          <span className="text-xs font-bold text-[#173D2B] block">Jahitan: {sewingProgress}% Selesai</span>
-                          
-                          <button
-                            onMouseDown={() => {
-                              setIsSewingActive(true);
-                              const interval = setInterval(() => {
-                                setSewingProgress(prev => {
-                                  if (prev >= 100) {
-                                    clearInterval(interval);
-                                    setIsSewingActive(false);
-                                    triggerEffect('Jahitan ganda rapi & kuat selesai!');
-                                    return 100;
-                                  }
-                                  return prev + 10;
-                                });
-                              }, 150);
-                            }}
-                            onTouchStart={() => {
-                              setIsSewingActive(true);
-                              const interval = setInterval(() => {
-                                setSewingProgress(prev => {
-                                  if (prev >= 100) {
-                                    clearInterval(interval);
-                                    setIsSewingActive(false);
-                                    triggerEffect('Jahitan ganda rapi & kuat selesai!');
-                                    return 100;
-                                  }
-                                  return prev + 10;
-                                });
-                              }, 150);
-                            }}
-                            className="px-8 py-4 bg-[#8B4A2B] hover:bg-[#6E381F] text-white text-xs font-bold rounded-2xl shadow-xl active:scale-95 transition"
-                          >
-                            {sewingProgress >= 100 ? '✓ Jahitan 100% Selesai' : '🧵 Tekan & Tahan Pedal Jahit'}
-                          </button>
-                        </div>
-
-                        {sewingProgress >= 100 && (
-                          <button
-                            onClick={() => setSimLevel(5)}
-                            className="px-6 py-3 bg-[#173D2B] text-white font-bold text-xs rounded-xl shadow-lg"
-                          >
-                            Lanjut Level 5: Merakit Komponen Jaket →
-                          </button>
-                        )}
-                      </div>
-                    )}
-
-                    {/* LEVEL 5 – MERAKIT JAKET (ASSEMBLY) */}
-                    {simLevel === 5 && (
-                      <div className="space-y-6">
-                        <div className="p-4 bg-[#F8F4EC] rounded-2xl border border-[#E9D8BD] text-xs">
-                          <h4 className="font-bold text-[#173D2B] mb-1">Perakitan Jaket (Drag & Drop Component):</h4>
-                          <p className="text-gray-700">Pasang setiap komponen pada manekin jaket untuk menyatukan jaket utuh:</p>
-                        </div>
-
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                          {[
-                            { key: 'depan', label: '1. Pasang Panel Depan' },
-                            { key: 'belakang', label: '2. Pasang Panel Belakang' },
-                            { key: 'lengan', label: '3. Pasang Lengan Kiri-Kanan' },
-                            { key: 'kerah', label: '4. Pasang Kerah Snap' },
-                            { key: 'zipper', label: '5. Pasang Zipper YKK Logam' },
-                            { key: 'furing', label: '6. Pasang Furing Dormeuil' },
-                          ].map((item) => {
-                            const isAttached = assembledParts[item.key];
-                            return (
-                              <button
-                                key={item.key}
-                                type="button"
-                                onClick={() => {
-                                  setAssembledParts(prev => ({ ...prev, [item.key]: true }));
-                                  triggerEffect(`${item.label} berhasil terpasang!`);
-                                }}
-                                className={`p-4 rounded-xl border text-left font-bold transition flex items-center justify-between ${
-                                  isAttached ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-white border-[#E9D8BD] hover:border-[#8B4A2B]'
-                                }`}
-                              >
-                                <span>{item.label}</span>
-                                <span>{isAttached ? '✓' : '+ Pasang'}</span>
-                              </button>
-                            );
-                          })}
-                        </div>
-
-                        <div className="flex items-center justify-between pt-2">
-                          <span className="text-xs font-bold text-[#173D2B]">
-                            Tergabung: {Object.values(assembledParts).filter(Boolean).length} / 6 Komponen
-                          </span>
-                          <button
-                            disabled={!Object.values(assembledParts).every(Boolean)}
-                            onClick={() => setSimLevel(6)}
-                            className="px-6 py-3 bg-[#173D2B] disabled:bg-gray-300 text-white font-bold text-xs rounded-xl shadow"
-                          >
-                            Lanjut Level 6: Finishing & Semir Alami →
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* LEVEL 6 – FINISHING */}
-                    {simLevel === 6 && (
-                      <div className="space-y-6 text-center">
-                        <div className="p-4 bg-[#F8F4EC] rounded-2xl border border-[#E9D8BD] text-xs text-left">
-                          <h4 className="font-bold text-[#173D2B] mb-1">Perawatan & QC Akhir Pengrajin:</h4>
-                          <p className="text-gray-700">Lakukan pembersihan dan poles minyak mink alami agar kulit awet puluhan tahun:</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto text-xs">
-                          <button
-                            onClick={() => { setCleanPassed(true); triggerEffect('Debu workshop bersih!'); }}
-                            className={`p-6 rounded-2xl border-2 transition font-bold ${cleanPassed ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-white border-[#E9D8BD]'}`}
-                          >
-                            <span className="text-3xl block mb-2">🧽</span>
-                            <span>{cleanPassed ? '✓ Permukaan Bersih Terawat' : '1. Bersihkan Permukaan Kulit'}</span>
-                          </button>
-                          <button
-                            onClick={() => { setMinkOilApplied(true); triggerEffect('Mink oil meresap, kilau mewah satin keluar!'); }}
-                            className={`p-6 rounded-2xl border-2 transition font-bold ${minkOilApplied ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-white border-[#E9D8BD]'}`}
-                          >
-                            <span className="text-3xl block mb-2">✨</span>
-                            <span>{minkOilApplied ? '✓ Minyak Mink Alami Meresap' : '2. Oleskan Semir Mink Oil'}</span>
-                          </button>
-                        </div>
-
-                        {cleanPassed && minkOilApplied && (
-                          <button
-                            onClick={() => setSimLevel(7)}
-                            className="px-8 py-3.5 bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xl hover:bg-emerald-800 transition"
-                          >
-                            🎉 Buka Hasil Akhir Jaket 3D & Dapatkan Sertifikat! →
-                          </button>
-                        )}
-                      </div>
-                    )}
-
-                    {/* LEVEL 7 – HASIL AKHIR 3D & SERTIFIKAT */}
-                    {simLevel === 7 && (
-                      <div className="space-y-6 text-center animate-fadeIn">
-                        <div className="max-w-2xl mx-auto space-y-3">
-                          <span className="text-xs font-bold uppercase tracking-widest text-[#8B4A2B]">Level 7 Selesai</span>
-                          <h3 className="font-serif text-3xl font-bold text-[#173D2B]">
-                            {jaketDesign} ({jaketColor}) Berhasil Diciptakan!
-                          </h3>
-                          <p className="text-xs text-gray-600">
-                            Puter dan lihat detail karya 3D kamu dari segala sudut dengan sentuhan jari atau mouse:
-                          </p>
-                        </div>
-
-                        {/* Interactive 3D Canvas Result */}
-                        <div className="h-80 w-full max-w-xl mx-auto shadow-2xl rounded-3xl overflow-hidden border-2 border-[#E9D8BD]">
-                          <ThreeLeatherViewer craftType="jaket" color={jaketColor} modelType={jaketDesign} />
-                        </div>
-
-                        {/* Sertifikat Digital Pengrajin */}
-                        <div className="p-6 bg-gradient-to-r from-[#173D2B] to-[#102B1E] text-[#F8F4EC] rounded-3xl max-w-xl mx-auto border-4 border-[#E9D8BD] shadow-2xl space-y-3">
-                          <span className="text-[10px] uppercase font-bold tracking-widest text-[#E9D8BD]">Sertifikat Pengrajin Kulit Sukaregang</span>
-                          <h4 className="font-serif text-xl font-bold text-white">MASTER LEATHERCRAFT CERTIFICATE</h4>
-                          <p className="text-xs text-[#E9D8BD]">
-                            Diberikan kepada: <strong>{currentUser ? currentUser.name : 'Wisatawan Pengrajin Sukaregang'}</strong>
-                          </p>
-                          <div className="flex justify-around pt-2 text-xs border-t border-white/20">
-                            <span>Skor Ketelitian: <strong>{simScore}/100</strong></span>
-                            <span>Koin Reward: <strong>+150 Koin</strong></span>
-                            <span>Status: <strong>Lulus Standar Garut</strong></span>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-                          <a
-                            href={SYAKIRA_OFFICIAL_SHOPEE_STORE}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-6 py-3 bg-[#8B4A2B] hover:bg-[#6E381F] text-white font-bold text-xs rounded-xl shadow-lg transition"
-                          >
-                            Beli Jaket Kulit Serupa di Shopee Syakira Leather ↗
-                          </a>
-                          <button
-                            onClick={() => {
-                              setSimGameMode('menu');
-                              setSimLevel(1);
-                            }}
-                            className="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-[#173D2B] font-bold text-xs rounded-xl shadow"
-                          >
-                            Pilih Permainan Lain
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                  </div>
-                )}
-
-                {/* GAME WORKSHOP SEPATU 3D */}
-                {simGameMode === 'sepatu' && (
-                  <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-[#E9D8BD]/50 shadow-xl space-y-6">
-                    <div className="flex items-center justify-between pb-4 border-b border-[#ECE3D4]">
-                      <div>
-                        <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Level {simLevel} dari 7</span>
-                        <h3 className="font-serif text-2xl font-bold text-[#173D2B]">
-                          Workshop Sepatu Kulit: {sepatuDesign}
-                        </h3>
-                      </div>
-                      <button onClick={() => setSimGameMode('menu')} className="text-xs text-gray-500 hover:underline">
-                        Menu Game
-                      </button>
-                    </div>
-
-                    {simLevel === 1 && (
-                      <div className="space-y-6">
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-                          <div className="h-80 sm:h-96 w-full rounded-3xl overflow-hidden shadow-xl border-2 border-[#E9D8BD]">
-                            <ThreeLeatherViewer craftType="sepatu" color={sepatuColor} modelType={sepatuDesign} />
-                          </div>
-                          <div className="space-y-4 text-xs">
-                            <label className="font-bold block text-[#173D2B]">Pilih Model Sepatu:</label>
-                            <div className="grid grid-cols-2 gap-2">
-                              {['Sepatu Boots', 'Sepatu Oxford', 'Sepatu Pantofel', 'Ankle Boots'].map((s) => (
-                                <button
-                                  key={s}
-                                  onClick={() => setSepatuDesign(s)}
-                                  className={`p-2.5 rounded-xl border text-left font-bold ${sepatuDesign === s ? 'bg-[#8B4A2B] text-white' : 'bg-[#F8F4EC]'}`}
-                                >
-                                  {s}
-                                </button>
-                              ))}
+                              <span className="absolute bottom-2.5 right-2.5 bg-black/80 text-white text-[10px] font-mono font-bold px-2 py-0.5 rounded">
+                                {vid.duration || 'YouTube'}
+                              </span>
                             </div>
-                            <label className="font-bold block text-[#173D2B]">Bahan Kulit Sapi Sukaregang:</label>
-                            <div className="flex gap-2">
-                              {['Pull-Up Leather', 'Crazy Horse', 'Full-Grain'].map((m) => (
-                                <button
-                                  key={m}
-                                  onClick={() => setSepatuLeather(m)}
-                                  className={`px-3 py-1.5 rounded-xl border text-xs font-bold ${sepatuLeather === m ? 'bg-[#173D2B] text-white' : 'bg-white'}`}
-                                >
-                                  {m}
-                                </button>
-                              ))}
-                            </div>
+                          )}
+                        </div>
+
+                        {/* Video Info */}
+                        <div className="p-5 space-y-3 flex-1 flex flex-col justify-between">
+                          <div className="space-y-2">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full bg-[#173D2B]/10 text-[#173D2B] text-[10px] font-bold">
+                              {vid.category}
+                            </span>
+                            <h4 className="font-serif font-bold text-base text-[#173D2B] leading-snug">
+                              {vid.title}
+                            </h4>
+                            <p className="text-xs text-gray-600 leading-relaxed">
+                              {vid.description}
+                            </p>
+                          </div>
+
+                          <div className="pt-3 border-t border-gray-100 flex items-center justify-between">
+                            <button
+                              onClick={() => setPlayingVideoId(isPlaying ? null : vid.id)}
+                              className="text-xs font-bold text-[#8B4A2B] hover:text-[#173D2B] transition"
+                            >
+                              {isPlaying ? 'Tutup Pemutar' : 'Putar di Halaman Ini ▶'}
+                            </button>
+                            <a
+                              href={vid.youtubeUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-[11px] font-bold transition flex items-center space-x-1"
+                            >
+                              <span>Tonton di YouTube</span>
+                              <span>↗</span>
+                            </a>
                           </div>
                         </div>
-
-                        <button
-                          onClick={() => setSimLevel(3)}
-                          className="w-full py-3 bg-[#8B4A2B] text-white font-bold text-xs rounded-xl shadow"
-                        >
-                          Lanjut: Memotong Pola Vamp & Tongue →
-                        </button>
                       </div>
-                    )}
-
-                    {simLevel === 3 && (
-                      <div className="space-y-6 text-xs">
-                        <h4 className="font-bold text-[#173D2B]">Potong 4 Pola Sepatu (Klik/Drag Gunting):</h4>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                          {[
-                            { key: 'vamp', label: '1. Vamp (Muka Kaki)' },
-                            { key: 'quarter', label: '2. Quarter (Samping)' },
-                            { key: 'tongue', label: '3. Tongue (Lidah)' },
-                            { key: 'heel', label: '4. Heel (Tumit)' },
-                          ].map((p) => {
-                            const done = sepatuCutParts[p.key];
-                            return (
-                              <button
-                                key={p.key}
-                                onClick={() => setSepatuCutParts(prev => ({ ...prev, [p.key]: true }))}
-                                className={`p-5 rounded-2xl border text-center font-bold transition ${done ? 'bg-emerald-50 border-emerald-500 text-emerald-800' : 'bg-[#F8F4EC]'}`}
-                              >
-                                <span className="text-2xl block mb-1">{done ? '✓' : '✂️'}</span>
-                                <span>{p.label}</span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                        <button
-                          disabled={!Object.values(sepatuCutParts).every(Boolean)}
-                          onClick={() => setSimLevel(5)}
-                          className="w-full py-3 bg-[#173D2B] disabled:bg-gray-300 text-white font-bold rounded-xl shadow"
-                        >
-                          Lanjut: Pasang Sol Goodyear Welt →
-                        </button>
-                      </div>
-                    )}
-
-                    {simLevel === 5 && (
-                      <div className="space-y-6 text-center text-xs">
-                        <div className="p-6 bg-[#F8F4EC] rounded-2xl border max-w-md mx-auto space-y-3">
-                          <span className="text-4xl block">🔨</span>
-                          <h4 className="font-bold text-[#173D2B]">Memasang Outsole Sol Karet Sukaregang</h4>
-                          <p className="text-gray-600">Tekan tombol di bawah untuk mengepres sol dengan jahitan keliling tembus:</p>
-                          <button
-                            onClick={() => {
-                              setSoleAttached(true);
-                              triggerEffect('Sol karet anti slip terpasang sempurna!');
-                            }}
-                            className={`w-full py-3 rounded-xl font-bold ${soleAttached ? 'bg-emerald-700 text-white' : 'bg-[#8B4A2B] text-white'}`}
-                          >
-                            {soleAttached ? '✓ Sol Terpasang Kuat' : '🔨 Pasang Sol Goodyear Welt'}
-                          </button>
-                        </div>
-                        {soleAttached && (
-                          <button
-                            onClick={() => setSimLevel(7)}
-                            className="px-6 py-3 bg-[#173D2B] text-white font-bold rounded-xl shadow"
-                          >
-                            Lihat Hasil Sepatu 3D →
-                          </button>
-                        )}
-                      </div>
-                    )}
-
-                    {simLevel === 7 && (
-                      <div className="space-y-6 text-center animate-fadeIn">
-                        <h3 className="font-serif text-3xl font-bold text-[#173D2B]">
-                          {sepatuDesign} Selesai Dibuat!
-                        </h3>
-                        <div className="h-80 sm:h-96 w-full max-w-xl mx-auto rounded-3xl overflow-hidden shadow-2xl border-2 border-[#E9D8BD]">
-                          <ThreeLeatherViewer craftType="sepatu" color="#5a3319" modelType={sepatuDesign} />
-                        </div>
-                        <div className="p-5 bg-[#173D2B] text-white rounded-2xl max-w-md mx-auto text-xs">
-                          <h4 className="font-serif font-bold text-sm text-[#E9D8BD]">SERTIFIKAT MASTER COBBLER GARUT</h4>
-                          <p className="mt-1">Sepatu kulit asli berhasil diproduksi dengan konstruksi standar pabrik Sukaregang.</p>
-                        </div>
-                        <div className="flex justify-center gap-3">
-                          <a href={SYAKIRA_OFFICIAL_SHOPEE_STORE} target="_blank" className="px-5 py-2.5 bg-[#8B4A2B] text-white font-bold text-xs rounded-xl">
-                            Beli Sepatu di Shopee ↗
-                          </a>
-                          <button onClick={() => setSimGameMode('menu')} className="px-4 py-2.5 bg-gray-100 font-bold text-xs rounded-xl">
-                            Pilih Permainan Lain
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
+                    );
+                  })}
+                </div>
               </div>
             )}
 
@@ -4638,7 +3904,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <button onClick={() => setCurrentRoute('simulator')} className="hover:text-[#E9D8BD] underline">Game 3D</button>
+                <button onClick={() => setCurrentRoute('videos')} className="hover:text-[#E9D8BD] underline">Video Edukasi</button>
                 <span>•</span>
                 <button onClick={() => setCurrentRoute('galeri')} className="hover:text-[#E9D8BD] underline">Syakira Store</button>
                 <span>•</span>
