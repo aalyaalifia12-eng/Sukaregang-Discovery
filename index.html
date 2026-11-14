@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="referrer" content="no-referrer">
+  <meta name="referrer" content="origin-when-cross-origin">
   <title>SUKAREGANG DISCOVERY - Heritage, Tourism & Syakira Leather</title>
   <link rel="icon" type="image/png" href="./logo.png">
 
@@ -1123,7 +1123,7 @@
     }
 
     // =========================================================================
-    // 2B. HALAMAN LOGIN TERPISAH (STANDALONE SPLIT-SCREEN FULL PAGE)
+    // 2B. HALAMAN LOGIN SEDERHANA (HANYA LOGIN, SUDAH/BELUM PUNYA AKUN, PORTAL ADMIN)
     // =========================================================================
     function LoginPage({
       currentUser,
@@ -1143,252 +1143,165 @@
       handleLoginSubmit,
       handleQuickDemoLogin,
     }) {
+      const [isRegisterMode, setIsRegisterMode] = useState(false);
+
       return (
-        <div className="min-h-screen bg-[#F8F4EC] flex flex-col lg:flex-row antialiased font-sans selection:bg-[#E9D8BD] selection:text-[#173D2B]">
-          {/* =================================================================
-              SISI KIRI: VISUAL BRANDING KERJINAN KULIT GARUT (50% DESKTOP)
-          ================================================================= */}
-          <div className="lg:w-1/2 relative bg-[#173D2B] text-[#F8F4EC] p-8 sm:p-12 lg:p-16 flex flex-col justify-between overflow-hidden min-h-[400px] lg:min-h-screen">
-            {/* Background Foto Pengrajin & Gradient Overlay */}
-            <div
-              className="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-overlay"
-              style={{ backgroundImage: `url('https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=1200&q=80')` }}
-            ></div>
-            <div className="absolute inset-0 bg-gradient-to-b from-[#173D2B]/95 via-[#173D2B]/85 to-[#35251D]/95"></div>
-
-            {/* Ornamen Jahitan Kulit Dekoratif */}
-            <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full border-4 border-dashed border-[#E9D8BD]/15 pointer-events-none"></div>
-
-            {/* Header Kiri: Logo Sukaregang Discovery & Tombol Kembali di HP */}
-            <div className="relative z-10 flex items-center justify-between">
-              <div className="flex items-center space-x-3.5">
-                <img
-                  src="./logo.png"
-                  alt="Sukaregang Discovery Logo"
-                  className="w-12 h-12 sm:w-16 sm:h-16 object-contain drop-shadow-xl"
-                />
-                <div>
-                  <h1 className="font-serif font-bold text-xl sm:text-2xl tracking-wider text-[#F8F4EC]">
-                    SUKAREGANG
-                  </h1>
-                  <span className="text-[10px] tracking-widest text-[#E9D8BD] font-bold uppercase block">
-                    Discovery • Garut
-                  </span>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={onBack}
-                className="lg:hidden px-3.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-[#E9D8BD] text-xs font-bold transition flex items-center space-x-1"
-              >
-                <span>← Beranda</span>
-              </button>
-            </div>
-
-            {/* Konten Utama Kiri: Headline & Deskripsi Resmi */}
-            <div className="relative z-10 space-y-5 my-auto py-8">
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-[#E9D8BD]/20 border border-[#E9D8BD]/30 text-[#E9D8BD] text-xs font-semibold backdrop-blur-sm">
-                <span>✨ Kawasan Sentra Industri Kulit Garut</span>
-              </div>
-
-              <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight tracking-wide">
-                Discover the Heritage, <br />
-                <span className="text-[#E9D8BD] italic font-normal">Explore the Leather.</span>
-              </h2>
-
-              <p className="text-xs sm:text-sm text-[#F8F4EC]/85 max-w-lg leading-relaxed font-normal">
-                "Jelajahi keunikan Sukaregang, kenali warisan kerajinan kulit Garut, dan temukan pengalaman wisata yang berbeda."
-              </p>
-
-              {/* Ornamen Tiga Pilar Keunggulan */}
-              <div className="grid grid-cols-3 gap-2.5 pt-4 max-w-md">
-                <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 text-center">
-                  <span className="text-xl block">🐑</span>
-                  <span className="text-[10px] font-bold text-[#E9D8BD] block mt-1">Kulit Domba Asli</span>
-                </div>
-                <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 text-center">
-                  <span className="text-xl block">🏭</span>
-                  <span className="text-[10px] font-bold text-[#E9D8BD] block mt-1">Pabrik & Workshop</span>
-                </div>
-                <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 text-center">
-                  <span className="text-xl block">🛍️</span>
-                  <span className="text-[10px] font-bold text-[#E9D8BD] block mt-1">Syakira Leather</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Footer Kiri */}
-            <div className="relative z-10 pt-6 border-t border-[#E9D8BD]/20 flex items-center justify-between text-[11px] text-[#E9D8BD]/80">
-              <span>Sentra Kerajinan Kulit Sukaregang</span>
-              <span>Garut, Jawa Barat</span>
+        <div className="min-h-screen bg-[#F8F4EC] flex flex-col justify-center items-center p-4 sm:p-6 antialiased font-sans">
+          {/* Tombol Kembali ke Beranda di Atas */}
+          <div className="w-full max-w-md flex items-center justify-between mb-5">
+            <button
+              type="button"
+              onClick={onBack}
+              className="flex items-center space-x-2 text-xs font-bold text-[#173D2B] hover:text-[#8B4A2B] transition group"
+            >
+              <span className="w-8 h-8 rounded-full bg-white border border-[#E9D8BD] flex items-center justify-center shadow-sm group-hover:scale-105 transition">
+                ←
+              </span>
+              <span>Kembali ke Beranda</span>
+            </button>
+            <div className="flex items-center space-x-2">
+              <img src="./logo.png" alt="Logo" className="w-7 h-7 object-contain" />
+              <span className="text-xs font-serif font-bold text-[#173D2B]">Sukaregang Discovery</span>
             </div>
           </div>
 
-          {/* =================================================================
-              SISI KANAN: FORM LOGIN TERPISAH (50% DESKTOP)
-          ================================================================= */}
-          <div className="lg:w-1/2 p-6 sm:p-12 lg:p-16 flex flex-col justify-between bg-[#F8F4EC] min-h-screen overflow-y-auto">
-            {/* Top Bar: Tombol Kembali ke Beranda */}
-            <div className="flex items-center justify-between pb-4 border-b border-[#E9D8BD]/40">
-              <button
-                type="button"
-                onClick={onBack}
-                className="flex items-center space-x-2 text-xs font-bold text-[#173D2B] hover:text-[#8B4A2B] transition group"
-              >
-                <span className="w-8 h-8 rounded-full bg-white border border-[#E9D8BD] flex items-center justify-center shadow-sm group-hover:scale-105 transition">
-                  ←
-                </span>
-                <span>Kembali ke Beranda</span>
-              </button>
-              <span className="text-[11px] text-[#35251D]/60 font-semibold">Sukaregang Discovery App</span>
+          {/* Card Form Login Sederhana */}
+          <div className="bg-white rounded-3xl max-w-md w-full p-8 sm:p-10 border-2 border-[#E9D8BD]/80 shadow-2xl space-y-6">
+            {/* Header Form */}
+            <div className="text-center space-y-2">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-[#173D2B] flex items-center justify-center p-2.5 shadow-md border border-[#E9D8BD]/40">
+                <img src="./logo.png" alt="Logo" className="w-full h-full object-contain" />
+              </div>
+              <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#173D2B]">
+                {isRegisterMode ? 'Daftar Akun' : 'Log In'}
+              </h2>
+              <p className="text-xs text-[#35251D]/70">
+                {isRegisterMode
+                  ? 'Buat akun untuk mulai eksplorasi sentra kulit Garut'
+                  : 'Masuk dan mulai perjalanan eksplorasimu bersama Sukaregang Discovery'}
+              </p>
             </div>
 
-            {/* Form Login Tengah */}
-            <div className="max-w-md w-full mx-auto space-y-6 my-auto py-8">
+            {/* Notifikasi Toast / Error */}
+            {loginToast && (
+              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold animate-fadeIn text-center">
+                ✓ {loginToast}
+              </div>
+            )}
+            {loginError && (
+              <div className="p-3 rounded-xl bg-red-50 border border-red-300 text-red-700 text-xs font-bold animate-fadeIn text-center">
+                ⚠️ {loginError}
+              </div>
+            )}
+
+            {/* Form Input Sederhana */}
+            <form onSubmit={handleLoginSubmit} className="space-y-4 text-xs">
               <div>
-                <h3 className="font-serif text-3xl sm:text-4xl font-bold text-[#173D2B]">
-                  Selamat Datang Kembali!
-                </h3>
-                <p className="text-xs sm:text-sm text-[#35251D]/75 mt-1.5 leading-relaxed">
-                  Masuk dan mulai perjalanan eksplorasimu bersama Sukaregang Discovery.
-                </p>
+                <label className="font-bold text-[#173D2B] block mb-1.5">
+                  Email atau Username:
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={loginIdentifier}
+                  onChange={(e) => setLoginIdentifier(e.target.value)}
+                  placeholder="nama@email.com atau username"
+                  className="w-full p-3 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B] focus:ring-2 focus:ring-[#173D2B]/20"
+                />
               </div>
 
-              {loginToast && (
-                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold animate-fadeIn flex items-center space-x-2 shadow-sm">
-                  <span>✓</span>
-                  <span>{loginToast}</span>
-                </div>
-              )}
-              {loginError && (
-                <div className="p-3.5 rounded-2xl bg-red-50 border border-red-300 text-red-700 text-xs font-bold animate-fadeIn flex items-center space-x-2 shadow-sm">
-                  <span>⚠️</span>
-                  <span>{loginError}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleLoginSubmit} className="space-y-4 text-xs">
-                <div>
-                  <label className="font-bold text-[#173D2B] block mb-1.5">
-                    Email atau Username:
-                  </label>
+              <div>
+                <label className="font-bold text-[#173D2B] block mb-1.5">
+                  Kata Sandi:
+                </label>
+                <div className="relative">
                   <input
-                    type="text"
+                    type={showPassword ? 'text' : 'password'}
                     required
-                    value={loginIdentifier}
-                    onChange={(e) => setLoginIdentifier(e.target.value)}
-                    placeholder="nama@email.com atau username"
-                    className="w-full p-3 rounded-2xl border-2 border-[#E9D8BD] bg-white text-xs focus:outline-none focus:border-[#173D2B] focus:ring-2 focus:ring-[#173D2B]/20 shadow-sm transition"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="Masukkan kata sandi..."
+                    className="w-full p-3 pr-10 rounded-xl border border-[#E9D8BD] bg-[#F8F4EC]/40 text-xs focus:outline-none focus:border-[#173D2B] focus:ring-2 focus:ring-[#173D2B]/20"
                   />
-                </div>
-
-                <div>
-                  <label className="font-bold text-[#173D2B] block mb-1.5">
-                    Kata Sandi (Password):
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      value={loginPassword}
-                      onChange={(e) => setLoginPassword(e.target.value)}
-                      placeholder="Masukkan kata sandi..."
-                      className="w-full p-3 pr-11 rounded-2xl border-2 border-[#E9D8BD] bg-white text-xs focus:outline-none focus:border-[#173D2B] focus:ring-2 focus:ring-[#173D2B]/20 shadow-sm transition"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-3 text-gray-400 hover:text-[#173D2B] transition"
-                    >
-                      <Icon name={showPassword ? 'eye-off' : 'eye'} className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-1">
-                  <label className="flex items-center space-x-2 cursor-pointer text-xs text-[#35251D]">
-                    <input
-                      type="checkbox"
-                      checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="rounded text-[#173D2B] focus:ring-[#173D2B]"
-                    />
-                    <span>Ingat Saya</span>
-                  </label>
                   <button
                     type="button"
-                    onClick={() => alert('Untuk demo, cukup gunakan tombol Masuk Cepat Demo di bawah atau ketikkan email Anda kembali.')}
-                    className="text-xs text-[#8B4A2B] hover:underline font-bold"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-[#173D2B]"
                   >
-                    Lupa Password?
-                  </button>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={loginLoading}
-                  className="w-full py-3.5 bg-[#173D2B] hover:bg-[#102B1E] disabled:bg-gray-400 text-white font-bold text-xs rounded-2xl shadow-xl transition flex items-center justify-center space-x-2 active:scale-95"
-                >
-                  {loginLoading ? (
-                    <>
-                      <span className="animate-spin">⏳</span>
-                      <span>Memproses Masuk...</span>
-                    </>
-                  ) : (
-                    <span>Masuk Sekarang →</span>
-                  )}
-                </button>
-              </form>
-
-              {/* Demo Mode 1-Klik */}
-              <div className="pt-4 border-t border-[#E9D8BD]/60 space-y-3">
-                <span className="text-[11px] text-[#35251D]/70 font-bold block text-center">
-                  Atau masuk cepat dengan 1-klik (Demo Mode):
-                </span>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => handleQuickDemoLogin('member')}
-                    className="py-2.5 px-3 rounded-2xl bg-white hover:bg-[#E9D8BD]/40 text-[#173D2B] border-2 border-[#E9D8BD] font-bold text-xs shadow-sm transition flex items-center justify-center space-x-1.5"
-                  >
-                    <span>👤</span>
-                    <span>Wisatawan</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleQuickDemoLogin('admin')}
-                    className="py-2.5 px-3 rounded-2xl bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs shadow-sm transition flex items-center justify-center space-x-1.5"
-                  >
-                    <span>👑</span>
-                    <span>Masuk Admin</span>
+                    <Icon name={showPassword ? 'eye-off' : 'eye'} className="w-4 h-4" />
                   </button>
                 </div>
               </div>
 
-              <div className="text-center pt-2">
-                <span className="text-xs text-[#35251D]/75">
+              <button
+                type="submit"
+                disabled={loginLoading}
+                className="w-full py-3.5 bg-[#173D2B] hover:bg-[#102B1E] disabled:bg-gray-400 text-white font-bold text-xs rounded-xl shadow-lg transition"
+              >
+                {loginLoading
+                  ? 'Memproses...'
+                  : isRegisterMode
+                  ? 'Daftar Sekarang'
+                  : 'Log In'}
+              </button>
+            </form>
+
+            {/* Sudah punya akun / Belum punya akun */}
+            <div className="text-center pt-2 border-t border-[#E9D8BD]/60 text-xs text-[#35251D]/75">
+              {isRegisterMode ? (
+                <span>
+                  Sudah punya akun?{' '}
+                  <button
+                    type="button"
+                    onClick={() => setIsRegisterMode(false)}
+                    className="text-[#8B4A2B] font-bold hover:underline"
+                  >
+                    Log In
+                  </button>
+                </span>
+              ) : (
+                <span>
                   Belum punya akun?{' '}
                   <button
                     type="button"
-                    onClick={() => handleQuickDemoLogin('member')}
+                    onClick={() => setIsRegisterMode(true)}
                     className="text-[#8B4A2B] font-bold hover:underline"
                   >
-                    Daftar Sekarang
+                    Daftar Akun
                   </button>
                 </span>
+              )}
+            </div>
+
+            {/* Akses Demo Cepat */}
+            <div className="pt-2 text-center">
+              <span className="text-[10px] text-gray-400 block mb-1.5">Akses Demo Cepat:</span>
+              <div className="flex justify-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleQuickDemoLogin('member')}
+                  className="px-3 py-1 rounded-lg bg-gray-100 hover:bg-gray-200 text-[#173D2B] text-[10px] font-bold"
+                >
+                  Masuk Wisatawan
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleQuickDemoLogin('admin')}
+                  className="px-3 py-1 rounded-lg bg-[#173D2B] hover:bg-[#102B1E] text-white text-[10px] font-bold"
+                >
+                  Masuk Admin
+                </button>
               </div>
             </div>
 
-            {/* Portal Admin Footer Link */}
-            <div className="pt-4 border-t border-[#E9D8BD]/40 text-center">
+            {/* Tulisan Kecil Portal Admin di Bagian Paling Bawah */}
+            <div className="pt-3 border-t border-gray-100 text-center">
               <button
                 type="button"
                 onClick={onGoToAdmin}
-                className="text-[11px] text-[#8B4A2B] font-bold hover:underline inline-flex items-center space-x-1.5"
+                className="text-[11px] text-gray-400 hover:text-[#8B4A2B] hover:underline transition"
               >
-                <span>⚙️</span>
-                <span>Masuk ke Portal Admin Pengeditan Aplikasi</span>
+                portal admin
               </button>
             </div>
           </div>
@@ -1549,6 +1462,22 @@
       const [revVisited, setRevVisited] = useState('Showroom Syakira Leather Sukaregang');
       const [revRating, setRevRating] = useState(5);
       const [revComment, setRevComment] = useState('');
+
+      // Literasi Sejarah & Edukasi State
+      const [sejarahActiveTab, setSejarahActiveTab] = useState('sejarah'); // 'sejarah', 'jenis_kulit', 'produksi', 'perawatan', 'asli_palsu', 'video'
+      const [playingVideoId, setPlayingVideoId] = useState(null);
+
+      // State Admin Tambah Video YouTube
+      const [newVidTitle, setNewVidTitle] = useState('');
+      const [newVidUrl, setNewVidUrl] = useState('');
+      const [newVidCategory, setNewVidCategory] = useState('Sejarah Garut');
+      const [newVidDesc, setNewVidDesc] = useState('');
+
+      const extractYoutubeId = (url) => {
+        if (!url) return '';
+        const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+        return match ? match[1] : url.trim();
+      };
 
       // =======================================================================
       // GAME SIMULATOR 3D (LEATHER CRAFT ADVENTURE - 7 LEVEL GAMEPLAY)
@@ -1910,6 +1839,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                     { id: 'reviews', icon: 'message-square', label: '💬 Kelola Kesan & Pesan' },
                     { id: 'gallery', icon: 'image', label: '🖼️ Kelola Galeri' },
                     { id: 'history', icon: 'book-open', label: '📜 Kelola Sejarah' },
+                    { id: 'videos', icon: 'video', label: '🎥 Kelola Video YouTube' },
                     { id: 'game', icon: 'gamepad-2', label: '🎮 Kelola Game' },
                     { id: 'reports', icon: 'bar-chart-3', label: '📈 Laporan' },
                     { id: 'settings', icon: 'settings', label: '⚙️ Pengaturan' },
@@ -2542,7 +2472,174 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   </div>
                 )}
 
-                {/* 10. KELOLA GAME */}
+                {/* KELOLA VIDEO YOUTUBE (TAMBAH VIA LINK YOUTUBE + LIST) */}
+                {adminActiveTab === 'videos' && (
+                  <div className="bg-white p-6 rounded-2xl border border-[#E9D8BD] shadow-sm space-y-6 animate-fadeIn">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#ECE3D4]">
+                      <div>
+                        <h3 className="font-serif font-bold text-xl text-[#173D2B]">
+                          Kelola Video Edukasi YouTube ({videos.length})
+                        </h3>
+                        <p className="text-xs text-gray-500">
+                          Tambahkan video edukasi Sukaregang dengan menempelkan tautan link YouTube.
+                        </p>
+                      </div>
+                      <span className="text-xs px-3 py-1 bg-red-100 text-red-700 font-bold rounded-full">
+                        ▶️ YouTube Sync
+                      </span>
+                    </div>
+
+                    {/* Form Tambah Video Baru */}
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!newVidUrl.trim() || !newVidTitle.trim()) {
+                          alert('Mohon isi Judul dan Link YouTube.');
+                          return;
+                        }
+                        const extractedId = extractYoutubeId(newVidUrl);
+                        if (!extractedId) {
+                          alert('Link YouTube tidak valid. Mohon periksa kembali tautan Anda.');
+                          return;
+                        }
+                        const newEntry = {
+                          id: 'vid-' + Date.now(),
+                          title: newVidTitle.trim(),
+                          category: newVidCategory || 'Dokumenter Sukaregang',
+                          youtubeUrl: newVidUrl.trim(),
+                          youtubeId: extractedId,
+                          description: newVidDesc.trim() || 'Video edukasi industri kulit Sukaregang Garut.',
+                          duration: 'Video Edukasi'
+                        };
+                        const updated = [newEntry, ...videos];
+                        setVideos(updated);
+                        try {
+                          localStorage.setItem('sukaregang_videos_list_v2', JSON.stringify(updated));
+                        } catch (err) {}
+                        setNewVidTitle('');
+                        setNewVidUrl('');
+                        setNewVidDesc('');
+                        alert('Video YouTube berhasil ditambahkan ke aplikasi!');
+                      }}
+                      className="p-5 rounded-2xl bg-[#F8F4EC] border-2 border-[#E9D8BD] space-y-4 text-xs"
+                    >
+                      <h4 className="font-serif font-bold text-sm text-[#173D2B] flex items-center space-x-2">
+                        <span>➕</span>
+                        <span>Tambah Video YouTube Baru</span>
+                      </h4>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="font-bold text-[#173D2B] block mb-1">Judul Video:</label>
+                          <input
+                            type="text"
+                            required
+                            value={newVidTitle}
+                            onChange={(e) => setNewVidTitle(e.target.value)}
+                            placeholder="Contoh: Proses Penyamakan Kulit Alami di Sukaregang"
+                            className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white text-xs"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="font-bold text-[#173D2B] block mb-1">Link YouTube (URL):</label>
+                          <input
+                            type="text"
+                            required
+                            value={newVidUrl}
+                            onChange={(e) => setNewVidUrl(e.target.value)}
+                            placeholder="Contoh: https://youtu.be/ARxTWs7Y9Lg atau https://youtube.com/watch?v=..."
+                            className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white text-xs"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="font-bold text-[#173D2B] block mb-1">Kategori Video:</label>
+                          <select
+                            value={newVidCategory}
+                            onChange={(e) => setNewVidCategory(e.target.value)}
+                            className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white text-xs"
+                          >
+                            <option value="Sejarah Garut">Sejarah Garut</option>
+                            <option value="Teknik Pembuatan Sepatu">Teknik Pembuatan Sepatu</option>
+                            <option value="Teknik Jaket Kulit">Teknik Jaket Kulit</option>
+                            <option value="Proses Bahan Dasar">Proses Bahan Dasar</option>
+                            <option value="Wisata Belanja">Wisata Belanja</option>
+                            <option value="Perawatan Kulit">Perawatan Kulit</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="font-bold text-[#173D2B] block mb-1">Deskripsi Singkat:</label>
+                          <input
+                            type="text"
+                            value={newVidDesc}
+                            onChange={(e) => setNewVidDesc(e.target.value)}
+                            placeholder="Deskripsi singkat konten video..."
+                            className="w-full p-2.5 rounded-xl border border-[#E9D8BD] bg-white text-xs"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="px-6 py-2.5 bg-[#173D2B] hover:bg-[#102B1E] text-white font-bold text-xs rounded-xl shadow transition"
+                      >
+                        ➕ Simpan Video ke Aplikasi
+                      </button>
+                    </form>
+
+                    {/* Daftar Video Terpasang */}
+                    <div className="space-y-3">
+                      <h4 className="font-serif font-bold text-sm text-[#173D2B]">
+                        Daftar Video Aktif ({videos.length}):
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {videos.map((vid) => (
+                          <div
+                            key={vid.id}
+                            className="p-4 rounded-2xl border border-[#E9D8BD] bg-white flex space-x-3 items-center shadow-sm"
+                          >
+                            <img
+                              src={`https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`}
+                              alt={vid.title}
+                              className="w-24 h-16 object-cover rounded-xl border"
+                            />
+                            <div className="flex-1 min-w-0">
+                              <span className="text-[10px] text-[#8B4A2B] font-bold uppercase block truncate">
+                                {vid.category}
+                              </span>
+                              <h5 className="font-bold text-xs text-[#173D2B] truncate">{vid.title}</h5>
+                              <a
+                                href={vid.youtubeUrl || `https://www.youtube.com/watch?v=${vid.youtubeId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[10px] text-blue-600 hover:underline block truncate mt-0.5"
+                              >
+                                {vid.youtubeUrl || `youtube.com/watch?v=${vid.youtubeId}`} ↗
+                              </a>
+                            </div>
+                            <button
+                              onClick={() => {
+                                if (confirm(`Hapus video "${vid.title}"?`)) {
+                                  const updated = videos.filter((v) => v.id !== vid.id);
+                                  setVideos(updated);
+                                  localStorage.setItem('sukaregang_videos_list_v2', JSON.stringify(updated));
+                                }
+                              }}
+                              className="p-2 text-red-600 hover:bg-red-50 rounded-lg text-xs font-bold"
+                              title="Hapus Video"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 {adminActiveTab === 'game' && (
                   <div className="bg-white p-6 rounded-2xl border border-[#E9D8BD] shadow-sm space-y-4 animate-fadeIn">
                     <h3 className="font-serif font-bold text-lg text-[#173D2B]">Pengaturan Game Simulator 3D (Leather Craft Adventure)</h3>
@@ -3630,38 +3727,540 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
             )}
 
             {/* -------------------------------------------------------------
-                SEJARAH & VIDEO DOKUMENTER GARUT
+                SEJARAH & ENSIKLOPEDIA LENGKAP KULIT SUKAREGANG GARUT
             ------------------------------------------------------------- */}
             {currentRoute === 'sejarah' && (
-              <div className="space-y-6 animate-fadeIn">
+              <div className="space-y-8 animate-fadeIn">
+                {/* Header Banner Utama */}
                 <div className="bg-[#173D2B] rounded-3xl p-6 sm:p-10 text-[#F8F4EC] border-2 border-[#E9D8BD]/40 shadow-xl space-y-3">
-                  <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD]">Literasi Warisan Sukaregang</span>
-                  <h2 className="font-serif text-3xl sm:text-4xl font-bold">SEJARAH INDUSTRI KULIT GARUT</h2>
-                  <p className="text-xs sm:text-sm text-[#F8F4EC]/85 max-w-2xl leading-relaxed">
-                    Saksikan dokumenter perjalanan industri kerajinan kulit Sukaregang dari era 1920-an hingga dikenal secara internasional.
+                  <span className="text-xs uppercase font-bold tracking-widest text-[#E9D8BD] flex items-center space-x-1.5">
+                    <span>📚</span>
+                    <span>Pusat Literasi & Edukasi Kulit Garut</span>
+                  </span>
+                  <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold">
+                    SEJARAH & ENSIKLOPEDIA KULIT SUKAREGANG
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#F8F4EC]/85 max-w-3xl leading-relaxed">
+                    Eksplorasi lengkap perjalanan sejarah industri Sukaregang sejak era 1920-an, ragam jenis bahan kulit asli (Domba, Kambing, Sapi), kesesuaian produksi jaket & sepatu, panduan perawatan, serta cara akurat membedakan kulit asli dan tiruan.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {videos.map((vid) => (
-                    <div key={vid.id} className="bg-white rounded-3xl overflow-hidden border-2 border-[#E9D8BD]/40 shadow-md flex flex-col justify-between">
-                      <div className="aspect-video w-full bg-black">
-                        <iframe
-                          src={`https://www.youtube.com/embed/${vid.youtubeId}`}
-                          title={vid.title}
-                          className="w-full h-full border-0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        ></iframe>
-                      </div>
-                      <div className="p-5 space-y-2">
-                        <span className="text-[10px] text-[#8B4A2B] font-bold uppercase">{vid.category}</span>
-                        <h4 className="font-serif font-bold text-base text-[#173D2B]">{vid.title}</h4>
-                        <p className="text-xs text-[#35251D]/75">{vid.description}</p>
-                      </div>
-                    </div>
+                {/* Sub-Navigasi Tab Edukasi Interaktif */}
+                <div className="flex flex-wrap gap-2 p-1.5 bg-white rounded-2xl border border-[#E9D8BD] shadow-sm">
+                  {[
+                    { id: 'sejarah', label: '📜 Sejarah Sukaregang', icon: 'book-open' },
+                    { id: 'jenis_kulit', label: '🐑 Jenis-Jenis Kulit', icon: 'layers' },
+                    { id: 'produksi', label: '🧥👞 Produksi Jaket & Sepatu', icon: 'scissors' },
+                    { id: 'perawatan', label: '✨ Cara Merawat Kulit', icon: 'sparkles' },
+                    { id: 'asli_palsu', label: '🔍 Kulit Asli vs Palsu', icon: 'check-circle' },
+                    { id: 'video', label: '🎥 Video Dokumenter', icon: 'video' },
+                  ].map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setSejarahActiveTab(tab.id)}
+                      className={`px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 ${
+                        sejarahActiveTab === tab.id
+                          ? 'bg-[#173D2B] text-white shadow-md'
+                          : 'text-[#35251D]/80 hover:bg-[#F8F4EC] hover:text-[#173D2B]'
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                    </button>
                   ))}
                 </div>
+
+                {/* =============================================================
+                    TAB 1: SEJARAH LENGKAP KAWASAN INDUSTRI SUKAREGANG GARUT
+                ============================================================= */}
+                {sejarahActiveTab === 'sejarah' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-[#E9D8BD]/50 shadow-md space-y-6">
+                      <div className="border-b border-[#ECE3D4] pb-4">
+                        <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Bab 1 • Kronik Sejarah</span>
+                        <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#173D2B] mt-1">
+                          Perjalanan Seabad Kawasan Industri Kulit Sukaregang (1920 - Sekarang)
+                        </h3>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Dari bantaran Sungai Cimanuk hingga menembus panggung fesyen internasional.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#35251D]/85 leading-relaxed">
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="px-2.5 py-1 bg-[#173D2B] text-[#E9D8BD] rounded-lg font-bold text-[10px] uppercase">
+                            Era 1920 - 1945 • Awal Mula Tradisi
+                          </span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">Penyamakan Nabati Tradisional Hindia Belanda</h4>
+                          <p>
+                            Tradisi pengolahan kulit di Sukaregang berakar sejak dekade 1920-an pada masa kolonial Belanda. Keberadaan aliran Sungai Cimanuk yang melintasi kawasan ini menjadi urat nadi utama untuk pencucian kulit mentah.
+                          </p>
+                          <p>
+                            Pengrajin awal menggunakan penyamak nabati alami dari kulit pohon mahoni dan getah akasia (<em>vegetable tanning</em>). Hasil olahan pada masa itu berupa tali pelana kuda kavaleri, sabuk lumbung padi, dan sarung golok khas Sunda.
+                          </p>
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="px-2.5 py-1 bg-[#8B4A2B] text-white rounded-lg font-bold text-[10px] uppercase">
+                            Era 1950 - 1970 • Modernisasi & Koperasi
+                          </span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">Kelahiran Sentra Pengrajin Jaket Kulit</h4>
+                          <p>
+                            Pasca-kemerdekaan RI, para perintis industri kulit Garut membentuk paguyuban koperasi. Pada era 1960-an, teknologi penyamakan mineral krom diperkenalkan, menghasilkan lembaran kulit domba yang sangat lembut, fleksibel, dan elastis.
+                          </p>
+                          <p>
+                            Pengrajin Garut mulai memproduksi jaket kulit untuk pilot TNI Angkatan Udara dan jaket kasual, yang seketika diminati pasar Jakarta dan kota-kota besar nasional.
+                          </p>
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="px-2.5 py-1 bg-[#173D2B] text-[#E9D8BD] rounded-lg font-bold text-[10px] uppercase">
+                            Era 1980 - 1990 • Puncak Kejayaan Dunia
+                          </span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">Pengakuan Ekspor & Standar Asia Tenggara</h4>
+                          <p>
+                            Sukaregang dinobatkan sebagai sentra kerajinan kulit terbaik di Asia Tenggara. Kualitas kulit domba Garut diakui memiliki kelembutan kelas dunia, bersaing langsung dengan produk kulit Italia dan Turki.
+                          </p>
+                          <p>
+                            Ribuan potong jaket kulit Sukaregang diekspor secara rutin ke Jerman, Korea Selatan, Jepang, dan Amerika Serikat. Garut pun dijuluki "Kota Kulit & Kota Intan".
+                          </p>
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="px-2.5 py-1 bg-emerald-800 text-white rounded-lg font-bold text-[10px] uppercase">
+                            Era 2000 - Sekarang • Wisata Belanja & IPAL
+                          </span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">Sentra Wisata Digital Terpadu</h4>
+                          <p>
+                            Kini sepanjang Jalan Gagak Lumayung Sukaregang bertransformasi menjadi surga belanja terpadu. Ratusan galeri resmi seperti <strong>Syakira Leather</strong> berdiri berdampingan dengan workshop pengrajin.
+                          </p>
+                          <p>
+                            Industri Sukaregang terus berkembang ramah lingkungan melalui Instalasi Pengolahan Air Limbah (IPAL) terpusat, menjaga kelestarian alam Garut sekaligus memajukan ekonomi lokal.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* =============================================================
+                    TAB 2: JENIS-JENIS KULIT (DOMBA, KAMBING, SAPI)
+                ============================================================= */}
+                {sejarahActiveTab === 'jenis_kulit' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {/* 1. Kulit Domba Garut */}
+                      <div className="bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/60 shadow-md flex flex-col justify-between space-y-4">
+                        <div className="space-y-3">
+                          <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-2xl shadow">
+                            🐑
+                          </div>
+                          <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Primadona Garut</span>
+                          <h4 className="font-serif font-bold text-lg text-[#173D2B]">Kulit Domba Garut (Sheepskin)</h4>
+                          <ul className="text-xs text-gray-700 space-y-2 list-disc list-inside">
+                            <li><strong>Pori Mikro:</strong> Pori-pori sangat halus, padat, dan seragam alami.</li>
+                            <li><strong>Super Lembut (Supple):</strong> Terasa sehalus sutra, lentur, dan tidak kaku saat dipakai.</li>
+                            <li><strong>Ringan & Fleksibel:</strong> Bobot paling enteng sehingga nyaman dipakai seharian tanpa pegal.</li>
+                            <li><strong>Kemampuan Termal:</strong> Menyejukkan di terik siang hari, namun menghangatkan di udara dingin.</li>
+                            <li><strong>Grade A Super:</strong> Standar emas ekspor Sukaregang dengan ketebalan 0.6 - 0.8 mm.</li>
+                          </ul>
+                        </div>
+                        <div className="p-3 bg-amber-50 rounded-xl text-[11px] text-amber-900 font-semibold border border-amber-200">
+                          🎯 Paling Cocok: <strong>Jaket Fesyen, Sarung Tangan, Tas Wanita, & Dompet Halus</strong>.
+                        </div>
+                      </div>
+
+                      {/* 2. Kulit Kambing */}
+                      <div className="bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/60 shadow-md flex flex-col justify-between space-y-4">
+                        <div className="space-y-3">
+                          <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-2xl shadow">
+                            🐐
+                          </div>
+                          <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Ulet & Kuat</span>
+                          <h4 className="font-serif font-bold text-lg text-[#173D2B]">Kulit Kambing (Goatskin)</h4>
+                          <ul className="text-xs text-gray-700 space-y-2 list-disc list-inside">
+                            <li><strong>Pebble Grain:</strong> Memiliki pola kerutan alami yang khas dan berkarakter unik.</li>
+                            <li><strong>Serat Sangat Ulet:</strong> Seratnya liat dan padat, menjadikannya sangat sulit robek.</li>
+                            <li><strong>Tahan Gesekan:</strong> Memiliki ketahanan abrasi alami yang lebih tinggi dibanding domba.</li>
+                            <li><strong>Kandungan Lanolin Alami:</strong> Lebih tahan terhadap kelembapan dan cipratan air.</li>
+                            <li><strong>Bobot Sedang:</strong> Lebih kokoh namun tetap elastis mengikuti lekuk jahitan.</li>
+                          </ul>
+                        </div>
+                        <div className="p-3 bg-emerald-50 rounded-xl text-[11px] text-emerald-900 font-semibold border border-emerald-200">
+                          🎯 Paling Cocok: <strong>Insole Sepatu, Jaket Militer, Tas Kerja, & Ikat Pinggang</strong>.
+                        </div>
+                      </div>
+
+                      {/* 3. Kulit Sapi */}
+                      <div className="bg-white rounded-3xl p-6 border-2 border-[#E9D8BD]/60 shadow-md flex flex-col justify-between space-y-4">
+                        <div className="space-y-3">
+                          <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl shadow">
+                            🐂
+                          </div>
+                          <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Tebal & Kokoh</span>
+                          <h4 className="font-serif font-bold text-lg text-[#173D2B]">Kulit Sapi (Cowhide)</h4>
+                          <ul className="text-xs text-gray-700 space-y-2 list-disc list-inside">
+                            <li><strong>Tebal & Mantap:</strong> Ketebalan 1.2 mm - 2.2 mm, sangat kokoh dan berbobot.</li>
+                            <li><strong>Daya Tahan Puluhan Tahun:</strong> Mampu bertahan dari benturan keras, aspal, dan cuaca ekstrem.</li>
+                            <li><strong>Varian Pull-Up:</strong> Diimpregnasi minyak alami; memunculkan gradasi antik saat ditekuk.</li>
+                            <li><strong>Crazy Horse Leather:</strong> Lapisan lilin khusus menghasilkan goresan artistik khas vintage.</li>
+                            <li><strong>Full Grain:</strong> Lapisan kulit teratas paling alami tanpa modifikasi.</li>
+                          </ul>
+                        </div>
+                        <div className="p-3 bg-blue-50 rounded-xl text-[11px] text-blue-900 font-semibold border border-blue-200">
+                          🎯 Paling Cocok: <strong>Sepatu Boots, Pantofel Pria, Sol Luar, Sabuk Tebal, & Jaket Biker</strong>.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* =============================================================
+                    TAB 3: KESESUAIAN PRODUKSI (JAKET VS SEPATU)
+                ============================================================= */}
+                {sejarahActiveTab === 'produksi' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-[#E9D8BD]/50 shadow-md space-y-6">
+                      <div className="border-b border-[#ECE3D4] pb-4">
+                        <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Bab 3 • Rahasia Produksi Sukaregang</span>
+                        <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#173D2B] mt-1">
+                          Panduan Memilih Kulit yang Tepat untuk Jaket dan Sepatu
+                        </h3>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Setiap produk kerajinan memiliki karakteristik beban dan fungsi mekanis yang berbeda.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#35251D]/85 leading-relaxed">
+                        {/* Jaket Kulit */}
+                        <div className="p-6 rounded-2xl bg-[#F8F4EC] border-2 border-[#E9D8BD] space-y-4">
+                          <div className="flex items-center space-x-3">
+                            <span className="text-3xl">🧥</span>
+                            <div>
+                              <h4 className="font-serif font-bold text-base text-[#173D2B]">Untuk Produksi Jaket Kulit</h4>
+                              <span className="text-[10px] font-bold text-[#8B4A2B] uppercase">Fokus: Fleksibilitas, Kelenturan, & Kenyamanan</span>
+                            </div>
+                          </div>
+                          <p>
+                            Jaket kulit bersentuhan langsung dengan postur dinamis tubuh manusia—bahu yang berputar, siku yang menekuk, dan lingkar dada saat bernapas.
+                          </p>
+                          <div className="space-y-2 bg-white p-4 rounded-xl border border-[#E9D8BD]/80">
+                            <div className="flex items-start space-x-2">
+                              <span className="text-emerald-600 font-bold">✓</span>
+                              <div>
+                                <strong>Pilihan No. 1: Kulit Domba Garut (Sheepskin)</strong>
+                                <p className="text-[11px] text-gray-600 mt-0.5">
+                                  90% jaket kulit unggulan Sukaregang memakai kulit domba karena ringan (tidak membebani pundak), sangat lentur, dan memberikan efek jatuh (<em>drape</em>) yang sangat elegan.
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-start space-x-2 pt-2 border-t border-gray-100">
+                              <span className="text-amber-600 font-bold">•</span>
+                              <div>
+                                <strong>Pilihan Khusus Touring: Kulit Sapi Tipis (0.9 - 1.0 mm)</strong>
+                                <p className="text-[11px] text-gray-600 mt-0.5">
+                                  Digunakan khusus jaket motor balap/touring untuk memberikan perlindungan gesekan aspal yang maksimal bila terjadi insiden.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Sepatu Kulit */}
+                        <div className="p-6 rounded-2xl bg-[#F8F4EC] border-2 border-[#E9D8BD] space-y-4">
+                          <div className="flex items-center space-x-3">
+                            <span className="text-3xl">👞</span>
+                            <div>
+                              <h4 className="font-serif font-bold text-base text-[#173D2B]">Untuk Produksi Sepatu Kulit</h4>
+                              <span className="text-[10px] font-bold text-[#8B4A2B] uppercase">Fokus: Kekuatan Struktural, Tahan Gesek, & Penyerapan</span>
+                            </div>
+                          </div>
+                          <p>
+                            Sepatu menopang seluruh beban bobot tubuh manusia saat melangkah, berlari, dan bergesekan terus-menerus dengan batu, aspal, dan air.
+                          </p>
+                          <div className="space-y-2 bg-white p-4 rounded-xl border border-[#E9D8BD]/80">
+                            <div className="flex items-start space-x-2">
+                              <span className="text-emerald-600 font-bold">✓</span>
+                              <div>
+                                <strong>Bagian Luar (Upper & Sol): Wajib Kulit Sapi (Cowhide)</strong>
+                                <p className="text-[11px] text-gray-600 mt-0.5">
+                                  Kulit sapi tebal tidak mudah melar, mampu mempertahankan bentuk cetakan kayu sepatu (<em>shoe lasting</em>), dan sangat tahan terhadap abrasi tanah dan aspal.
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex items-start space-x-2 pt-2 border-t border-gray-100">
+                              <span className="text-blue-600 font-bold">✓</span>
+                              <div>
+                                <strong>Bagian Dalam (Lining & Insole): Kulit Domba / Kambing</strong>
+                                <p className="text-[11px] text-gray-600 mt-0.5">
+                                  Bagian dalam membutuhkan kulit domba/kambing yang lembut agar kaki tidak lecet, serta pori-pori mikronya menyerap keringat kaki dengan sangat baik.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* =============================================================
+                    TAB 4: CARA MERAWAT KULIT ASLI AGAR AWET PULUHAN TAHUN
+                ============================================================= */}
+                {sejarahActiveTab === 'perawatan' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-[#E9D8BD]/50 shadow-md space-y-6">
+                      <div className="border-b border-[#ECE3D4] pb-4">
+                        <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Bab 4 • Panduan Pemeliharaan</span>
+                        <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#173D2B] mt-1">
+                          5 Aturan Emas Merawat Produk Kulit Asli Garut
+                        </h3>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Kulit asli adalah materi organik alami. Dengan perawatan yang tepat, produk kulit Anda akan bertahan hingga puluhan tahun.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="text-2xl block">🚫</span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">1. Jangan Cuci dengan Air & Deterjen</h4>
+                          <p className="text-gray-700">
+                            Deterjen akan merusak dan melarutkan minyak alami kulit, menyebabkannya mengeras, kaku, dan pecah-pecah (<em>cracking</em>) secara permanen.
+                          </p>
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="text-2xl block">🧽</span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">2. Bersihkan Rutin dengan Kain Kering</h4>
+                          <p className="text-gray-700">
+                            Setelah dipakai, seka debu jalanan dengan kain microfiber kering atau sikat bulu kuda halus (<em>horsehair brush</em>) untuk mencegah kotoran menyumbat pori kulit.
+                          </p>
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="text-2xl block">✨</span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">3. Oleskan Pelembap (Mink Oil / Balsam)</h4>
+                          <p className="text-gray-700">
+                            Oleskan secara tipis dan melingkar <em>Mink Oil</em> atau <em>Leather Conditioner</em> setiap 2 hingga 3 bulan sekali agar serat kulit tetap lentur dan berkilau mewah.
+                          </p>
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="text-2xl block">🌧️</span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">4. Segera Anginkan Jika Kena Hujan</h4>
+                          <p className="text-gray-700">
+                            Bila basah terkena hujan, segera lap dengan handuk kering bersih dan anginkan di ruangan sejuk. <strong>JANGAN</strong> dijemur di terik matahari langsung atau hair dryer!
+                          </p>
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="text-2xl block">🧥</span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">5. Gantung dengan Hanger Busa Lebar</h4>
+                          <p className="text-gray-700">
+                            Gantung jaket kulit dengan hanger berbusa tebal atau kayu lebar agar pundak jaket tidak melorot. Hindari melipat jaket dalam waktu lama agar tidak timbul garis patah.
+                          </p>
+                        </div>
+
+                        <div className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] space-y-2">
+                          <span className="text-2xl block">💨</span>
+                          <h4 className="font-serif font-bold text-sm text-[#173D2B]">6. Simpan di Tempat Berventilasi</h4>
+                          <p className="text-gray-700">
+                            Gunakan sarung pelindung kain bernapas (<em>dust bag</em>), hindari kantong plastik kedap udara yang dapat memicu jamur, dan letakkan silica gel di sudut lemari.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* =============================================================
+                    TAB 5: CARA MEMBEDAKAN KULIT ASLI VS KULIT PALSU (IMITASI)
+                ============================================================= */}
+                {sejarahActiveTab === 'asli_palsu' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="bg-white rounded-3xl p-6 sm:p-10 border-2 border-[#E9D8BD]/50 shadow-md space-y-6">
+                      <div className="border-b border-[#ECE3D4] pb-4">
+                        <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Bab 5 • Panduan Pembeli Cerdas</span>
+                        <h3 className="font-serif text-2xl sm:text-3xl font-bold text-[#173D2B] mt-1">
+                          6 Uji Praktis Membedakan Kulit Asli vs Kulit Sintetis (PU / PVC)
+                        </h3>
+                        <p className="text-xs text-gray-600 mt-1">
+                          Kenali ciri-ciri khas kulit asli Sukaregang agar Anda tidak tertipu produk tiruan berbahan plastik.
+                        </p>
+                      </div>
+
+                      <div className="space-y-4 text-xs">
+                        {[
+                          {
+                            no: '1',
+                            title: 'Uji Aroma / Bau (The Scent Test)',
+                            icon: '👃',
+                            asli: 'Memiliki aroma hewani alami yang sangat khas, mewah, dan tidak pernah hilang meski sudah bertahun-tahun.',
+                            palsu: 'Berbau tajam bahan kimia sintetis, pelarut pabrik, plastik baru, atau karet menyengat.',
+                          },
+                          {
+                            no: '2',
+                            title: 'Uji Pori-Pori & Tekstur Permukaan (The Grain Test)',
+                            icon: '🔬',
+                            asli: 'Pori-pori bervariasi dengan ketidakteraturan alami yang membuktikan berasal dari kulit hewan alami.',
+                            palsu: 'Pola bintik atau kerutan tercetak sangat simetris dan berulang secara geometris karena hasil cetakan rol mesin.',
+                          },
+                          {
+                            no: '3',
+                            title: 'Uji Tekukan & Elastisitas (The Bend Test)',
+                            icon: '🖐️',
+                            asli: 'Saat ditekuk atau ditekan dengan jari, muncul kerutan-kerutan halus alami dan warnanya sedikit merekah lalu kembali rata.',
+                            palsu: 'Terasa kaku, membal seperti spons plastik, atau menimbulkan lipatan patah permanen yang tidak pulih.',
+                          },
+                          {
+                            no: '4',
+                            title: 'Uji Tetesan Air (The Water Drop Test)',
+                            icon: '💧',
+                            asli: 'Teteskan setitik air kecil; dalam 1-2 menit air akan terserap secara perlahan oleh pori-pori bernapas kulit asli.',
+                            palsu: 'Air tidak terserap sama sekali, hanya menggenang bulat di permukaan dan langsung tergelincir jatuh seperti di atas plastik.',
+                          },
+                          {
+                            no: '5',
+                            title: 'Uji Tahan Panas / Api (The Flame Resistance Test)',
+                            icon: '🔥',
+                            asli: 'Tahan percikan api korek sesaat; tidak meleleh, hanya sedikit hangus dengan aroma khas rambut terbakar.',
+                            palsu: 'Langsung meleleh, mengerut, terbakar dalam hitungan detik, dan mengeluarkan asap hitam pekat beracun.',
+                          },
+                          {
+                            no: '6',
+                            title: 'Uji Sentuhan Suhu Tubuh (The Thermal Test)',
+                            icon: '🌡️',
+                            asli: 'Terasa hangat saat disentuh telapak tangan karena kulit alami mampu mengalirkan kehangatan suhu tubuh.',
+                            palsu: 'Terasa dingin dan licin lengket plastik saat pertama kali disentuh tangan.',
+                          },
+                        ].map((test) => (
+                          <div
+                            key={test.no}
+                            className="p-5 rounded-2xl bg-[#F8F4EC] border border-[#E9D8BD] flex flex-col md:flex-row gap-4 items-start shadow-sm"
+                          >
+                            <div className="flex items-center space-x-3 w-full md:w-64 flex-shrink-0">
+                              <span className="w-10 h-10 rounded-xl bg-[#173D2B] text-white flex items-center justify-center text-lg font-bold">
+                                {test.icon}
+                              </span>
+                              <div>
+                                <span className="text-[10px] font-bold text-[#8B4A2B] uppercase">Metode #{test.no}</span>
+                                <h4 className="font-serif font-bold text-sm text-[#173D2B]">{test.title}</h4>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1 w-full">
+                              <div className="p-3 bg-emerald-50 rounded-xl border border-emerald-300">
+                                <span className="font-bold text-emerald-800 text-[11px] block mb-1">✓ Kulit Asli Garut:</span>
+                                <p className="text-emerald-950 text-[11px]">{test.asli}</p>
+                              </div>
+                              <div className="p-3 bg-red-50 rounded-xl border border-red-300">
+                                <span className="font-bold text-red-800 text-[11px] block mb-1">❌ Kulit Palsu / Sintetis:</span>
+                                <p className="text-red-950 text-[11px]">{test.palsu}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* =============================================================
+                    TAB 6: VIDEO DOKUMENTER YOUTUBE BEBAS ERROR
+                ============================================================= */}
+                {sejarahActiveTab === 'video' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="flex items-center justify-between pb-2">
+                      <div>
+                        <h3 className="font-serif font-bold text-xl text-[#173D2B]">
+                          Koleksi Video Edukasi & Dokumenter Sukaregang ({videos.length})
+                        </h3>
+                        <p className="text-xs text-gray-600">
+                          Klik untuk memutar langsung di web atau tonton di YouTube resmi tanpa kendala.
+                        </p>
+                      </div>
+                      <span className="text-xs px-3 py-1 bg-red-100 text-red-700 font-bold rounded-full">
+                        HD YouTube Video
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {videos.map((vid) => {
+                        const isPlaying = playingVideoId === vid.id;
+                        return (
+                          <div
+                            key={vid.id}
+                            className="bg-white rounded-3xl overflow-hidden border-2 border-[#E9D8BD]/60 shadow-lg flex flex-col justify-between hover:shadow-xl transition"
+                          >
+                            {/* Video Screen Area */}
+                            <div className="aspect-video w-full bg-black relative overflow-hidden group">
+                              {isPlaying ? (
+                                <iframe
+                                  src={`https://www.youtube-nocookie.com/embed/${vid.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                                  title={vid.title}
+                                  className="w-full h-full border-0"
+                                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                  allowFullScreen
+                                ></iframe>
+                              ) : (
+                                <div
+                                  onClick={() => setPlayingVideoId(vid.id)}
+                                  className="w-full h-full relative cursor-pointer group"
+                                >
+                                  <img
+                                    src={`https://img.youtube.com/vi/${vid.youtubeId}/hqdefault.jpg`}
+                                    alt={vid.title}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                  />
+                                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/25 transition flex items-center justify-center">
+                                    <div className="w-16 h-16 rounded-full bg-red-600 group-hover:bg-red-700 text-white flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition">
+                                      <span className="text-2xl ml-1">▶</span>
+                                    </div>
+                                  </div>
+                                  <span className="absolute bottom-3 right-3 px-2.5 py-1 bg-black/80 text-white text-[10px] font-bold rounded-md">
+                                    Putar Video
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Info & Action Buttons */}
+                            <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                              <div className="space-y-1.5">
+                                <span className="text-[10px] text-[#8B4A2B] font-bold uppercase tracking-wider">
+                                  {vid.category}
+                                </span>
+                                <h4 className="font-serif font-bold text-base text-[#173D2B] leading-snug">
+                                  {vid.title}
+                                </h4>
+                                <p className="text-xs text-[#35251D]/75 leading-relaxed line-clamp-3">
+                                  {vid.description}
+                                </p>
+                              </div>
+
+                              <div className="flex items-center space-x-2 pt-2 border-t border-gray-100">
+                                <button
+                                  type="button"
+                                  onClick={() => setPlayingVideoId(isPlaying ? null : vid.id)}
+                                  className="flex-1 py-2.5 bg-[#173D2B] hover:bg-[#102B1E] text-white text-xs font-bold rounded-xl transition text-center shadow"
+                                >
+                                  {isPlaying ? '⏸️ Tutup Player' : '▶️ Putar di Web'}
+                                </button>
+                                <a
+                                  href={vid.youtubeUrl || `https://www.youtube.com/watch?v=${vid.youtubeId}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-xl transition shadow flex items-center space-x-1"
+                                >
+                                  <span>YouTube</span>
+                                  <span>↗</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
