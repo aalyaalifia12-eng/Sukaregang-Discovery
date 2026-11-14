@@ -186,7 +186,7 @@
       },
       {
         id: 'dest-05',
-        name: 'Showroom Resmi Syakira Leather Garut',
+        name: 'Showroom Resmi Syakira Leather" id="katalog-syakira-section Garut',
         category: 'Mitra Toko Pilihan',
         address: 'Jl. Sukaregang Sentra Kulit Garut',
         googleMapsUrl: SYAKIRA_OFFICIAL_SHOPEE_STORE,
@@ -1488,7 +1488,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               onGoToAdmin={handleLockedAdminAccess}
               onOpenPromo={() => setIsAdPromoOpen(true)}
             />
-            <AdPromoModal isOpen={isAdPromoOpen} onClose={() => setIsAdPromoOpen(false)} />
+            {/* Pop up di Beranda telah dihilangkan sesuai permintaan pengguna */}
           </>
         );
       }
@@ -2571,7 +2571,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
               <div className="space-y-12 animate-fadeIn">
                 
                 {/* Pop up Iklan Promo Otomatis di Beranda */}
-                <AdPromoModal isOpen={isAdPromoOpen} onClose={() => setIsAdPromoOpen(false)} />
+                {/* Pop up di Beranda telah dihilangkan sesuai permintaan pengguna */}
 
                 {/* Hero Section Bersih, Ringkas & Menarik */}
                 <div className="relative rounded-3xl overflow-hidden bg-[#173D2B] text-[#F8F4EC] p-6 sm:p-10 lg:p-12 border-2 border-[#E9D8BD]/40 shadow-2xl">
@@ -2634,7 +2634,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       {/* Tombol Aksi Beranda */}
                       <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 pt-2">
                         <button
-                          onClick={() => setIsAdPromoOpen(true)}
+                          onClick={() => { const el = document.getElementById('katalog-syakira-section'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
                           className="px-5 py-3 bg-[#E9D8BD] hover:bg-[#D6B889] text-[#173D2B] font-bold text-xs rounded-2xl shadow-xl transition flex items-center space-x-2"
                         >
                           <Icon name="tag" className="w-4 h-4 text-[#173D2B]" />
@@ -2685,15 +2685,15 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         {/* FOTO KULIT DI ATAS */}
                         <div className="relative h-48 overflow-hidden bg-gray-100">
                           <img
-                            src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=600&q=80"
-                            alt="Foto Kulit Domba Garut Asli"
+                            src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=800&q=80"
+                            alt="Foto Makro Tekstur Kulit Domba Asli Garut"
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
                           <div className="absolute top-2.5 left-2.5 bg-[#173D2B] text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
-                            🐑 Kulit Domba Garut
+                            🐑 Tekstur Kulit Domba Asli
                           </div>
                           <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded">
-                            Grade A Super
+                            Pori Halus & Lembut
                           </div>
                         </div>
                         {/* PENJELASAN DI BAWAH FOTO */}
@@ -2719,15 +2719,15 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         {/* FOTO KULIT DI ATAS */}
                         <div className="relative h-48 overflow-hidden bg-gray-100">
                           <img
-                            src="https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=600&q=80"
-                            alt="Foto Kulit Sapi Garut Asli"
+                            src="https://images.unsplash.com/photo-1524805444758-089113d48a6d?auto=format&fit=crop&w=800&q=80"
+                            alt="Foto Makro Tekstur Kulit Sapi Full-Grain Asli Garut"
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
                           <div className="absolute top-2.5 left-2.5 bg-[#8B4A2B] text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
-                            🐂 Kulit Sapi Garut
+                            🐂 Tekstur Kulit Sapi Asli
                           </div>
                           <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded">
-                            Tebal & Kokoh
+                            Tebal & Full Grain
                           </div>
                         </div>
                         {/* PENJELASAN DI BAWAH FOTO */}
@@ -2753,15 +2753,15 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         {/* FOTO KULIT DI ATAS */}
                         <div className="relative h-48 overflow-hidden bg-gray-100">
                           <img
-                            src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=600&q=80"
-                            alt="Foto Kulit Kambing Garut Asli"
+                            src="https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=800&q=80"
+                            alt="Foto Makro Tekstur Kulit Kambing Kerutan Pebble Grain Asli"
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
                           <div className="absolute top-2.5 left-2.5 bg-[#2B352E] text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
-                            🐐 Kulit Kambing Garut
+                            🐐 Tekstur Kulit Kambing Asli
                           </div>
                           <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded">
-                            Pebble Grain
+                            Kerutan Pebble Grain
                           </div>
                         </div>
                         {/* PENJELASAN DI BAWAH FOTO */}
@@ -2787,15 +2787,15 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                         {/* FOTO DI ATAS */}
                         <div className="relative h-48 overflow-hidden bg-gray-100">
                           <img
-                            src="https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?auto=format&fit=crop&w=600&q=80"
-                            alt="Proses Penyamakan Tradisional Sukaregang"
+                            src="https://images.unsplash.com/photo-1509319117193-57bab727e09d?auto=format&fit=crop&w=800&q=80"
+                            alt="Foto Makro Tekstur Lembaran Kulit Samak Garut"
                             className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                           />
                           <div className="absolute top-2.5 left-2.5 bg-red-800 text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow">
-                            ⚙️ Penyamakan Kulit
+                            ⚙️ Lembaran Kulit Samak
                           </div>
                           <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded">
-                            Sentra 1920
+                            Samak Sukaregang 1920
                           </div>
                         </div>
                         {/* PENJELASAN DI BAWAH FOTO */}
@@ -2858,7 +2858,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
                     <div>
                       <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#8B4A2B]/10 text-[#8B4A2B] text-[10px] font-bold uppercase tracking-wider mb-1">
-                        <span>Showroom Resmi Syakira Leather</span>
+                        <span>Showroom Resmi Syakira Leather" id="katalog-syakira-section</span>
                       </div>
                       <h3 className="font-serif font-bold text-xl sm:text-3xl text-[#173D2B]">
                         Koleksi Jaket & Sepatu Kulit Asli Garut
@@ -2951,7 +2951,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                       className="inline-flex items-center space-x-2 px-8 py-3.5 bg-gradient-to-r from-[#8B4A2B] to-[#6E381F] text-white font-bold text-xs sm:text-sm rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 transition"
                     >
                       <Icon name="shopping-bag" className="w-4 h-4" />
-                      <span>Kunjungi Showroom Resmi Syakira Leather di Shopee ↗</span>
+                      <span>Kunjungi Showroom Resmi Syakira Leather" id="katalog-syakira-section di Shopee ↗</span>
                     </a>
                   </div>
                 </div>
@@ -2961,7 +2961,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                 ========================================================================= */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div
-                    onClick={() => setIsAdPromoOpen(true)}
+                    onClick={() => { const el = document.getElementById('katalog-syakira-section'); if (el) el.scrollIntoView({ behavior: 'smooth' }); }}
                     className="cursor-pointer bg-gradient-to-br from-[#173D2B] to-[#102B1E] text-[#F8F4EC] rounded-3xl p-6 border-2 border-[#E9D8BD]/60 shadow-lg hover:shadow-2xl transition space-y-3 group"
                   >
                     <div className="w-12 h-12 rounded-2xl bg-white/10 text-amber-300 flex items-center justify-center group-hover:scale-110 transition">
@@ -3110,7 +3110,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-gray-100">
                     <div>
                       <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-[#173D2B]/10 text-[#173D2B] text-[10px] font-bold uppercase tracking-wider mb-1">
-                        <span>Peta Lokasi & Sentra Industri</span>
+                        <span>Peta Lokasi & Sentra Industri" id="peta-kawasan-section</span>
                       </div>
                       <h3 className="font-serif font-bold text-xl sm:text-3xl text-[#173D2B]">
                         Peta Kawasan & Titik Kunjungan Pabrik Sukaregang
@@ -3544,7 +3544,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                             <li><strong>Super Lembut (Supple):</strong> Terasa sehalus sutra, lentur, dan tidak kaku saat dipakai.</li>
                             <li><strong>Ringan & Fleksibel:</strong> Bobot paling enteng sehingga nyaman dipakai seharian tanpa pegal.</li>
                             <li><strong>Kemampuan Termal:</strong> Menyejukkan di terik siang hari, namun menghangatkan di udara dingin.</li>
-                            <li><strong>Grade A Super:</strong> Standar emas ekspor Sukaregang dengan ketebalan 0.6 - 0.8 mm.</li>
+                            <li><strong>Pori Halus & Lembut:</strong> Standar emas ekspor Sukaregang dengan ketebalan 0.6 - 0.8 mm.</li>
                           </ul>
                         </div>
                         <div className="p-3 bg-amber-50 rounded-xl text-[11px] text-amber-900 font-semibold border border-amber-200">
@@ -3561,7 +3561,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                           <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Ulet & Kuat</span>
                           <h4 className="font-serif font-bold text-lg text-[#173D2B]">Kulit Kambing (Goatskin)</h4>
                           <ul className="text-xs text-gray-700 space-y-2 list-disc list-inside">
-                            <li><strong>Pebble Grain:</strong> Memiliki pola kerutan alami yang khas dan berkarakter unik.</li>
+                            <li><strong>Kerutan Pebble Grain:</strong> Memiliki pola kerutan alami yang khas dan berkarakter unik.</li>
                             <li><strong>Serat Sangat Ulet:</strong> Seratnya liat dan padat, menjadikannya sangat sulit robek.</li>
                             <li><strong>Tahan Gesekan:</strong> Memiliki ketahanan abrasi alami yang lebih tinggi dibanding domba.</li>
                             <li><strong>Kandungan Lanolin Alami:</strong> Lebih tahan terhadap kelembapan dan cipratan air.</li>
@@ -3579,7 +3579,7 @@ ${bookingNote ? `💬 *Catatan Khusus:* ${bookingNote}\n\n` : ''}Mohon konfirmas
                           <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center text-2xl shadow">
                             🐂
                           </div>
-                          <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Tebal & Kokoh</span>
+                          <span className="text-[10px] font-bold text-[#8B4A2B] uppercase tracking-wider">Tebal & Full Grain</span>
                           <h4 className="font-serif font-bold text-lg text-[#173D2B]">Kulit Sapi (Cowhide)</h4>
                           <ul className="text-xs text-gray-700 space-y-2 list-disc list-inside">
                             <li><strong>Tebal & Mantap:</strong> Ketebalan 1.2 mm - 2.2 mm, sangat kokoh dan berbobot.</li>
